@@ -46,6 +46,7 @@ let server = weblib.createServer(async (req, res) => {
 
     // parse url
     let url = new URL(req.url, 'https://nkyrpt.xyz/');
+    writeLog(`POST ${url}`);
 
     // API /api/user-login
     if (url.pathname === '/api/user-login') {
@@ -96,6 +97,17 @@ let server = weblib.createServer(async (req, res) => {
           return sendJsonResponse(res, { nodeKey });
         });
       });
+    }
+
+    // API /api/remove-nodes
+    else if (url.pathname === '/api/remove-nodes') {
+      let body = await parseRequestBody(req);
+      let { apiKey, nodeKeyList } = await JSON.parse(body);
+      let { userKey } = await authService.authenticate({ apiKey });
+      for (let nodeKey of nodeKeyList) {
+        await fileStorage.removeNode(userKey, nodeKey);
+      }
+      return sendJsonResponse(res, {});
     }
 
     else {

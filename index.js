@@ -56,7 +56,47 @@ let server = weblib.createServer(async (req, res) => {
       return sendJsonResponse(res, userData);
     }
 
-    
+    // TODO new api: add-user
+    // TODO new api: update-user
+
+    // API /api/get-node
+    else if (url.pathname === '/api/get-node') {
+      let body = await parseRequestBody(req);
+      let [apiKey, nodeKey] = splitStringIntoChunks(body, 32, 32);
+      // TODO: validate length and charset
+      let { userKey } = await authService.authenticate({ apiKey });
+      let readStream = fileStorage.getReadStream(userKey, nodeKey);
+      readStream.pipe(res);
+    }
+
+    // API /api/set-node
+    else if (url.pathname === '/api/set-node') {
+      let apiKey, nodeKey;
+      req.on('error', (error) => {
+        console.error(error);
+        sendCaughtError(res, error);
+      })
+      req.once('readable', async () => {
+        let head = bufferToString(req.read(64));
+        let [apiKey, nodeKey] = splitStringIntoChunks(head, 32, 32);
+        // TODO: validate length and charset
+        let { userKey } = await authService.authenticate({ apiKey });
+
+        // If nodeKey is the nullNodeKey, it indicates a new unique
+        // nodeName is to be created
+        let writeStream;
+        if (nodeKey === reservedNodeKeys.nullNodeKey) {
+          [nodeKey, writeStream] = fileStorage.createUniqueWriteStream(userKey);
+        } else {
+          writeStream = fileStorage.getWriteStream(userKey, nodeKey);
+        }
+
+        req.pipe(writeStream);
+        req.on('end', () => {
+          return sendJsonResponse(res, { nodeKey });
+        });
+      });
+    }
 
     else {
       res.writeHead(404);

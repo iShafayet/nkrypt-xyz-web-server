@@ -46,7 +46,7 @@ let server = weblib.createServer(async (req, res) => {
 
     // parse url
     let url = new URL(req.url, 'https://nkyrpt.xyz/');
-    writeLog(`POST ${url}`);
+    writeLog(`POST ${url.pathname}`);
 
     // API /api/user-login
     if (url.pathname === '/api/user-login') {
@@ -55,6 +55,16 @@ let server = weblib.createServer(async (req, res) => {
       // TODO: validate
       let userData = await authService.login({ username, password });
       return sendJsonResponse(res, userData);
+    }
+
+    // API /api/user-logout
+    if (url.pathname === '/api/user-logout') {
+      let body = await parseRequestBody(req);
+      let { apiKey } = await JSON.parse(body);
+      let { userKey } = await authService.authenticate({ apiKey });
+      // TODO: validate
+      let userData = await authService.logout({ apiKey });
+      return sendJsonResponse(res, {});
     }
 
     // TODO new api: add-user
@@ -103,6 +113,7 @@ let server = weblib.createServer(async (req, res) => {
     else if (url.pathname === '/api/remove-nodes') {
       let body = await parseRequestBody(req);
       let { apiKey, nodeKeyList } = await JSON.parse(body);
+      // TODO: validate length and charset
       let { userKey } = await authService.authenticate({ apiKey });
       for (let nodeKey of nodeKeyList) {
         await fileStorage.removeNode(userKey, nodeKey);

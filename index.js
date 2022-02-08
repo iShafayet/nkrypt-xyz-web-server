@@ -1,13 +1,9 @@
 
+// TODO Add config loader
 const config = {
   port: process.env.PORT || 9003,
   dataDir: './data',
   ssl: false
-};
-
-const reservedNodeKeys = {
-  rootNodeKey: "root".padStart(32, 0),
-  nullNodeKey: "".padStart(32, 0),
 };
 
 import * as httplib from 'http';
@@ -17,7 +13,22 @@ import { parseRequestBody, sendJsonResponse, sendCaughtError, writeLog } from '.
 import { CodedError } from './lib/coded-error.js';
 import { AuthService } from './lib/auth-service.js';
 import { FileStorage } from './lib/file-storage.js';
+import { LockService } from './lib/lock-service.js';
 import { splitStringIntoChunks, bufferToString } from './lib/utils.js';
+
+let lockService = new LockService();
+await lockService.init();
+
+// let key = "AAAA";
+// let lock = await lockService.acquireLock(key, "read");
+// console.log(key + " " + lock);
+
+// setTimeout(()=>{
+// lockService.releaseLock(key, lock)
+// }, 3000);
+
+// let lock2 = await lockService.acquireLock(key, "read");
+// console.log(key + " " + lock2);
 
 let fileStorage = new FileStorage();
 await fileStorage.init({ dataDir: config.dataDir });
@@ -45,7 +56,8 @@ let server = weblib.createServer(async (req, res) => {
     }
 
     // parse url
-    let url = new URL(req.url, 'https://nkyrpt.xyz/');
+    const exampleHostName = 'https://nkyrpt.xyz/';
+    let url = new URL(req.url, exampleHostName);
     writeLog(`POST ${url.pathname}`);
 
     // API /api/user-login
@@ -58,7 +70,7 @@ let server = weblib.createServer(async (req, res) => {
     }
 
     // API /api/user-logout
-    if (url.pathname === '/api/user-logout') {
+    else if (url.pathname === '/api/user-logout') {
       let body = await parseRequestBody(req);
       let { apiKey } = await JSON.parse(body);
       let { userKey } = await authService.authenticate({ apiKey });
@@ -70,56 +82,75 @@ let server = weblib.createServer(async (req, res) => {
     // TODO new api: add-user
     // TODO new api: update-user
 
-    // API /api/get-node
-    else if (url.pathname === '/api/get-node') {
+    // API /api/list-child-nodes
+    else if (url.pathname === '/api/list-child-nodes') {
       let body = await parseRequestBody(req);
-      let [apiKey, nodeKey] = splitStringIntoChunks(body, 32, 32);
+      let { apiKey, nodeKey } = await JSON.parse(body);
       // TODO: validate length and charset
       let { userKey } = await authService.authenticate({ apiKey });
-      let readStream = fileStorage.getReadStream(userKey, nodeKey);
-      readStream.pipe(res);
+      let nodeList = fileStorage.listChildNodes(nodeKey);
+      return sendJsonResponse(res, { nodeList })
     }
 
-    // API /api/set-node
-    else if (url.pathname === '/api/set-node') {
-      let apiKey, nodeKey;
-      req.on('error', (error) => {
-        console.error(error);
-        sendCaughtError(res, error);
-      })
-      req.once('readable', async () => {
-        let head = bufferToString(req.read(64));
-        let [apiKey, nodeKey] = splitStringIntoChunks(head, 32, 32);
-        // TODO: validate length and charset
-        let { userKey } = await authService.authenticate({ apiKey });
+    // request-write-lock
+    // write
+    // read (automatically creates read locks)
 
-        // If nodeKey is the nullNodeKey, it indicates a new unique
-        // nodeName is to be created
-        let writeStream;
-        if (nodeKey === reservedNodeKeys.nullNodeKey) {
-          [nodeKey, writeStream] = fileStorage.createUniqueWriteStream(userKey);
-        } else {
-          writeStream = fileStorage.getWriteStream(userKey, nodeKey);
-        }
+    // multiple readlocks are allowed
+    // multiple writelocks are not allowed
 
-        req.pipe(writeStream);
-        req.on('end', () => {
-          return sendJsonResponse(res, { nodeKey });
-        });
-      });
-    }
 
-    // API /api/remove-nodes
-    else if (url.pathname === '/api/remove-nodes') {
-      let body = await parseRequestBody(req);
-      let { apiKey, nodeKeyList } = await JSON.parse(body);
-      // TODO: validate length and charset
-      let { userKey } = await authService.authenticate({ apiKey });
-      for (let nodeKey of nodeKeyList) {
-        await fileStorage.removeNode(userKey, nodeKey);
-      }
-      return sendJsonResponse(res, {});
-    }
+
+    // // API /api/get-node
+    // else if (url.pathname === '/api/get-node') {
+    //   let body = await parseRequestBody(req);
+    //   let [apiKey, nodeKey] = splitStringIntoChunks(body, 32, 32);
+    //   // TODO: validate length and charset
+    //   let { userKey } = await authService.authenticate({ apiKey });
+    //   let readStream = fileStorage.getReadStream(userKey, nodeKey);
+    //   readStream.pipe(res);
+    // }
+
+    // // API /api/set-node
+    // else if (url.pathname === '/api/set-node') {
+    //   let apiKey, nodeKey;
+    //   req.on('error', (error) => {
+    //     console.error(error);
+    //     sendCaughtError(res, error);
+    //   })
+    //   req.once('readable', async () => {
+    //     let head = bufferToString(req.read(64));
+    //     let [apiKey, nodeKey] = splitStringIntoChunks(head, 32, 32);
+    //     // TODO: validate length and charset
+    //     let { userKey } = await authService.authenticate({ apiKey });
+
+    //     // If nodeKey is the nullNodeKey, it indicates a new unique
+    //     // nodeName is to be created
+    //     let writeStream;
+    //     if (nodeKey === reservedNodeKeys.nullNodeKey) {
+    //       [nodeKey, writeStream] = fileStorage.createUniqueWriteStream(userKey);
+    //     } else {
+    //       writeStream = fileStorage.getWriteStream(userKey, nodeKey);
+    //     }
+
+    //     req.pipe(writeStream);
+    //     req.on('end', () => {
+    //       return sendJsonResponse(res, { nodeKey });
+    //     });
+    //   });
+    // }
+
+    // // API /api/remove-nodes
+    // else if (url.pathname === '/api/remove-nodes') {
+    //   let body = await parseRequestBody(req);
+    //   let { apiKey, nodeKeyList } = await JSON.parse(body);
+    //   // TODO: validate length and charset
+    //   let { userKey } = await authService.authenticate({ apiKey });
+    //   for (let nodeKey of nodeKeyList) {
+    //     await fileStorage.removeNode(userKey, nodeKey);
+    //   }
+    //   return sendJsonResponse(res, {});
+    // }
 
     else {
       res.writeHead(404);

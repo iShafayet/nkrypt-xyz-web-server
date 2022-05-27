@@ -50,6 +50,7 @@ class DatabaseEngine {
     if (!defaultAdmin) {
       await this.connection.insertAsync({
         collection: collections.USER,
+        displayName: constants.iam.DEFAULT_ADMIN_DISPLAY_NAME,
         userName: constants.iam.DEFAULT_ADMIN_USER_NAME,
         password: calculateHashOfString(
           constants.iam.DEFAULT_ADMIN_USER_PASSWORD

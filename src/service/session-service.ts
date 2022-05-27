@@ -3,7 +3,11 @@ import collections from "../constant/collections.js";
 import constants from "../constant/common-constants.js";
 import { Generic } from "../global";
 import { DatabaseEngine } from "../lib/database-engine.js";
-import { throwOnFalsy } from "../utility/coded-error.js";
+import {
+  DeveloperError,
+  throwOnFalsy,
+  UserError,
+} from "../utility/coded-error.js";
 import { generateRandomString } from "../utility/string-utils.js";
 
 const LOGOUT_MESSAGE_PREFIX = "Logout: ";
@@ -36,7 +40,12 @@ export class SessionService {
           expireReason: null,
         });
       }
-      throwOnFalsy(safetyCap--, "API_KEY_CREATION_FAILED", "Timed out");
+      throwOnFalsy(
+        DeveloperError,
+        safetyCap--,
+        "API_KEY_CREATION_FAILED",
+        "Timed out"
+      );
     } while (exists);
 
     return { session, apiKey };
@@ -49,6 +58,7 @@ export class SessionService {
     });
 
     throwOnFalsy(
+      UserError,
       session,
       "SESSION_NOT_FOUND",
       "The requested session could not be found."

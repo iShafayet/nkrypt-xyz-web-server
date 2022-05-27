@@ -5,7 +5,7 @@ const basePath = "http://localhost:9041/api";
 
 const callPostJsonApi = async (endPoint, postData, authToken = null) => {
   const url = basePath + endPoint;
-  console.log(url);
+  console.log("POST " + url);
 
   const body = JSON.stringify(postData);
 

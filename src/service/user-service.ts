@@ -1,7 +1,7 @@
 import Nedb from "@seald-io/nedb";
-import collections from "../constant/collections";
-import { DatabaseEngine } from "../lib/database-engine";
-import { throwOnFalsy } from "../utility/coded-error";
+import collections from "../constant/collections.js";
+import { DatabaseEngine } from "../lib/database-engine.js";
+import { throwOnFalsy, UserError } from "../utility/coded-error.js";
 
 export class UserService {
   db: Nedb;
@@ -16,6 +16,7 @@ export class UserService {
       userName,
     });
     throwOnFalsy(
+      UserError,
       user,
       "USER_NOT_FOUND",
       "The requested user could not be found."

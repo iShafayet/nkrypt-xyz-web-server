@@ -6,8 +6,10 @@ import constants from "../constant/common-constants.js";
 import { JsonValue } from "../global.js";
 import {
   CodedError,
+  DeveloperError,
   throwOnFalsy,
   throwOnTruthy,
+  UserError,
 } from "../utility/coded-error.js";
 import { Config } from "./config-loader.js";
 import { Server } from "./server.js";
@@ -91,6 +93,7 @@ abstract class AbstractApi {
     );
 
     throwOnFalsy(
+      DeveloperError,
       authorizationHeader.length > 0,
       "AUTHORIZATION_HEADER_MISSING",
       "Authorization header is missing"
@@ -98,6 +101,7 @@ abstract class AbstractApi {
 
     let parts = authorizationHeader.split(" ");
     throwOnFalsy(
+      UserError,
       parts.length === 2 &&
         parts[0].toLowerCase().indexOf("bearer") === 0 &&
         parts[1].length === constants.iam.API_KEY_LENGTH,
@@ -113,18 +117,21 @@ abstract class AbstractApi {
     );
 
     throwOnFalsy(
+      UserError,
       session,
       "API_KEY_NOT_FOUND",
       "Your session could not be found. Login again."
     );
 
     throwOnTruthy(
+      UserError,
       session.hasExpired,
       "API_KEY_EXPIRED",
       "Your session has expired. Login again."
     );
 
     throwOnTruthy(
+      UserError,
       Date.now() - Date.parse(session.createdAt) >
         constants.iam.SESSION_VALIDITY_DURATION_MS,
       "API_KEY_EXPIRED",
@@ -138,7 +145,7 @@ abstract class AbstractApi {
   async _preHandleJsonPostApi(parsedJsonBody: JsonValue) {
     try {
       if (!this.isEnabled) {
-        throw new CodedError(
+        throw new DeveloperError(
           "API_DISABLED",
           "This action has been disabled by the developers."
         );
@@ -157,7 +164,7 @@ abstract class AbstractApi {
       let response = await this.handle(body);
 
       if (typeof response !== "object" || response === null) {
-        throw new CodedError(
+        throw new DeveloperError(
           "DEVELOPER_ERROR",
           "Expected response to be an object."
         );
@@ -167,7 +174,10 @@ abstract class AbstractApi {
       response.hasError = false;
       this._sendResponse(200, response);
     } catch (ex: unknown) {
-      logger.error(<Error>ex);
+      // There is no need to log UserErrors since they are always logged as response.
+      if (!(ex instanceof UserError)) {
+        logger.error(<Error>ex);
+      }
 
       let serializedError = this._stringifyErrorObject(<Error>ex);
       let statusCode = this._detectHttpStatusCode(serializedError);
@@ -188,7 +198,7 @@ abstract class AbstractApi {
     let details = {};
 
     if (!(errorObject instanceof Error)) {
-      throw new CodedError(
+      throw new DeveloperError(
         "DEVELOPER_ERROR",
         "expected errorObject to be an instanceof Error"
       );

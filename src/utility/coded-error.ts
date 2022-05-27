@@ -20,16 +20,49 @@ class CodedError extends ExtendableError {
   }
 }
 
-function throwOnFalsy(value: any, code: string, message: string) {
+function throwOnFalsy(
+  CodedErrorClass: ICodedError,
+  value: any,
+  code: string,
+  message: string
+) {
   if (!value) {
-    throw new CodedError(code, message);
+    throw new CodedErrorClass(code, message);
   }
 }
 
-function throwOnTruthy(value: any, code: string, message: string) {
+function throwOnTruthy(
+  CodedErrorClass: ICodedError,
+  value: any,
+  code: string,
+  message: string
+) {
   if (!!value) {
-    throw new CodedError(code, message);
+    throw new CodedErrorClass(code, message);
   }
 }
 
-export { ExtendableError, CodedError, throwOnFalsy, throwOnTruthy };
+interface ICodedError {
+  new (code: string, message: string): CodedError;
+}
+
+class DeveloperError extends CodedError {
+  constructor(code: string, message: string) {
+    super(code, message);
+  }
+}
+
+class UserError extends CodedError {
+  constructor(code: string, message: string) {
+    super(code, message);
+  }
+}
+
+export {
+  ExtendableError,
+  CodedError,
+  throwOnFalsy,
+  throwOnTruthy,
+  DeveloperError,
+  UserError,
+};

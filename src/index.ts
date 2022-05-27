@@ -8,6 +8,7 @@ import constants from "./constant/common-constants.js";
 import { appRootDirPath } from "./utility/file-utils.js";
 
 import pathlib from "path";
+import { prepareServiceDispatch } from "./lib/service-dispatch.js";
 
 // We initiate logger and inject it into global so that it is usable by everyone.
 let logger = (global.logger = new Logger({
@@ -46,6 +47,8 @@ class Program {
   async _initialize() {
     this.db = new DatabaseEngine(config);
     await this._initiateDatabase();
+
+    await prepareServiceDispatch(this.db);
 
     this.server = new Server(config, this.db);
     await this._registerEndpoints();

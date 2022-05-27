@@ -33,15 +33,7 @@ export class Api extends AbstractApi {
   async handle(body: CurrentRequest) {
     let { userName, password } = body;
 
-    let user = await this.db.findOneAsync({
-      collection: collections.USER,
-      userName,
-    });
-    throwOnFalsy(
-      user,
-      "USER_NOT_FOUND",
-      "The requested user could not be found."
-    );
+    let user = await dispatch.userService.findUserOrFail(userName);
 
     let isPasswordCorrect = compareHashWithString(
       password,
@@ -54,28 +46,8 @@ export class Api extends AbstractApi {
       "The password you have used is not correct."
     );
 
-    let apiKey;
-    let session, exists;
-    let safetyCap = constants.std.SAFETY_CAP;
-    do {
-      apiKey = generateRandomString(constants.iam.API_KEY_LENGTH);
-
-      let exists = await this.db.findOneAsync({
-        collection: collections.SESSION,
-        apiKey,
-      });
-      if (!exists) {
-        session = await this.db.insertAsync({
-          collection: collections.SESSION,
-          userId: user._id,
-          apiKey,
-          hasExpired: false,
-          expiredAt: null,
-          expireReason: null,
-        });
-      }
-      throwOnFalsy(safetyCap--, "API_KEY_CREATION_FAILED", "Timed out");
-    } while (exists);
+    let {session, apiKey} =
+      await dispatch.sessionService.createNewUniqueSession(user);
 
     return {
       apiKey,

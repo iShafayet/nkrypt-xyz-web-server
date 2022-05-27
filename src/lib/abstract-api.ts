@@ -108,15 +108,14 @@ abstract class AbstractApi {
 
     console.log({ apiKey });
 
-    let session = await this.db.findOneAsync({
-      collection: collections.SESSION,
-      apiKey,
-    });
+    let session = await dispatch.sessionService.getSessionByApiKey(
+      apiKey as string
+    );
 
     throwOnFalsy(
       session,
       "API_KEY_NOT_FOUND",
-      "Your session could not be validated. Login again."
+      "Your session could not be found. Login again."
     );
 
     throwOnTruthy(

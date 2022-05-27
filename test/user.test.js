@@ -18,8 +18,6 @@ test("Login", async () => {
     password: DEFAULT_PASSWORD,
   });
 
-  console.log(data);
-
   await validateObject(data, {
     hasError: Joi.boolean().valid(false).required(),
     apiKey: Joi.string().required(),
@@ -40,8 +38,6 @@ test("Logout", async () => {
     message: "Logout invoked from test case.",
   });
 
-  console.log(data);
-
   await validateObject(data, {
     hasError: Joi.boolean().valid(false).required(),
   });
@@ -51,8 +47,6 @@ test("Logout: Ensure apiKey is invalidated.", async () => {
   const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/user/logout", {
     message: "Logout invoked from test case.",
   });
-
-  console.log(data);
 
   await validateObject(data, {
     hasError: Joi.boolean().valid(true).required(),

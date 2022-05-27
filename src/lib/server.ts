@@ -4,7 +4,7 @@ import * as ExpressCore from "express-serve-static-core";
 import http from "http";
 import constants from "../constant/common-constants.js";
 import { ErrorCode } from "../constant/error-codes.js";
-import { CodedError } from "../utility/coded-error.js";
+import { DeveloperError } from "../utility/coded-error.js";
 import { joinUrlParts } from "../utility/url-utils.js";
 import { IAbstractApi } from "./abstract-api.js";
 import { Config } from "./config-loader.js";
@@ -63,7 +63,7 @@ class Server {
 
   async registerJsonPostApi(path: String, ApiClass: IAbstractApi) {
     if (!ApiClass) {
-      throw new CodedError(
+      throw new DeveloperError(
         ErrorCode.DEVELOPER_ERROR,
         "Expected ApiClass to be not null/undefined"
       );

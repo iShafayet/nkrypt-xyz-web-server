@@ -1,8 +1,8 @@
-import { CodedError } from "./coded-error.js";
+import { DeveloperError } from "./coded-error.js";
 
 function extract(object: any, keyList: string[]) {
   if (typeof object !== "object" || object === null) {
-    throw new CodedError(
+    throw new DeveloperError(
       "GENERIC_OBJECT_NOT_OBJECT",
       "Expected object to be an object"
     );
@@ -10,7 +10,7 @@ function extract(object: any, keyList: string[]) {
   let newObject: any = {};
   for (let key of keyList) {
     if (!object.hasOwnProperty(key)) {
-      throw new CodedError(
+      throw new DeveloperError(
         "GENERIC_OBJECT_KEY_MISSING",
         `Expected object to have key "${key}"`
       );

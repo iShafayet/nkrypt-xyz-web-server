@@ -10,6 +10,14 @@ import { appRootDirPath } from "./utility/file-utils.js";
 import pathlib from "path";
 import { prepareServiceDispatch } from "./lib/service-dispatch.js";
 
+// DANGER
+import { existsSync, rmSync } from "fs";
+const testDatabaseDir = "./nkrypt-xyz-local-data/db/";
+if (existsSync(testDatabaseDir)) {
+  rmSync(testDatabaseDir, { recursive: true, force: true });
+}
+// DANGER
+
 // We initiate logger and inject it into global so that it is usable by everyone.
 let logger = (global.logger = new Logger({
   switches: {
@@ -66,7 +74,15 @@ class Program {
       pathlib.dirname(decodeURI(new URL(import.meta.url).pathname))
     );
 
-    const apiNameList = ["user/login", "user/logout"];
+    const apiNameList = [
+      // user
+      "user/login",
+      "user/assert",
+      "user/logout",
+      "user/list",
+      "user/update-profile",
+      "user/update-password",
+    ];
 
     await Promise.all(
       apiNameList.map(async (name) => {

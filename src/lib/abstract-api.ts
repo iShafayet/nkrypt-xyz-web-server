@@ -110,8 +110,6 @@ abstract class AbstractApi {
     );
     let apiKey = parts.pop();
 
-    console.log({ apiKey });
-
     let session = await dispatch.sessionService.getSessionByApiKey(
       apiKey as string
     );

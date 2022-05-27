@@ -11,6 +11,7 @@ import {
 import { generateRandomString } from "../utility/string-utils.js";
 
 const LOGOUT_MESSAGE_PREFIX = "Logout: ";
+const FORCE_LOGOUT_MESSAGE_PREFIX = "ForceLogout: ";
 
 export class SessionService {
   db: Nedb;
@@ -63,6 +64,8 @@ export class SessionService {
       "SESSION_NOT_FOUND",
       "The requested session could not be found."
     );
+
+    return session;
   }
 
   async getSessionByApiKey(apiKey: string) {
@@ -79,9 +82,27 @@ export class SessionService {
         _id,
       },
       {
-        hasExpired: true,
-        expireReason: `${LOGOUT_MESSAGE_PREFIX}${message}`,
-        expiredAt: Date.now(),
+        $set: {
+          hasExpired: true,
+          expireReason: `${LOGOUT_MESSAGE_PREFIX}${message}`,
+          expiredAt: Date.now(),
+        },
+      }
+    );
+  }
+
+  async expireAllSessionByUserId(userId: string, message: string) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.SESSION,
+        userId,
+      },
+      {
+        $set: {
+          hasExpired: true,
+          expireReason: `${FORCE_LOGOUT_MESSAGE_PREFIX}${message}`,
+          expiredAt: Date.now(),
+        },
       }
     );
   }

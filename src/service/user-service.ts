@@ -10,6 +10,20 @@ export class UserService {
     this.db = dbEngine.connection;
   }
 
+  async findUserByIdOrFail(_id: string) {
+    let user = await this.db.findOneAsync({
+      collection: collections.USER,
+      _id,
+    });
+    throwOnFalsy(
+      UserError,
+      user,
+      "USER_NOT_FOUND",
+      "The requested user could not be found."
+    );
+    return user;
+  }
+
   async findUserOrFail(userName: string) {
     let user = await this.db.findOneAsync({
       collection: collections.USER,
@@ -22,5 +36,43 @@ export class UserService {
       "The requested user could not be found."
     );
     return user;
+  }
+
+  async updateOwnCommonProperties(_id: string, displayName: string) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.USER,
+        _id,
+      },
+      {
+        $set: {
+          displayName,
+        },
+      }
+    );
+  }
+
+  async listAllUsers() {
+    let userList = await this.db.findAsync({
+      collection: collections.USER,
+    });
+    return userList;
+  }
+
+  async updateUserPassword(
+    _id: string,
+    newPassword: { hash: string; salt: string }
+  ) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.USER,
+        _id,
+      },
+      {
+        $set: {
+          newPassword,
+        },
+      }
+    );
   }
 }

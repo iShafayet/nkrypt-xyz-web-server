@@ -47,12 +47,12 @@ export class Api extends AbstractApi {
       "The password you have used is not correct."
     );
 
-    let {session, apiKey} =
+    let { session, apiKey } =
       await dispatch.sessionService.createNewUniqueSession(user);
 
     return {
       apiKey,
-      user: extract(user, ["_id"]),
+      user: extract(user, ["_id", "userName", "displayName"]),
       session: extract(session, ["_id"]),
     };
   }

@@ -103,6 +103,9 @@ export class SessionService {
           expireReason: `${FORCE_LOGOUT_MESSAGE_PREFIX}${message}`,
           expiredAt: Date.now(),
         },
+      },
+      {
+        multi: true,
       }
     );
   }

@@ -1,4 +1,5 @@
 import { Logger } from "./lib/logger";
+import { AdminService } from "./service/admin-service";
 import { SessionService } from "./service/session-service";
 import { UserService } from "./service/user-service";
 
@@ -7,6 +8,7 @@ declare global {
   var dispatch: {
     userService: UserService;
     sessionService: SessionService;
+    adminService: AdminService;
   };
 }
 
@@ -19,3 +21,8 @@ type JsonValue =
 
 // We type-alias any as Generic to easily mark improvement scopes without adding comments
 type Generic = any;
+
+type GlobalPermissions = {
+  MANAGE_ALL_USER: boolean,
+  CREATE_USER: boolean,
+}

@@ -31,37 +31,16 @@ class DatabaseEngine {
 
     await this.connection.loadDatabaseAsync();
 
-    await this.setupInitialValues();
+    await this.setupInternalData();
   }
 
-  async setupInitialValues() {
+  async setupInternalData() {
     await this.connection.compactDatafileAsync();
     await this.connection.updateAsync(
       { collection: collections.SYSTEM },
       { $inc: { timesApplicationRan: 1 } },
       { upsert: true }
     );
-
-    let defaultAdmin = await this.connection.findOneAsync({
-      collection: collections.USER,
-      userName: constants.iam.DEFAULT_ADMIN_USER_NAME,
-    });
-
-    if (!defaultAdmin) {
-      await this.connection.insertAsync({
-        collection: collections.USER,
-        displayName: constants.iam.DEFAULT_ADMIN_DISPLAY_NAME,
-        userName: constants.iam.DEFAULT_ADMIN_USER_NAME,
-        password: calculateHashOfString(
-          constants.iam.DEFAULT_ADMIN_USER_PASSWORD
-        ),
-        globalPermissions: {
-          MANAGE_ALL_USER: true,
-          CREATE_USER: true,
-        },
-        createdAt: Date.now(),
-      });
-    }
   }
 
   async backup() {

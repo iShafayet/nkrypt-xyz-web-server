@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  nkrypt-xyz-ts-node-docker-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    volumes:
+      - ./src:/home/node/app/src
+    container_name: nkrypt-xyz-ts-node-docker-1
+    expose:
+      - '9041'
+    ports:
+      - '9041:9041'
+    command: npm run dev
+

@@ -58,6 +58,8 @@ class Program {
 
     await prepareServiceDispatch(this.db);
 
+    await dispatch.adminService.createDefaultAdminAccountIfNotPresent();
+
     this.server = new Server(config, this.db);
     await this._registerEndpoints();
     await this._startServer();
@@ -82,6 +84,8 @@ class Program {
       "user/list",
       "user/update-profile",
       "user/update-password",
+      // admin
+      "admin/iam/add-user",
     ];
 
     await Promise.all(

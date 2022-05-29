@@ -30,4 +30,13 @@ export class DirectoryService {
       createdAt: Date.now,
     });
   }
+
+  async listDirectoriesByIdList(idList: string[]) {
+    let list = await this.db.findAsync({
+      collection: collections.DIRECTORY,
+      bucketId: { $in: idList },
+      parentDirectoryId: null,
+    });
+    return list;
+  }
 }

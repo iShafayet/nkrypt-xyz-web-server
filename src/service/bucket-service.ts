@@ -32,7 +32,7 @@ export class BucketService {
       cryptSpec,
       cryptData,
       metaData,
-      bucketPermissions: [
+      bucketAuthorizations: [
         {
           userId: userId,
           permissions: {
@@ -43,5 +43,12 @@ export class BucketService {
         },
       ],
     });
+  }
+
+  async listAllBuckets() {
+    let list = await this.db.findAsync({
+      collection: collections.BUCKET,
+    });
+    return list;
   }
 }

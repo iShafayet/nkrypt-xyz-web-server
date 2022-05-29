@@ -33,22 +33,14 @@ await logger.init();
 let config = ConfigLoader.loadConfig();
 
 class Program {
-  db: DatabaseEngine;
-  server: Server;
-
-  constructor() {
-    // @ts-ignore
-    this.server = null;
-
-    // @ts-ignore
-    this.db = null;
-  }
+  db!: DatabaseEngine;
+  server!: Server;
 
   async start() {
     try {
       await this._initialize();
     } catch (ex) {
-      console.log("Error propagated to root level. Throwing again.");
+      logger.log("Error propagated to root level. Throwing again.");
       throw ex;
     }
   }

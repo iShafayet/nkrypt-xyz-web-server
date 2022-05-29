@@ -20,7 +20,7 @@ class Server {
 
   private _port: any;
   private _expressApp: ExpressCore.Express;
-  private _nodeWebServer: http.Server;
+  private _nodeWebServer!: http.Server;
   private _subContextPath: string;
 
   constructor(config: Config, db: DatabaseEngine) {
@@ -29,8 +29,7 @@ class Server {
 
     this._port = config.webServer.port || constants.webServer.FALLBACK_PORT;
     this._expressApp = express();
-    // @ts-ignore
-    this._nodeWebServer = null;
+
     this._subContextPath = constants.api.CORE_API_SUBCONTEXT_PATH;
   }
 

@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import fetch from "node-fetch";
 import Joi from "joi";
 

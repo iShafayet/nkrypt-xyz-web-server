@@ -9,7 +9,7 @@ class DatabaseEngine {
   config: Config;
   private _dir: string;
   private _dbFilePath: string;
-  connection: Nedb;
+  connection!: Nedb;
 
   constructor(config: Config) {
     this.config = config;
@@ -18,9 +18,6 @@ class DatabaseEngine {
       config.database.dir,
       constants.database.CORE_FILE_NAME
     );
-
-    // @ts-ignore
-    this.connection = null;
   }
 
   async init() {

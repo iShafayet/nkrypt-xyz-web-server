@@ -61,7 +61,7 @@ class Server {
     });
   }
 
-  async registerJsonPostApi(path: String, ApiClass: IAbstractApi) {
+  async registerJsonPostApi(path: string, ApiClass: IAbstractApi) {
     if (!ApiClass) {
       throw new DeveloperError(
         ErrorCode.DEVELOPER_ERROR,

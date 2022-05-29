@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { AbstractApi } from "../../lib/abstract-api.js";
 
-type CurrentRequest = {};
+type CurrentRequest = Record<string, never>;
 
 export class Api extends AbstractApi {
   get isEnabled(): boolean {

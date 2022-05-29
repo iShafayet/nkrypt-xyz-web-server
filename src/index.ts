@@ -48,6 +48,7 @@ class Program {
     try {
       await this._initialize();
     } catch (ex) {
+      console.log("Error propagated to root level. Throwing again.");
       throw ex;
     }
   }

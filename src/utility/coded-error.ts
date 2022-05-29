@@ -37,7 +37,7 @@ function throwOnTruthy(
   code: string,
   message: string
 ) {
-  if (!!value) {
+  if (value) {
     throw new CodedErrorClass(code, message);
   }
 }

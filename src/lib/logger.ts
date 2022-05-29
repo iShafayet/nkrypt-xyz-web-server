@@ -5,6 +5,7 @@ class Logger {
     important: true,
     warning: true,
     error: true,
+    urgent: true,
   };
 
   constructor({
@@ -14,6 +15,7 @@ class Logger {
       warning = true,
       error = true,
       important = true,
+      urgent = true,
     },
   }: any = {}) {
     this.switches = {
@@ -22,6 +24,7 @@ class Logger {
       important,
       warning,
       error,
+      urgent,
     };
   }
 
@@ -37,6 +40,11 @@ class Logger {
   log(...args: any) {
     if (!this.switches.log) return;
     console.log.apply(console, ["LOG\t", ...args]);
+  }
+
+  urgent(...args: any) {
+    if (!this.switches.important) return;
+    console.log.apply(console, ["URGENT\t", ...args]);
   }
 
   important(...args: any) {

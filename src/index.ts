@@ -86,6 +86,8 @@ class Program {
       "user/update-password",
       // admin
       "admin/iam/add-user",
+      // bucket
+      "bucket/create",
     ];
 
     await Promise.all(

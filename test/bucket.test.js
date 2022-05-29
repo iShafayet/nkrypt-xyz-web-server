@@ -9,16 +9,14 @@ import {
 const DEFAULT_USER_NAME = "admin";
 const DEFAULT_PASSWORD = "PleaseChangeMe@YourEarliest2Day";
 
-const TEST_USER_USER_NAME = "testuser1-" + Date.now();
-const TEST_USER_DISPLAY_NAME = "Test User 1";
-const TEST_USER_PASSWORD = "ExamplePassword";
+const TEST_BUCKET_NAME = "testBucket1-" + Date.now();
 
 let vars = {
   apiKey: null,
 };
 
-describe.skip("Admin Suite", () => {
-  test("Admin Login: Basic", async () => {
+describe("Bucket Suite", () => {
+  test("User Login: Basic", async () => {
     const data = await callHappyPostJsonApi("/user/login", {
       userName: DEFAULT_USER_NAME,
       password: DEFAULT_PASSWORD,
@@ -40,40 +38,24 @@ describe.skip("Admin Suite", () => {
     vars.apiKey = data.apiKey;
   });
 
-  test("Admin Add User", async () => {
+  test("Bucket/Create", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.apiKey,
-      "/admin/iam/add-user",
+      "/bucket/create",
       {
-        displayName: TEST_USER_DISPLAY_NAME,
-        userName: TEST_USER_USER_NAME,
-        password: TEST_USER_PASSWORD,
+        name: TEST_BUCKET_NAME,
+        cryptSpec: "V1:AES256",
+        cryptData: "PLACEHOLDER",
+        metaData: {},
       }
     );
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
-      userId: Joi.string().required(),
+      bucketId: Joi.string().required(),
+      rootDirectoryId: Joi.string().required(),
     });
   });
 
-  test("Login: Test user login works", async () => {
-    const data = await callHappyPostJsonApi("/user/login", {
-      userName: TEST_USER_USER_NAME,
-      password: TEST_USER_PASSWORD,
-    });
-
-    await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      apiKey: Joi.string().required(),
-      user: Joi.object().required().keys({
-        _id: Joi.string().required(),
-        userName: Joi.string().required(),
-        displayName: Joi.string().required(),
-      }),
-      session: Joi.object().required().keys({
-        _id: Joi.string().required(),
-      }),
-    });
-  });
+  // eof
 });

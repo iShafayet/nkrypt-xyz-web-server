@@ -2,11 +2,7 @@
 
 import Joi from "joi";
 
-import {
-  callHappyPostJsonApi,
-  callHappyPostJsonApiWithAuth,
-  validateObject,
-} from "./testlib/common-api-test-utils.js";
+import { callHappyPostJsonApi, callHappyPostJsonApiWithAuth, validateObject } from "./testlib/common-api-test-utils.js";
 
 const DEFAULT_USER_NAME = "admin";
 const DEFAULT_PASSWORD = "PleaseChangeMe@YourEarliest2Day";
@@ -17,7 +13,7 @@ let vars = {
   apiKey: null,
 };
 
-describe.skip("User Suite", () => {
+describe("User Suite", () => {
   test("Login: Basic", async () => {
     const data = await callHappyPostJsonApi("/user/login", {
       userName: DEFAULT_USER_NAME,
@@ -41,14 +37,10 @@ describe.skip("User Suite", () => {
   });
 
   test("Logout: Basic", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
-      vars.apiKey,
-      "/user/logout",
-      {
-        // apiKey: vars.apiKey,
-        message: "Logout invoked from test case.",
-      }
-    );
+    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/user/logout", {
+      // apiKey: vars.apiKey,
+      message: "Logout invoked from test case.",
+    });
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
@@ -56,13 +48,9 @@ describe.skip("User Suite", () => {
   });
 
   test("Logout: Ensure apiKey is invalidated.", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
-      vars.apiKey,
-      "/user/logout",
-      {
-        message: "Logout invoked from test case.",
-      }
-    );
+    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/user/logout", {
+      message: "Logout invoked from test case.",
+    });
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(true).required(),
@@ -99,11 +87,7 @@ describe.skip("User Suite", () => {
   });
 
   test("List: Basic", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
-      vars.apiKey,
-      "/user/list",
-      {}
-    );
+    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/user/list", {});
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
@@ -124,13 +108,9 @@ describe.skip("User Suite", () => {
   });
 
   test("Update: Basic", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
-      vars.apiKey,
-      "/user/update-profile",
-      {
-        displayName: "Administrator Edited",
-      }
-    );
+    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/user/update-profile", {
+      displayName: "Administrator Edited",
+    });
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
@@ -138,11 +118,7 @@ describe.skip("User Suite", () => {
   });
 
   test("List: Update confirmation", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
-      vars.apiKey,
-      "/user/list",
-      {}
-    );
+    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/user/list", {});
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
@@ -163,13 +139,9 @@ describe.skip("User Suite", () => {
   });
 
   test("Update: Revert", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
-      vars.apiKey,
-      "/user/update-profile",
-      {
-        displayName: "Administrator",
-      }
-    );
+    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/user/update-profile", {
+      displayName: "Administrator",
+    });
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
@@ -177,14 +149,10 @@ describe.skip("User Suite", () => {
   });
 
   test("Update Password: Basic", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
-      vars.apiKey,
-      "/user/update-password",
-      {
-        currentPassword: DEFAULT_PASSWORD,
-        newPassword: UPDATED_PASSWORD,
-      }
-    );
+    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/user/update-password", {
+      currentPassword: DEFAULT_PASSWORD,
+      newPassword: UPDATED_PASSWORD,
+    });
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
@@ -192,10 +160,7 @@ describe.skip("User Suite", () => {
   });
 
   test("Assert: Ensure apiKey is invalidated.", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
-      vars.apiKey,
-      "/user/assert"
-    );
+    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/user/assert");
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(true).required(),

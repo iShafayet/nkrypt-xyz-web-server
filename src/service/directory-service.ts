@@ -11,9 +11,27 @@ export class DirectoryService {
     this.db = dbEngine.connection;
   }
 
+  async listChildrenOfDirectory(bucketId: string, parentDirectoryId: string) {
+    let list = await this.db.findAsync({
+      collection: collections.DIRECTORY,
+      bucketId,
+      parentDirectoryId,
+    });
+    return list;
+  }
+
+  async findDirectoryById(bucketId: string, directoryId: string) {
+    let doc = await this.db.findOneAsync({
+      collection: collections.DIRECTORY,
+      bucketId,
+      _id: directoryId,
+    });
+    return doc;
+  }
+
   async findDirectoryByNameAndParent(name: string, bucketId: string, parentDirectoryId: string) {
     let doc = await this.db.findOneAsync({
-      collection: collections.BUCKET,
+      collection: collections.DIRECTORY,
       name,
       bucketId,
       parentDirectoryId,
@@ -37,7 +55,7 @@ export class DirectoryService {
       encryptedMetaData,
       createdByUserId,
       parentDirectoryId,
-      createdAt: Date.now,
+      createdAt: Date.now(),
     });
   }
 

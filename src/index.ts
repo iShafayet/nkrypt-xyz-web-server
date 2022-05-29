@@ -11,6 +11,7 @@ import { prepareServiceDispatch } from "./lib/service-dispatch.js";
 
 import { appRootDirPath, toFileUrl } from "./utility/file-utils.js";
 import { wipeOutLocalData } from "./utility/wipe-out.js";
+import { apiNameList } from "./routes.js";
 
 wipeOutLocalData();
 
@@ -60,24 +61,6 @@ class Program {
 
   async _registerEndpoints() {
     logger.log("(server)> Dynamically registering APIs");
-
-    const apiNameList = [
-      // user
-      "user/login",
-      "user/assert",
-      "user/logout",
-      "user/list",
-      "user/update-profile",
-      "user/update-password",
-      // admin
-      "admin/iam/add-user",
-      // bucket
-      "bucket/create",
-      "bucket/list",
-      // directory
-      "directory/create",
-      "directory/list",
-    ];
 
     await Promise.all(
       apiNameList.map(async (name) => {

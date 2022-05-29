@@ -10,12 +10,14 @@ const DEFAULT_PASSWORD = "PleaseChangeMe@YourEarliest2Day";
 const TEST_BUCKET_NAME = "testBucket1-" + Date.now();
 const TEST_LEVEL_1_DIRECTORY_1_NAME = "testL1Dir1-" + Date.now();
 const TEST_LEVEL_1_DIRECTORY_2_NAME = "testL1Dir2-" + Date.now();
+const TEST_LEVEL_2_DIRECTORY_1_NAME = "testL2Dir1-" + Date.now();
 
 let vars = {
   apiKey: null,
   bucketId: null,
   rootDirectoryId: null,
   level1Directory1Id: null,
+  level1Directory2Id: null,
 };
 
 describe("Bucket and Directory Suite", () => {
@@ -109,6 +111,8 @@ describe("Bucket and Directory Suite", () => {
       hasError: Joi.boolean().valid(false).required(),
       directoryId: Joi.string().required(),
     });
+
+    vars.level1Directory1Id = data.directoryId;
   });
 
   test("Directory/Create 2", async () => {
@@ -124,6 +128,23 @@ describe("Bucket and Directory Suite", () => {
       hasError: Joi.boolean().valid(false).required(),
       directoryId: Joi.string().required(),
     });
+
+    vars.level1Directory2Id = data.directoryId;
+  });
+
+  test("Directory/Create 3", async () => {
+    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/directory/create", {
+      name: TEST_LEVEL_2_DIRECTORY_1_NAME,
+      bucketId: vars.bucketId,
+      parentDirectoryId: vars.level1Directory1Id,
+      encryptedMetaData: "PLACEHOLDER",
+      metaData: { createdFromApp: "Integration testing" },
+    });
+
+    await validateObject(data, {
+      hasError: Joi.boolean().valid(false).required(),
+      directoryId: Joi.string().required(),
+    });
   });
 
   test("Directory/List", async () => {
@@ -131,43 +152,83 @@ describe("Bucket and Directory Suite", () => {
       bucketId: vars.bucketId,
       directoryId: vars.rootDirectoryId,
     });
-    console.log(data);
 
-    // await validateObject(data, {
-    //   hasError: Joi.boolean().valid(false).required(),
-    //   bucketList: Joi.array()
-    //     .required()
-    //     .items(
-    //       Joi.object().keys({
-    //         _id: Joi.string().required(),
-    //         name: Joi.string().required(),
-    //         cryptSpec: Joi.string().required(),
-    //         cryptData: Joi.string().required(),
-    //         metaData: Joi.object().required(),
-    //         bucketAuthorizations: Joi.array()
-    //           .required()
-    //           .items(
-    //             Joi.object()
-    //               .required()
-    //               .keys({
-    //                 userId: Joi.string().required(),
-    //                 permissions: Joi.object().required().keys({
-    //                   USE: Joi.boolean().required(),
-    //                   MODIFY: Joi.boolean().required(),
-    //                   MANAGE: Joi.boolean().required(),
-    //                 }),
-    //               })
-    //           ),
-    //         rootDirectoryId: Joi.string().required(),
-    //       })
-    //     ),
-    // });
+    let directorySchema = Joi.object()
+      .keys({
+        _id: Joi.string().required(),
+        name: Joi.string().min(4).max(32).required(),
+        bucketId: Joi.string().min(1).max(64).required(),
+        parentDirectoryId: Joi.string().min(1).max(64).allow(null).required(),
+        encryptedMetaData: Joi.string().min(1).max(2048).allow(null).required(),
+        metaData: Joi.object().required(),
+        createdAt: Joi.number().required(),
+        createdByUserId: Joi.string().required(),
+      })
+      .required();
 
-    // let bucket = data.bucketList.find((bucket) => bucket.name === TEST_BUCKET_NAME);
-    // expect(bucket).not.toBeFalsy();
+    await validateObject(data, {
+      hasError: Joi.boolean().valid(false).required(),
+      directory: directorySchema,
+      childDirectoryList: Joi.array().required().items(directorySchema),
+    });
 
-    // vars.bucketId = bucket._id;
-    // vars.rootDirectoryId = bucket.rootDirectoryId;
+    expect(data.childDirectoryList.length).toEqual(2);
+  });
+
+  test("Directory/List", async () => {
+    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/directory/get", {
+      bucketId: vars.bucketId,
+      directoryId: vars.level1Directory1Id,
+    });
+
+    let directorySchema = Joi.object()
+      .keys({
+        _id: Joi.string().required(),
+        name: Joi.string().min(4).max(32).required(),
+        bucketId: Joi.string().min(1).max(64).required(),
+        parentDirectoryId: Joi.string().min(1).max(64).allow(null).required(),
+        encryptedMetaData: Joi.string().min(1).max(2048).allow(null).required(),
+        metaData: Joi.object().required(),
+        createdAt: Joi.number().required(),
+        createdByUserId: Joi.string().required(),
+      })
+      .required();
+
+    await validateObject(data, {
+      hasError: Joi.boolean().valid(false).required(),
+      directory: directorySchema,
+      childDirectoryList: Joi.array().required().items(directorySchema),
+    });
+
+    expect(data.childDirectoryList.length).toEqual(1);
+  });
+
+  test("Directory/List", async () => {
+    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/directory/get", {
+      bucketId: vars.bucketId,
+      directoryId: vars.level1Directory2Id,
+    });
+
+    let directorySchema = Joi.object()
+      .keys({
+        _id: Joi.string().required(),
+        name: Joi.string().min(4).max(32).required(),
+        bucketId: Joi.string().min(1).max(64).required(),
+        parentDirectoryId: Joi.string().min(1).max(64).allow(null).required(),
+        encryptedMetaData: Joi.string().min(1).max(2048).allow(null).required(),
+        metaData: Joi.object().required(),
+        createdAt: Joi.number().required(),
+        createdByUserId: Joi.string().required(),
+      })
+      .required();
+
+    await validateObject(data, {
+      hasError: Joi.boolean().valid(false).required(),
+      directory: directorySchema,
+      childDirectoryList: Joi.array().optional().max(0),
+    });
+
+    expect(data.childDirectoryList.length).toEqual(0);
   });
 
   // eof

@@ -5,18 +5,14 @@ import { ConfigLoader } from "./lib/config-loader.js";
 import { DatabaseEngine } from "./lib/database-engine.js";
 
 import constants from "./constant/common-constants.js";
-import { appRootDirPath } from "./utility/file-utils.js";
 
 import pathlib from "path";
 import { prepareServiceDispatch } from "./lib/service-dispatch.js";
 
-// DANGER
-import { existsSync, rmSync } from "fs";
-const testDatabaseDir = "./nkrypt-xyz-local-data/db/";
-if (existsSync(testDatabaseDir)) {
-  rmSync(testDatabaseDir, { recursive: true, force: true });
-}
-// DANGER
+import { appRootDirPath, toFileUrl } from "./utility/file-utils.js";
+import { wipeOutLocalData } from "./utility/wipe-out.js";
+
+wipeOutLocalData();
 
 // We initiate logger and inject it into global so that it is usable by everyone.
 let logger = (global.logger = new Logger({
@@ -65,10 +61,6 @@ class Program {
   async _registerEndpoints() {
     logger.log("(server)> Dynamically registering APIs");
 
-    const __dirname = pathlib.resolve(
-      pathlib.dirname(decodeURI(new URL(import.meta.url).pathname))
-    );
-
     const apiNameList = [
       // user
       "user/login",
@@ -89,11 +81,8 @@ class Program {
 
     await Promise.all(
       apiNameList.map(async (name) => {
-        let path = pathlib.join(
-          __dirname,
-          constants.api.CORE_API_DIR,
-          `${name}.js`
-        );
+        let path = toFileUrl(pathlib.join(appRootDirPath, constants.api.CORE_API_DIR, `${name}.js`));
+
         let apiModule = await import(path);
         await this.server.registerJsonPostApi(name, apiModule.Api);
       })

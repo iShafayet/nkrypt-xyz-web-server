@@ -1,17 +1,13 @@
-import { Logger } from "./lib/logger.js";
-import { Server } from "./lib/server.js";
-
+import pathlib from "path";
+import constants from "./constant/common-constants.js";
 import { ConfigLoader } from "./lib/config-loader.js";
 import { DatabaseEngine } from "./lib/database-engine.js";
-
-import constants from "./constant/common-constants.js";
-
-import pathlib from "path";
+import { Logger } from "./lib/logger.js";
+import { Server } from "./lib/server.js";
 import { prepareServiceDispatch } from "./lib/service-dispatch.js";
-
+import { apiNameList } from "./routes.js";
 import { appRootDirPath, toFileUrl } from "./utility/file-utils.js";
 import { wipeOutLocalData } from "./utility/wipe-out.js";
-import { apiNameList } from "./routes.js";
 
 wipeOutLocalData();
 
@@ -64,7 +60,9 @@ class Program {
 
     await Promise.all(
       apiNameList.map(async (name) => {
-        let path = toFileUrl(pathlib.join(appRootDirPath, constants.api.CORE_API_DIR, `${name}.js`));
+        let path = toFileUrl(
+          pathlib.join(appRootDirPath, constants.api.CORE_API_DIR, `${name}.js`)
+        );
 
         let apiModule = await import(path);
         await this.server.registerJsonPostApi(name, apiModule.Api);

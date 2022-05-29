@@ -1,7 +1,6 @@
-import Joi, { any } from "joi";
-import { Generic } from "../../global.js";
+import Joi from "joi";
 import { AbstractApi } from "../../lib/abstract-api.js";
-import { extract, strip } from "../../utility/misc-utils.js";
+import { strip } from "../../utility/misc-utils.js";
 
 type CurrentRequest = {
   bucketId: string;
@@ -29,9 +28,16 @@ export class Api extends AbstractApi {
   async handle(body: CurrentRequest) {
     let { bucketId, directoryId } = body;
 
-    let directory = await dispatch.directoryService.findDirectoryById(bucketId, directoryId);
+    let directory = await dispatch.directoryService.findDirectoryById(
+      bucketId,
+      directoryId
+    );
 
-    let childDirectoryList = await dispatch.directoryService.listChildrenOfDirectory(bucketId, directoryId);
+    let childDirectoryList =
+      await dispatch.directoryService.listChildrenOfDirectory(
+        bucketId,
+        directoryId
+      );
 
     strip(directory, ["collection"]);
     strip(childDirectoryList, ["collection"]);

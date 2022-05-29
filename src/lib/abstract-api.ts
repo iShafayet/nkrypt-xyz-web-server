@@ -3,7 +3,7 @@ import * as ExpressCore from "express-serve-static-core";
 import Joi from "joi";
 import collections from "../constant/collections.js";
 import constants from "../constant/common-constants.js";
-import { JsonValue } from "../global.js";
+import { Generic, JsonValue } from "../global.js";
 import {
   CodedError,
   DeveloperError,
@@ -76,15 +76,9 @@ abstract class AbstractApi {
   async _composeAndValidateSchema(body: JsonValue) {
     let schema = this.requestSchema;
 
-    try {
-      let validatedBody = await schema.validateAsync(
-        body,
-        joiValidationOptions
-      );
-      return validatedBody;
-    } catch (ex) {
-      throw ex;
-    }
+    // Note: Throws validation error
+    let validatedBody = await schema.validateAsync(body, joiValidationOptions);
+    return validatedBody;
   }
 
   async _authenticate() {
@@ -168,8 +162,11 @@ abstract class AbstractApi {
         );
       }
 
+      // FIXME Better solution
+      // eslint-disable-next-line
       // @ts-ignore
       response.hasError = false;
+
       this._sendResponse(200, response);
     } catch (ex: unknown) {
       // There is no need to log UserErrors since they are always logged as response.
@@ -209,8 +206,7 @@ abstract class AbstractApi {
 
     if ("isJoi" in errorObject) {
       code = "VALIDATION_ERROR";
-      // @ts-ignore
-      details = errorObject.details;
+      details = (errorObject as Generic).details;
     }
 
     let message =

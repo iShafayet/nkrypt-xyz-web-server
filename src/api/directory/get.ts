@@ -27,20 +27,14 @@ export class Api extends AbstractApi {
   }
 
   async handle(body: CurrentRequest) {
-    let bucketList = (await dispatch.bucketService.listAllBuckets()).filter((bucket) =>
-      bucket.bucketAuthorizations.find((authorization: Generic) => authorization.userId === this.interimData.userId)
-    );
+    let { bucketId, directoryId } = body;
 
-    let idList: string[] = bucketList.map((bucket: Generic) => bucket._id);
-    let dirList = await dispatch.directoryService.listDirectoriesByIdList(idList);
+    let directory = await dispatch.directoryService.findDirectoryById(bucketId, directoryId);
 
-    bucketList.forEach((bucket: Generic) => {
-      bucket.rootDirectoryId = dirList.find(
-        (dir: Generic) => dir.bucketId == bucket._id && dir.parentDirectoryId === null
-      )._id;
-    });
+    let childDirectoryList = await dispatch.directoryService.listChildrenOfDirectory(bucketId, directoryId);
 
-    strip(bucketList, ["collection"]);
-    return { bucketList };
+    strip(directory, ["collection"]);
+    strip(childDirectoryList, ["collection"]);
+    return { directory, childDirectoryList };
   }
 }

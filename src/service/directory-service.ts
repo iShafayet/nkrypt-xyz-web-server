@@ -11,6 +11,16 @@ export class DirectoryService {
     this.db = dbEngine.connection;
   }
 
+  async findDirectoryByNameAndParent(name: string, bucketId: string, parentDirectoryId: string) {
+    let doc = await this.db.findOneAsync({
+      collection: collections.BUCKET,
+      name,
+      bucketId,
+      parentDirectoryId,
+    });
+    return doc;
+  }
+
   async createDirectory(
     name: string,
     bucketId: string,

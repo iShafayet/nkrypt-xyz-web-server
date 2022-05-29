@@ -2,7 +2,6 @@ import Nedb from "@seald-io/nedb";
 import collections from "../constant/collections.js";
 import { Generic } from "../global.js";
 import { DatabaseEngine } from "../lib/database-engine.js";
-import { throwOnFalsy, UserError } from "../utility/coded-error.js";
 
 export class BucketService {
   db: Nedb;

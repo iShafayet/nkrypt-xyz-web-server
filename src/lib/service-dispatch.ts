@@ -14,6 +14,5 @@ export const prepareServiceDispatch = async (db: DatabaseEngine) => {
     userService: new UserService(db),
     sessionService: new SessionService(db),
     adminService: new AdminService(db),
-
   };
 };

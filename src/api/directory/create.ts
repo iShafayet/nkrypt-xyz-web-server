@@ -1,10 +1,7 @@
 import Joi from "joi";
-import constants from "../../constant/common-constants.js";
 import { Generic } from "../../global.js";
 import { AbstractApi } from "../../lib/abstract-api.js";
-import { throwOnFalsy, throwOnTruthy, UserError } from "../../utility/coded-error.js";
-import { extract } from "../../utility/misc-utils.js";
-import { calculateHashOfString, compareHashWithString } from "../../utility/security-utils.js";
+import { throwOnTruthy, UserError } from "../../utility/coded-error.js";
 
 type CurrentRequest = {
   name: string;
@@ -36,9 +33,14 @@ export class Api extends AbstractApi {
   }
 
   async handle(body: CurrentRequest) {
-    let { name, bucketId, parentDirectoryId, encryptedMetaData, metaData } = body;
+    let { name, bucketId, parentDirectoryId, encryptedMetaData, metaData } =
+      body;
 
-    let exists = await dispatch.directoryService.findDirectoryByNameAndParent(name, bucketId, parentDirectoryId);
+    let exists = await dispatch.directoryService.findDirectoryByNameAndParent(
+      name,
+      bucketId,
+      parentDirectoryId
+    );
     throwOnTruthy(
       UserError,
       exists,

@@ -1,5 +1,4 @@
 import Joi from "joi";
-import constants from "../../constant/common-constants.js";
 import { AbstractApi } from "../../lib/abstract-api.js";
 import { throwOnFalsy, UserError } from "../../utility/coded-error.js";
 import {

@@ -1,7 +1,6 @@
 import Nedb from "@seald-io/nedb";
 import * as ExpressCore from "express-serve-static-core";
 import Joi from "joi";
-import collections from "../constant/collections.js";
 import constants from "../constant/common-constants.js";
 import { Generic, JsonValue } from "../global.js";
 import {

@@ -20,7 +20,7 @@ let vars = {
 };
 
 describe("Admin Suite", () => {
-  test("Admin Login: Basic", async () => {
+  test("(user/login): Preparational", async () => {
     const data = await callHappyPostJsonApi("/user/login", {
       userName: DEFAULT_USER_NAME,
       password: DEFAULT_PASSWORD,
@@ -42,7 +42,7 @@ describe("Admin Suite", () => {
     vars.apiKey = data.apiKey;
   });
 
-  test("Admin Add User", async () => {
+  test("(admin/iam/add-user): Create new user", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.apiKey,
       "/admin/iam/add-user",
@@ -59,7 +59,7 @@ describe("Admin Suite", () => {
     });
   });
 
-  test("Login: Test user login works", async () => {
+  test("(user/login): Ensure newly created user can log in", async () => {
     const data = await callHappyPostJsonApi("/user/login", {
       userName: TEST_USER_USER_NAME,
       password: TEST_USER_PASSWORD,

@@ -8,7 +8,7 @@ import {
   compareHashWithString,
 } from "../../utility/security-utils.js";
 
-type CurrentRequest = {};
+type CurrentRequest = Record<string, never>;
 
 export class Api extends AbstractApi {
   get isEnabled(): boolean {

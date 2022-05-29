@@ -51,7 +51,7 @@ export class Api extends AbstractApi {
       `A bucket with the provided name ${name} already exists.`
     );
 
-    let bucket = await dispatch.bucketService.createBucket(
+    let bucket: Generic = await dispatch.bucketService.createBucket(
       name,
       cryptSpec,
       cryptData,
@@ -59,7 +59,7 @@ export class Api extends AbstractApi {
       this.interimData.userId as string
     );
 
-    let directory = await dispatch.directoryService.createDirectory(
+    let directory: Generic = await dispatch.directoryService.createDirectory(
       name,
       bucket._id,
       metaData,

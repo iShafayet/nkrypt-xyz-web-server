@@ -1,4 +1,4 @@
-const joinUrlParts = (...parts: String[]) => {
+const joinUrlParts = (...parts: string[]) => {
   const del = "/";
   return (
     del +

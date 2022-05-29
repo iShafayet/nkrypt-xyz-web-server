@@ -1,7 +1,11 @@
+/* eslint-disable no-var */
 import { Logger } from "./lib/logger";
 import { AdminService } from "./service/admin-service";
 import { SessionService } from "./service/session-service";
 import { UserService } from "./service/user-service";
+import { BucketService } from "./service/bucket-service";
+import { DirectoryService } from "./service/directory-service";
+import { FileService } from "./service/file-service";
 
 declare global {
   var logger: Logger;

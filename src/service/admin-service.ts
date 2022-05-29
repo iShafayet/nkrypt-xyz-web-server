@@ -37,6 +37,7 @@ export class AdminService {
           CREATE_USER: true,
         },
         createdAt: Date.now(),
+        isBanned: false,
       });
     }
   }
@@ -54,6 +55,7 @@ export class AdminService {
       password: calculateHashOfString(password),
       globalPermissions,
       createdAt: Date.now(),
+      isBanned: false,
     });
   }
 }

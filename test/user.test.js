@@ -14,7 +14,7 @@ let vars = {
   apiKey: null,
 };
 
-describe.skip("User Suite", () => {
+describe("User Suite", () => {
   test("Login: Basic", async () => {
     const data = await callHappyPostJsonApi("/user/login", {
       userName: DEFAULT_USER_NAME,
@@ -114,9 +114,10 @@ describe.skip("User Suite", () => {
         .required(),
     });
 
-    expect(data.userList).toStrictEqual([
-      { userName: "admin", displayName: "Administrator" },
-    ]);
+    expect(data.userList).toContainEqual({
+      userName: "admin",
+      displayName: "Administrator",
+    });
   });
 
   test("Update: Basic", async () => {
@@ -152,9 +153,10 @@ describe.skip("User Suite", () => {
         .required(),
     });
 
-    expect(data.userList).toStrictEqual([
-      { userName: "admin", displayName: "Administrator Edited" },
-    ]);
+    expect(data.userList).toContainEqual({
+      userName: "admin",
+      displayName: "Administrator Edited",
+    });
   });
 
   test("Update: Revert", async () => {

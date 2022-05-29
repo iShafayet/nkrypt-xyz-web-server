@@ -24,6 +24,14 @@ export class UserService {
     return user;
   }
 
+  async findUserByUserName(userName: string) {
+    let user = await this.db.findOneAsync({
+      collection: collections.USER,
+      userName,
+    });
+    return user;
+  }
+
   async findUserOrFail(userName: string) {
     let user = await this.db.findOneAsync({
       collection: collections.USER,

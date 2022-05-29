@@ -82,6 +82,9 @@ class Program {
       // bucket
       "bucket/create",
       "bucket/list",
+      // directory
+      "directory/create",
+      "directory/list",
     ];
 
     await Promise.all(

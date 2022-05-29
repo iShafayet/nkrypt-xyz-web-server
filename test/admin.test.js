@@ -9,7 +9,7 @@ import {
 const DEFAULT_USER_NAME = "admin";
 const DEFAULT_PASSWORD = "PleaseChangeMe@YourEarliest2Day";
 
-const TEST_USER_USER_NAME = "testuser1";
+const TEST_USER_USER_NAME = "testuser1-" + Date.now();
 const TEST_USER_DISPLAY_NAME = "Test User 1";
 const TEST_USER_PASSWORD = "ExamplePassword";
 
@@ -53,6 +53,7 @@ describe("Admin Suite", () => {
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
+      userId: Joi.string().required(),
     });
   });
 });

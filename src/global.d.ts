@@ -9,6 +9,9 @@ declare global {
     userService: UserService;
     sessionService: SessionService;
     adminService: AdminService;
+    bucketService: BucketService;
+    directoryService: DirectoryService;
+    fileService: FileService;
   };
 }
 
@@ -23,6 +26,6 @@ type JsonValue =
 type Generic = any;
 
 type GlobalPermissions = {
-  MANAGE_ALL_USER: boolean,
-  CREATE_USER: boolean,
-}
+  MANAGE_ALL_USER: boolean;
+  CREATE_USER: boolean;
+};

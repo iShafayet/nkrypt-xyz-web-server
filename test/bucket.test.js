@@ -2,7 +2,11 @@
 
 import Joi from "joi";
 
-import { callHappyPostJsonApi, callHappyPostJsonApiWithAuth, validateObject } from "./testlib/common-api-test-utils.js";
+import {
+  callHappyPostJsonApi,
+  callHappyPostJsonApiWithAuth,
+  validateObject,
+} from "./testlib/common-api-test-utils.js";
 
 const DEFAULT_USER_NAME = "admin";
 const DEFAULT_PASSWORD = "PleaseChangeMe@YourEarliest2Day";
@@ -21,7 +25,7 @@ let vars = {
 };
 
 describe("Bucket and Directory Suite", () => {
-  test("User Login: Basic", async () => {
+  test("(user/login): Preparational", async () => {
     const data = await callHappyPostJsonApi("/user/login", {
       userName: DEFAULT_USER_NAME,
       password: DEFAULT_PASSWORD,
@@ -43,13 +47,17 @@ describe("Bucket and Directory Suite", () => {
     vars.apiKey = data.apiKey;
   });
 
-  test("Bucket/Create", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/bucket/create", {
-      name: TEST_BUCKET_NAME,
-      cryptSpec: "V1:AES256",
-      cryptData: "PLACEHOLDER",
-      metaData: {},
-    });
+  test("(bucket/create): Affirmative", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/bucket/create",
+      {
+        name: TEST_BUCKET_NAME,
+        cryptSpec: "V1:AES256",
+        cryptData: "PLACEHOLDER",
+        metaData: {},
+      }
+    );
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
@@ -58,8 +66,12 @@ describe("Bucket and Directory Suite", () => {
     });
   });
 
-  test("List: Basic", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/bucket/list", {});
+  test("(bucket/list): Affirmative", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/bucket/list",
+      {}
+    );
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
@@ -91,21 +103,27 @@ describe("Bucket and Directory Suite", () => {
         ),
     });
 
-    let bucket = data.bucketList.find((bucket) => bucket.name === TEST_BUCKET_NAME);
+    let bucket = data.bucketList.find(
+      (bucket) => bucket.name === TEST_BUCKET_NAME
+    );
     expect(bucket).not.toBeFalsy();
 
     vars.bucketId = bucket._id;
     vars.rootDirectoryId = bucket.rootDirectoryId;
   });
 
-  test("Directory/Create 1", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/directory/create", {
-      name: TEST_LEVEL_1_DIRECTORY_1_NAME,
-      bucketId: vars.bucketId,
-      parentDirectoryId: vars.rootDirectoryId,
-      encryptedMetaData: "PLACEHOLDER",
-      metaData: { createdFromApp: "Integration testing" },
-    });
+  test("(directory/create): Bucket1Root/Level1Directory1", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/create",
+      {
+        name: TEST_LEVEL_1_DIRECTORY_1_NAME,
+        bucketId: vars.bucketId,
+        parentDirectoryId: vars.rootDirectoryId,
+        encryptedMetaData: "PLACEHOLDER",
+        metaData: { createdFromApp: "Integration testing" },
+      }
+    );
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
@@ -115,14 +133,18 @@ describe("Bucket and Directory Suite", () => {
     vars.level1Directory1Id = data.directoryId;
   });
 
-  test("Directory/Create 2", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/directory/create", {
-      name: TEST_LEVEL_1_DIRECTORY_2_NAME,
-      bucketId: vars.bucketId,
-      parentDirectoryId: vars.rootDirectoryId,
-      encryptedMetaData: "PLACEHOLDER",
-      metaData: { createdFromApp: "Integration testing" },
-    });
+  test("(directory/create): Bucket1Root/Level1Directory2", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/create",
+      {
+        name: TEST_LEVEL_1_DIRECTORY_2_NAME,
+        bucketId: vars.bucketId,
+        parentDirectoryId: vars.rootDirectoryId,
+        encryptedMetaData: "PLACEHOLDER",
+        metaData: { createdFromApp: "Integration testing" },
+      }
+    );
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
@@ -132,14 +154,18 @@ describe("Bucket and Directory Suite", () => {
     vars.level1Directory2Id = data.directoryId;
   });
 
-  test("Directory/Create 3", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/directory/create", {
-      name: TEST_LEVEL_2_DIRECTORY_1_NAME,
-      bucketId: vars.bucketId,
-      parentDirectoryId: vars.level1Directory1Id,
-      encryptedMetaData: "PLACEHOLDER",
-      metaData: { createdFromApp: "Integration testing" },
-    });
+  test("(directory/create) Bucket1Root/Level1Directory1/Level2Directory1", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/create",
+      {
+        name: TEST_LEVEL_2_DIRECTORY_1_NAME,
+        bucketId: vars.bucketId,
+        parentDirectoryId: vars.level1Directory1Id,
+        encryptedMetaData: "PLACEHOLDER",
+        metaData: { createdFromApp: "Integration testing" },
+      }
+    );
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
@@ -147,11 +173,15 @@ describe("Bucket and Directory Suite", () => {
     });
   });
 
-  test("Directory/List", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/directory/get", {
-      bucketId: vars.bucketId,
-      directoryId: vars.rootDirectoryId,
-    });
+  test("(directory/list): Bucket1Root/*", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/get",
+      {
+        bucketId: vars.bucketId,
+        directoryId: vars.rootDirectoryId,
+      }
+    );
 
     let directorySchema = Joi.object()
       .keys({
@@ -175,11 +205,15 @@ describe("Bucket and Directory Suite", () => {
     expect(data.childDirectoryList.length).toEqual(2);
   });
 
-  test("Directory/List", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/directory/get", {
-      bucketId: vars.bucketId,
-      directoryId: vars.level1Directory1Id,
-    });
+  test("(directory/list): Bucket1Root/Level1Directory1/*", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/get",
+      {
+        bucketId: vars.bucketId,
+        directoryId: vars.level1Directory1Id,
+      }
+    );
 
     let directorySchema = Joi.object()
       .keys({
@@ -203,11 +237,15 @@ describe("Bucket and Directory Suite", () => {
     expect(data.childDirectoryList.length).toEqual(1);
   });
 
-  test("Directory/List", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/directory/get", {
-      bucketId: vars.bucketId,
-      directoryId: vars.level1Directory2Id,
-    });
+  test("(directory/list): Bucket1Root/Level1Directory1/Level2Directory1/*", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/get",
+      {
+        bucketId: vars.bucketId,
+        directoryId: vars.level1Directory2Id,
+      }
+    );
 
     let directorySchema = Joi.object()
       .keys({

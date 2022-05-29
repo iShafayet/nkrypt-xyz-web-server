@@ -1,9 +1,9 @@
 import { dirname, join } from "path";
 import fs from "fs";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 
 // NOTE: The relative pathing will have to be adjusted if this file is moved elsewhere.
-const appRootDirPath = join(dirname(fileURLToPath(import.meta.url)), "../../");
+const appRootDirPath = join(dirname(fileURLToPath(import.meta.url)), "../../dist/");
 
 const ensureDir = (dirpath: string) => {
   fs.mkdirSync(dirpath, { recursive: true });
@@ -13,4 +13,8 @@ const resolvePath = (...paths: string[]) => {
   return join(...paths);
 };
 
-export { appRootDirPath, ensureDir, resolvePath };
+const toFileUrl = (path: string) => {
+  return pathToFileURL(path).toString();
+};
+
+export { ensureDir, resolvePath, appRootDirPath, toFileUrl };

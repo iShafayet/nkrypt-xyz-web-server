@@ -121,10 +121,12 @@ abstract class AbstractApi {
       "Your session has expired. Login again."
     );
 
+    let hasExpired =
+      Date.now() - session.createdAt >
+      constants.iam.SESSION_VALIDITY_DURATION_MS;
     throwOnTruthy(
       UserError,
-      Date.now() - Date.parse(session.createdAt) >
-        constants.iam.SESSION_VALIDITY_DURATION_MS,
+      hasExpired,
       "API_KEY_EXPIRED",
       "Your session has expired. Login again."
     );

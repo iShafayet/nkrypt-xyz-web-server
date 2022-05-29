@@ -19,6 +19,7 @@ let logger = (global.logger = new Logger({
     important: true,
     warning: true,
     error: true,
+    urgent: true,
   },
 }));
 await logger.init();

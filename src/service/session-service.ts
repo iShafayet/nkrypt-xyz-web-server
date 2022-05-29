@@ -39,6 +39,7 @@ export class SessionService {
           hasExpired: false,
           expiredAt: null,
           expireReason: null,
+          createdAt: Date.now(),
         });
       }
       throwOnFalsy(

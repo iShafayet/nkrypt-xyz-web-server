@@ -173,7 +173,7 @@ describe("Bucket and Directory Suite", () => {
     });
   });
 
-  test("(directory/list): Bucket1Root/*", async () => {
+  test("(directory/get): Bucket1Root/*", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.apiKey,
       "/directory/get",
@@ -205,7 +205,7 @@ describe("Bucket and Directory Suite", () => {
     expect(data.childDirectoryList.length).toEqual(2);
   });
 
-  test("(directory/list): Bucket1Root/Level1Directory1/*", async () => {
+  test("(directory/get): Bucket1Root/Level1Directory1/*", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.apiKey,
       "/directory/get",
@@ -237,7 +237,7 @@ describe("Bucket and Directory Suite", () => {
     expect(data.childDirectoryList.length).toEqual(1);
   });
 
-  test("(directory/list): Bucket1Root/Level1Directory1/Level2Directory1/*", async () => {
+  test("(directory/get): Bucket1Root/Level1Directory1/Level2Directory1/*", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.apiKey,
       "/directory/get",
@@ -246,6 +246,8 @@ describe("Bucket and Directory Suite", () => {
         directoryId: vars.level1Directory2Id,
       }
     );
+
+    console.log(data);
 
     let directorySchema = Joi.object()
       .keys({

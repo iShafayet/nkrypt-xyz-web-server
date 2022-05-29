@@ -22,7 +22,7 @@ if (existsSync(testDatabaseDir)) {
 let logger = (global.logger = new Logger({
   switches: {
     debug: false,
-    log: true,
+    log: false,
     important: true,
     warning: true,
     error: true,
@@ -81,6 +81,7 @@ class Program {
       "admin/iam/add-user",
       // bucket
       "bucket/create",
+      "bucket/list",
     ];
 
     await Promise.all(

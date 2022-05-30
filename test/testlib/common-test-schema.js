@@ -34,9 +34,11 @@ export const bucketListSchema = Joi.array()
             .keys({
               userId: Joi.string().required(),
               permissions: Joi.object().required().keys({
-                USE: Joi.boolean().required(),
                 MODIFY: Joi.boolean().required(),
-                MANAGE: Joi.boolean().required(),
+                MANAGE_AUTHORIZATION: Joi.boolean().required(),
+                DESTROY: Joi.boolean().required(),
+                VIEW_CONTENT: Joi.boolean().required(),
+                MANAGE_CONTENT: Joi.boolean().required(),
               }),
             })
         ),

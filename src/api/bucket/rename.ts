@@ -1,5 +1,7 @@
 import Joi from "joi";
+import { BucketPermission } from "../../constant/bucket-permission.js";
 import { AbstractApi } from "../../lib/abstract-api.js";
+import { requireBucketAuthorizationByBucketId } from "../../utility/access-control-utils.js";
 import { throwOnTruthy, UserError } from "../../utility/coded-error.js";
 import { validators } from "../../validators.js";
 
@@ -28,6 +30,12 @@ export class Api extends AbstractApi {
 
   async handle(body: CurrentRequest) {
     let { name, bucketId } = body;
+
+    requireBucketAuthorizationByBucketId(
+      this.interimData.userId as string,
+      bucketId,
+      BucketPermission.MODIFY
+    );
 
     let existingBucket = await dispatch.bucketService.findBucketByName(name);
 

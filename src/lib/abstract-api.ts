@@ -132,7 +132,10 @@ abstract class AbstractApi {
     );
 
     let { userId, _id: sessionId } = session;
-    return { apiKey, userId, sessionId };
+
+    let user = await dispatch.userService.findUserByIdOrFail(userId);
+
+    return { apiKey, userId, sessionId, user };
   }
 
   async _preHandleJsonPostApi(parsedJsonBody: JsonValue) {

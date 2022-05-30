@@ -1,6 +1,8 @@
 import Joi from "joi";
+import { GlobalPermission } from "../../constant/global-permission.js";
 import { Generic } from "../../global.js";
 import { AbstractApi } from "../../lib/abstract-api.js";
+import { requireGlobalPermission } from "../../utility/access-control-utils.js";
 import { throwOnTruthy, UserError } from "../../utility/coded-error.js";
 import { validators } from "../../validators.js";
 
@@ -33,6 +35,11 @@ export class Api extends AbstractApi {
 
   async handle(body: CurrentRequest) {
     let { name, cryptData, cryptSpec, metaData } = body;
+
+    await requireGlobalPermission(
+      this.interimData.user,
+      GlobalPermission.CREATE_BUCKET
+    );
 
     let exists = await dispatch.bucketService.findBucketByName(name);
     throwOnTruthy(

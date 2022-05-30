@@ -13,7 +13,6 @@ import {
 import { validators } from "../../validators.js";
 
 type CurrentRequest = {
-  name: string;
   bucketId: string;
   directoryId: string;
 };
@@ -30,7 +29,6 @@ export class Api extends AbstractApi {
   get requestSchema() {
     return Joi.object()
       .keys({
-        name: validators.bucketName,
         bucketId: validators.id,
         directoryId: validators.id,
       })
@@ -38,7 +36,7 @@ export class Api extends AbstractApi {
   }
 
   async handle(body: CurrentRequest) {
-    let { name, bucketId, directoryId } = body;
+    let { bucketId, directoryId } = body;
 
     await ensureDirectoryBelongsToBucket(bucketId, directoryId);
 
@@ -53,15 +51,6 @@ export class Api extends AbstractApi {
       directoryId
     );
 
-    // No need to do anything. It's the same name and same bucket
-    if (
-      existingDirectory &&
-      existingDirectory._id === directoryId &&
-      existingDirectory.name === name
-    ) {
-      return {};
-    }
-
     throwOnFalsy(
       UserError,
       existingDirectory,
@@ -69,11 +58,7 @@ export class Api extends AbstractApi {
       `Given directory does not belong to the given bucket`
     );
 
-    await dispatch.directoryService.setDirectoryName(
-      bucketId,
-      directoryId,
-      name
-    );
+    await dispatch.directoryService.deleteDirectory(bucketId, directoryId);
 
     return {};
   }

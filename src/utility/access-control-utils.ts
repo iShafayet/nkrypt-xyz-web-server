@@ -8,7 +8,10 @@ export const requireGlobalPermission = async (
   ...requiredPermissions: GlobalPermission[]
 ) => {
   requiredPermissions.forEach((permission) => {
-    if (!(permission in user.globalPermissions)) {
+    if (
+      !(permission in user.globalPermissions) ||
+      user.globalPermissions[permission] === false
+    ) {
       throw new UserError(
         "INSUFFICIENT_GLOBAL_PERMISSION",
         `You do not have the required permissions. This action requires the "${permission}" permission.`
@@ -41,7 +44,10 @@ export const requireBucketAuthorizationByBucketId = async (
   );
 
   requiredPermissions.forEach((permission: Generic) => {
-    if (!(permission in authorization.permissions)) {
+    if (
+      !(permission in authorization.permissions) ||
+      authorization.permissions[permission] === false
+    ) {
       throw new UserError(
         "INSUFFICIENT_BUCKET_PERMISSION",
         `You do not have the required permissions. This action requires the "${permission}" permission on bucket "${bucket.name}".`

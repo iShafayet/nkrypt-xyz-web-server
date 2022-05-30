@@ -86,6 +86,17 @@ export class DirectoryService {
     );
   }
 
+  async deleteDirectory(bucketId: string, directoryId: string) {
+    return await this.db.removeAsync(
+      {
+        collection: collections.DIRECTORY,
+        _id: directoryId,
+        bucketId,
+      },
+      { multi: false }
+    );
+  }
+
   async moveDirectory(
     bucketId: string,
     directoryId: string,

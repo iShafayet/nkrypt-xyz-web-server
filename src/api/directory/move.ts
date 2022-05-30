@@ -42,11 +42,11 @@ export class Api extends AbstractApi {
   async handle(body: CurrentRequest) {
     let { newName, bucketId, directoryId, newParentDirectoryId } = body;
 
-    ensureDirectoryBelongsToBucket(bucketId, directoryId);
+    await ensureDirectoryBelongsToBucket(bucketId, directoryId);
 
-    ensureDirectoryBelongsToBucket(bucketId, newParentDirectoryId);
+    await ensureDirectoryBelongsToBucket(bucketId, newParentDirectoryId);
 
-    requireBucketAuthorizationByBucketId(
+    await requireBucketAuthorizationByBucketId(
       this.interimData.userId as string,
       bucketId,
       BucketPermission.MANAGE_CONTENT

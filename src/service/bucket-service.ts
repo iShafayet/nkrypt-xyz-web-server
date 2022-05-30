@@ -43,13 +43,7 @@ export class BucketService {
       bucketAuthorizations: [
         {
           userId: userId,
-          permissions: {
-            [BucketPermission.MODIFY]: true,
-            [BucketPermission.MANAGE_AUTHORIZATION]: true,
-            [BucketPermission.DESTROY]: true,
-            [BucketPermission.VIEW_CONTENT]: true,
-            [BucketPermission.MANAGE_CONTENT]: true,
-          },
+          permissions: this.createNewBucketPermissionAllAllowed(),
         },
       ],
     });
@@ -83,6 +77,54 @@ export class BucketService {
         _id: bucketId,
       },
       { multi: false }
+    );
+  }
+
+  createNewBucketPermissionAllAllowed() {
+    return Object.keys(BucketPermission).reduce((map: Generic, key) => {
+      map[key] = true;
+      return map;
+    }, {});
+  }
+
+  createNewBucketPermissionAllForbidden() {
+    return Object.keys(BucketPermission).reduce((map: Generic, key) => {
+      map[key] = false;
+      return map;
+    }, {});
+  }
+
+  async authorizeUserWithAllPermissionsForbidden(
+    bucketId: string,
+    userId: string
+  ) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.BUCKET,
+        _id: bucketId,
+      },
+      {
+        $push: {
+          bucketAuthorizations: {
+            userId,
+            permissions: this.createNewBucketPermissionAllForbidden(),
+          },
+        },
+      }
+    );
+  }
+
+  async setAuthorizationList(bucketId: string, bucketAuthorizations: Generic) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.BUCKET,
+        _id: bucketId,
+      },
+      {
+        $set: {
+          bucketAuthorizations,
+        },
+      }
     );
   }
 }

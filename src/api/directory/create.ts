@@ -1,6 +1,8 @@
 import Joi from "joi";
+import { BucketPermission } from "../../constant/bucket-permission.js";
 import { Generic } from "../../global.js";
 import { AbstractApi } from "../../lib/abstract-api.js";
+import { requireBucketAuthorizationByBucketId } from "../../utility/access-control-utils.js";
 import { throwOnTruthy, UserError } from "../../utility/coded-error.js";
 import { validators } from "../../validators.js";
 
@@ -36,6 +38,12 @@ export class Api extends AbstractApi {
   async handle(body: CurrentRequest) {
     let { name, bucketId, parentDirectoryId, encryptedMetaData, metaData } =
       body;
+
+    requireBucketAuthorizationByBucketId(
+      this.interimData.userId as string,
+      bucketId,
+      BucketPermission.MANAGE_CONTENT
+    );
 
     let exists = await dispatch.directoryService.findDirectoryByNameAndParent(
       name,

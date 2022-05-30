@@ -1,4 +1,5 @@
 import Nedb from "@seald-io/nedb";
+import { BucketPermission } from "../constant/bucket-permission.js";
 import collections from "../constant/collections.js";
 import { Generic } from "../global.js";
 import { DatabaseEngine } from "../lib/database-engine.js";
@@ -8,6 +9,14 @@ export class BucketService {
 
   constructor(dbEngine: DatabaseEngine) {
     this.db = dbEngine.connection;
+  }
+
+  async findBucketById(id: string) {
+    let doc = await this.db.findOneAsync({
+      collection: collections.BUCKET,
+      _id: id,
+    });
+    return doc;
   }
 
   async findBucketByName(name: string) {
@@ -35,9 +44,11 @@ export class BucketService {
         {
           userId: userId,
           permissions: {
-            USE: true,
-            MODIFY: true,
-            MANAGE: true,
+            [BucketPermission.MODIFY]: true,
+            [BucketPermission.MANAGE_AUTHORIZATION]: true,
+            [BucketPermission.DESTROY]: true,
+            [BucketPermission.VIEW_CONTENT]: true,
+            [BucketPermission.MANAGE_CONTENT]: true,
           },
         },
       ],

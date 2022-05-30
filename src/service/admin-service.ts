@@ -1,6 +1,7 @@
 import Nedb from "@seald-io/nedb";
 import collections from "../constant/collections.js";
 import constants from "../constant/common-constants.js";
+import { GlobalPermission } from "../constant/global-permission.js";
 import { GlobalPermissions } from "../global";
 import { DatabaseEngine } from "../lib/database-engine.js";
 import { calculateHashOfString } from "../utility/security-utils.js";
@@ -27,8 +28,9 @@ export class AdminService {
           constants.iam.DEFAULT_ADMIN_USER_PASSWORD
         ),
         globalPermissions: {
-          MANAGE_ALL_USER: true,
-          CREATE_USER: true,
+          [GlobalPermission.CREATE_USER]: true,
+          [GlobalPermission.MANAGE_ALL_USER]: true,
+          [GlobalPermission.CREATE_BUCKET]: true,
         },
         createdAt: Date.now(),
         isBanned: false,

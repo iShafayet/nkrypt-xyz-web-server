@@ -49,3 +49,20 @@ export const requireBucketAuthorizationByBucketId = async (
     }
   });
 };
+
+export const ensureDirectoryBelongsToBucket = async (
+  bucketId: string,
+  directoryId: string
+) => {
+  let directory = await dispatch.directoryService.findDirectoryById(
+    bucketId,
+    directoryId
+  );
+
+  throwOnFalsy(
+    UserError,
+    directory,
+    "DIRECTORY_NOT_IN_BUCKET",
+    `Given directory does not belong to the given bucket`
+  );
+};

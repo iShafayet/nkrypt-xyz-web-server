@@ -17,7 +17,7 @@ let vars = {
   apiKey: null,
 };
 
-describe.skip("User Suite", () => {
+describe("User Suite", () => {
   test("(user/login): Affirmative", async () => {
     const data = await callHappyPostJsonApi("/user/login", {
       userName: DEFAULT_USER_NAME,

@@ -1,10 +1,7 @@
 import Joi from "joi";
 import { AbstractApi } from "../../lib/abstract-api.js";
-import {
-  throwOnFalsy,
-  throwOnTruthy,
-  UserError,
-} from "../../utility/coded-error.js";
+import { throwOnFalsy, UserError } from "../../utility/coded-error.js";
+import { validators } from "../../validators.js";
 
 type CurrentRequest = {
   // We want to make the user type in the name to ensure intention
@@ -24,8 +21,8 @@ export class Api extends AbstractApi {
   get requestSchema() {
     return Joi.object()
       .keys({
-        name: Joi.string().min(4).max(32).required(),
-        bucketId: Joi.string().required(),
+        name: validators.bucketName,
+        bucketId: validators.id,
       })
       .required();
   }

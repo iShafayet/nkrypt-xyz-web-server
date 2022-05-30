@@ -2,6 +2,7 @@ import Joi from "joi";
 import { Generic } from "../../../global.js";
 import { AbstractApi } from "../../../lib/abstract-api.js";
 import { throwOnTruthy, UserError } from "../../../utility/coded-error.js";
+import { validators } from "../../../validators.js";
 
 type CurrentRequest = {
   displayName: string;
@@ -21,9 +22,9 @@ export class Api extends AbstractApi {
   get requestSchema() {
     return Joi.object()
       .keys({
-        displayName: Joi.string().min(4).max(128).required(),
-        userName: Joi.string().min(4).max(32).required(),
-        password: Joi.string().min(8).max(32).required(),
+        displayName: validators.displayName,
+        userName: validators.userName,
+        password: validators.password,
       })
       .required();
   }

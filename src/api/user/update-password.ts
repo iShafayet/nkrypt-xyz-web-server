@@ -5,6 +5,7 @@ import {
   calculateHashOfString,
   compareHashWithString,
 } from "../../utility/security-utils.js";
+import { validators } from "../../validators.js";
 
 type CurrentRequest = {
   currentPassword: string;
@@ -23,8 +24,8 @@ export class Api extends AbstractApi {
   get requestSchema() {
     return Joi.object()
       .keys({
-        currentPassword: Joi.string().min(8).max(32).required(),
-        newPassword: Joi.string().min(8).max(32).required(),
+        currentPassword: validators.password,
+        newPassword: validators.password,
       })
       .required();
   }

@@ -22,4 +22,8 @@ export const validators = {
     .min(4)
     .max(128 - 4)
     .required(),
+
+  hasErrorFalsy: Joi.boolean().valid(false).required(),
+  hasErrorTruthy: Joi.boolean().valid(true).required(),
+  apiKey: Joi.string().required(),
 };

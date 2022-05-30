@@ -8,6 +8,16 @@ import {
   validateObject,
 } from "./testlib/common-api-test-utils.js";
 
+import {
+  directorySchema,
+  bucketListSchema,
+  userAssertion,
+  errorOfCode,
+  userListSchema,
+} from "./testlib/common-test-schema.js";
+
+import { validators } from "../dist/validators.js";
+
 const DEFAULT_USER_NAME = "admin";
 const DEFAULT_PASSWORD = "PleaseChangeMe@YourEarliest2Day";
 
@@ -24,18 +34,7 @@ describe("User Suite", () => {
       password: DEFAULT_PASSWORD,
     });
 
-    await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      apiKey: Joi.string().required(),
-      user: Joi.object().required().keys({
-        _id: Joi.string().required(),
-        userName: Joi.string().required(),
-        displayName: Joi.string().required(),
-      }),
-      session: Joi.object().required().keys({
-        _id: Joi.string().required(),
-      }),
-    });
+    await validateObject(data, userAssertion);
 
     vars.apiKey = data.apiKey;
   });
@@ -50,7 +49,7 @@ describe("User Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
+      hasError: validators.hasErrorFalsy,
     });
   });
 
@@ -61,14 +60,8 @@ describe("User Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(true).required(),
-      error: Joi.object()
-        .required()
-        .keys({
-          code: Joi.string().required().valid("API_KEY_EXPIRED"),
-          message: Joi.string().required(),
-          details: Joi.object().required(),
-        }),
+      hasError: validators.hasErrorTruthy,
+      error: errorOfCode("API_KEY_EXPIRED"),
     });
   });
 
@@ -78,18 +71,7 @@ describe("User Suite", () => {
       password: DEFAULT_PASSWORD,
     });
 
-    await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      apiKey: Joi.string().required(),
-      user: Joi.object().required().keys({
-        _id: Joi.string().required(),
-        userName: Joi.string().required(),
-        displayName: Joi.string().required(),
-      }),
-      session: Joi.object().required().keys({
-        _id: Joi.string().required(),
-      }),
-    });
+    await validateObject(data, userAssertion);
 
     vars.apiKey = data.apiKey;
   });
@@ -102,15 +84,8 @@ describe("User Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      userList: Joi.array()
-        .items(
-          Joi.object().keys({
-            userName: Joi.string().required(),
-            displayName: Joi.string().required(),
-          })
-        )
-        .required(),
+      hasError: validators.hasErrorFalsy,
+      userList: userListSchema,
     });
 
     expect(data.userList).toContainEqual({
@@ -129,7 +104,7 @@ describe("User Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
+      hasError: validators.hasErrorFalsy,
     });
   });
 
@@ -141,15 +116,8 @@ describe("User Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      userList: Joi.array()
-        .items(
-          Joi.object().keys({
-            userName: Joi.string().required(),
-            displayName: Joi.string().required(),
-          })
-        )
-        .required(),
+      hasError: validators.hasErrorFalsy,
+      userList: userListSchema,
     });
 
     expect(data.userList).toContainEqual({
@@ -168,7 +136,7 @@ describe("User Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
+      hasError: validators.hasErrorFalsy,
     });
   });
 
@@ -183,7 +151,7 @@ describe("User Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
+      hasError: validators.hasErrorFalsy,
     });
   });
 
@@ -194,14 +162,8 @@ describe("User Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(true).required(),
-      error: Joi.object()
-        .required()
-        .keys({
-          code: Joi.string().required().valid("API_KEY_EXPIRED"),
-          message: Joi.string().required(),
-          details: Joi.object().required(),
-        }),
+      hasError: validators.hasErrorTruthy,
+      error: errorOfCode("API_KEY_EXPIRED"),
     });
   });
 });

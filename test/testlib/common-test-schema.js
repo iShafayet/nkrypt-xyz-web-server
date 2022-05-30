@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
 
+import { validators } from "../../dist/validators.js";
+
 import Joi from "joi";
 
 export const directorySchema = Joi.object()
@@ -41,3 +43,35 @@ export const bucketListSchema = Joi.array()
       rootDirectoryId: Joi.string().required(),
     })
   );
+
+export const userAssertion = {
+  hasError: validators.hasErrorFalsy,
+  apiKey: validators.apiKey,
+  user: Joi.object().required().keys({
+    _id: validators.id,
+    userName: validators.userName,
+    displayName: validators.displayName,
+  }),
+  session: Joi.object().required().keys({
+    _id: validators.id,
+  }),
+};
+
+export const errorOfCode = (code) => {
+  return Joi.object()
+    .required()
+    .keys({
+      code: Joi.string().required().valid(code),
+      message: Joi.string().required(),
+      details: Joi.object().required(),
+    });
+};
+
+export const userListSchema = Joi.array()
+  .items(
+    Joi.object().keys({
+      userName: validators.userName,
+      displayName: validators.displayName,
+    })
+  )
+  .required();

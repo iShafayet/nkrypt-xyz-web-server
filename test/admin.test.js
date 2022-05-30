@@ -8,6 +8,10 @@ import {
   validateObject,
 } from "./testlib/common-api-test-utils.js";
 
+import { userAssertion } from "./testlib/common-test-schema.js";
+
+import { validators } from "../dist/validators.js";
+
 const DEFAULT_USER_NAME = "admin";
 const DEFAULT_PASSWORD = "PleaseChangeMe@YourEarliest2Day";
 
@@ -26,18 +30,7 @@ describe("Admin Suite", () => {
       password: DEFAULT_PASSWORD,
     });
 
-    await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      apiKey: Joi.string().required(),
-      user: Joi.object().required().keys({
-        _id: Joi.string().required(),
-        userName: Joi.string().required(),
-        displayName: Joi.string().required(),
-      }),
-      session: Joi.object().required().keys({
-        _id: Joi.string().required(),
-      }),
-    });
+    await validateObject(data, userAssertion);
 
     vars.apiKey = data.apiKey;
   });
@@ -54,8 +47,8 @@ describe("Admin Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      userId: Joi.string().required(),
+      hasError: validators.hasErrorFalsy,
+      userId: validators.id,
     });
   });
 
@@ -65,17 +58,6 @@ describe("Admin Suite", () => {
       password: TEST_USER_PASSWORD,
     });
 
-    await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      apiKey: Joi.string().required(),
-      user: Joi.object().required().keys({
-        _id: Joi.string().required(),
-        userName: Joi.string().required(),
-        displayName: Joi.string().required(),
-      }),
-      session: Joi.object().required().keys({
-        _id: Joi.string().required(),
-      }),
-    });
+    await validateObject(data, userAssertion);
   });
 });

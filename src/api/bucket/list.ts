@@ -28,9 +28,8 @@ export class Api extends AbstractApi {
     );
 
     let idList: string[] = bucketList.map((bucket: Generic) => bucket._id);
-    let dirList = await dispatch.directoryService.listDirectoriesByIdList(
-      idList
-    );
+    let dirList =
+      await dispatch.directoryService.listRootDirectoriesByBucketIdList(idList);
 
     bucketList.forEach((bucket: Generic) => {
       bucket.rootDirectoryId = dirList.find(

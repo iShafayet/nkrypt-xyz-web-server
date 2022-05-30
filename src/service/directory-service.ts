@@ -62,7 +62,7 @@ export class DirectoryService {
     });
   }
 
-  async listDirectoriesByIdList(idList: string[]) {
+  async listRootDirectoriesByBucketIdList(idList: string[]) {
     let list = await this.db.findAsync({
       collection: collections.DIRECTORY,
       bucketId: { $in: idList },
@@ -81,6 +81,27 @@ export class DirectoryService {
       {
         $set: {
           name,
+        },
+      }
+    );
+  }
+
+  async moveDirectory(
+    bucketId: string,
+    directoryId: string,
+    newParentDirectoryId: string,
+    newName: string
+  ) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.DIRECTORY,
+        _id: directoryId,
+        bucketId,
+      },
+      {
+        $set: {
+          parentDirectoryId: newParentDirectoryId,
+          name: newName,
         },
       }
     );

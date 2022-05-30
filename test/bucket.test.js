@@ -240,6 +240,48 @@ describe("Bucket and Directory Suite", () => {
     expect(data.directory.name).toBe(TEST_DIRECTORY_B_NAME_ALT);
   });
 
+  test("(directory/move) Bucket1Root/testDirBAlt => Bucket1Root/testDirA/testDirBAlt", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/move",
+      {
+        bucketId: vars.bucketId,
+        directoryId: vars.idOfDirectoryB,
+        newParentDirectoryId: vars.idOfDirectoryA,
+        newName: TEST_DIRECTORY_B_NAME_ALT,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+    });
+  });
+
+  test("(directory/get): Bucket1Root/testDirA/* Ensure move worked", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/get",
+      {
+        bucketId: vars.bucketId,
+        directoryId: vars.idOfDirectoryA,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+      directory: directorySchema,
+      childDirectoryList: Joi.array().required().items(directorySchema),
+    });
+
+    expect(data.childDirectoryList.length).toEqual(2);
+
+    expect(
+      data.childDirectoryList.find(
+        (directory) => directory._id === vars.idOfDirectoryB
+      )
+    ).toBeTruthy();
+  });
+
   test("(bucket/rename): Affirmative", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.apiKey,

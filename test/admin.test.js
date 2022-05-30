@@ -19,7 +19,7 @@ let vars = {
   apiKey: null,
 };
 
-describe("Admin Suite", () => {
+describe.skip("Admin Suite", () => {
   test("(user/login): Preparational", async () => {
     const data = await callHappyPostJsonApi("/user/login", {
       userName: DEFAULT_USER_NAME,

@@ -7,11 +7,16 @@ import {
   callHappyPostJsonApiWithAuth,
   validateObject,
 } from "./testlib/common-api-test-utils.js";
+import {
+  directorySchema,
+  bucketListSchema,
+} from "./testlib/common-test-schema.js";
 
 const DEFAULT_USER_NAME = "admin";
 const DEFAULT_PASSWORD = "PleaseChangeMe@YourEarliest2Day";
 
 const TEST_BUCKET_NAME = "testBucket1-" + Date.now();
+const TEST_BUCKET_NEW_NAME = "testBucket1Renamed-" + Date.now();
 const TEST_LEVEL_1_DIRECTORY_1_NAME = "testL1Dir1-" + Date.now();
 const TEST_LEVEL_1_DIRECTORY_2_NAME = "testL1Dir2-" + Date.now();
 const TEST_LEVEL_2_DIRECTORY_1_NAME = "testL2Dir1-" + Date.now();
@@ -75,32 +80,7 @@ describe("Bucket and Directory Suite", () => {
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
-      bucketList: Joi.array()
-        .required()
-        .items(
-          Joi.object().keys({
-            _id: Joi.string().required(),
-            name: Joi.string().required(),
-            cryptSpec: Joi.string().required(),
-            cryptData: Joi.string().required(),
-            metaData: Joi.object().required(),
-            bucketAuthorizations: Joi.array()
-              .required()
-              .items(
-                Joi.object()
-                  .required()
-                  .keys({
-                    userId: Joi.string().required(),
-                    permissions: Joi.object().required().keys({
-                      USE: Joi.boolean().required(),
-                      MODIFY: Joi.boolean().required(),
-                      MANAGE: Joi.boolean().required(),
-                    }),
-                  })
-              ),
-            rootDirectoryId: Joi.string().required(),
-          })
-        ),
+      bucketList: bucketListSchema,
     });
 
     let bucket = data.bucketList.find(
@@ -183,19 +163,6 @@ describe("Bucket and Directory Suite", () => {
       }
     );
 
-    let directorySchema = Joi.object()
-      .keys({
-        _id: Joi.string().required(),
-        name: Joi.string().min(4).max(32).required(),
-        bucketId: Joi.string().min(1).max(64).required(),
-        parentDirectoryId: Joi.string().min(1).max(64).allow(null).required(),
-        encryptedMetaData: Joi.string().min(1).max(2048).allow(null).required(),
-        metaData: Joi.object().required(),
-        createdAt: Joi.number().required(),
-        createdByUserId: Joi.string().required(),
-      })
-      .required();
-
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
       directory: directorySchema,
@@ -214,19 +181,6 @@ describe("Bucket and Directory Suite", () => {
         directoryId: vars.level1Directory1Id,
       }
     );
-
-    let directorySchema = Joi.object()
-      .keys({
-        _id: Joi.string().required(),
-        name: Joi.string().min(4).max(32).required(),
-        bucketId: Joi.string().min(1).max(64).required(),
-        parentDirectoryId: Joi.string().min(1).max(64).allow(null).required(),
-        encryptedMetaData: Joi.string().min(1).max(2048).allow(null).required(),
-        metaData: Joi.object().required(),
-        createdAt: Joi.number().required(),
-        createdByUserId: Joi.string().required(),
-      })
-      .required();
 
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
@@ -247,21 +201,6 @@ describe("Bucket and Directory Suite", () => {
       }
     );
 
-    console.log(data);
-
-    let directorySchema = Joi.object()
-      .keys({
-        _id: Joi.string().required(),
-        name: Joi.string().min(4).max(32).required(),
-        bucketId: Joi.string().min(1).max(64).required(),
-        parentDirectoryId: Joi.string().min(1).max(64).allow(null).required(),
-        encryptedMetaData: Joi.string().min(1).max(2048).allow(null).required(),
-        metaData: Joi.object().required(),
-        createdAt: Joi.number().required(),
-        createdByUserId: Joi.string().required(),
-      })
-      .required();
-
     await validateObject(data, {
       hasError: Joi.boolean().valid(false).required(),
       directory: directorySchema,
@@ -269,6 +208,76 @@ describe("Bucket and Directory Suite", () => {
     });
 
     expect(data.childDirectoryList.length).toEqual(0);
+  });
+
+  test("(bucket/rename): Affirmative", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/bucket/rename",
+      {
+        name: TEST_BUCKET_NEW_NAME,
+        bucketId: vars.bucketId,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: Joi.boolean().valid(false).required(),
+    });
+  });
+
+  test("(bucket/list): Ensure rename worked", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/bucket/list",
+      {}
+    );
+
+    await validateObject(data, {
+      hasError: Joi.boolean().valid(false).required(),
+      bucketList: bucketListSchema,
+    });
+
+    let bucket1 = data.bucketList.find(
+      (bucket) => bucket.name === TEST_BUCKET_NAME
+    );
+    expect(bucket1).toBeFalsy();
+
+    let bucket2 = data.bucketList.find(
+      (bucket) =>
+        bucket.name === TEST_BUCKET_NEW_NAME && bucket._id == vars.bucketId
+    );
+    expect(bucket2).not.toBeFalsy();
+  });
+
+  test("(bucket/destroy): Affirmative", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/bucket/destroy",
+      {
+        name: TEST_BUCKET_NEW_NAME,
+        bucketId: vars.bucketId,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: Joi.boolean().valid(false).required(),
+    });
+  });
+
+  test("(bucket/list): Ensure destroy worked", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/bucket/list",
+      {}
+    );
+
+    await validateObject(data, {
+      hasError: Joi.boolean().valid(false).required(),
+      bucketList: bucketListSchema,
+    });
+
+    let bucket1 = data.bucketList.find((bucket) => bucket._id == vars.bucketId);
+    expect(bucket1).toBeFalsy();
   });
 
   // eof

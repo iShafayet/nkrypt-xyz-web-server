@@ -7,10 +7,14 @@ import {
   callHappyPostJsonApiWithAuth,
   validateObject,
 } from "./testlib/common-api-test-utils.js";
+
 import {
   directorySchema,
   bucketListSchema,
+  userAssertion,
 } from "./testlib/common-test-schema.js";
+
+import { validators } from "../dist/validators.js";
 
 const DEFAULT_USER_NAME = "admin";
 const DEFAULT_PASSWORD = "PleaseChangeMe@YourEarliest2Day";
@@ -36,18 +40,7 @@ describe("Bucket and Directory Suite", () => {
       password: DEFAULT_PASSWORD,
     });
 
-    await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      apiKey: Joi.string().required(),
-      user: Joi.object().required().keys({
-        _id: Joi.string().required(),
-        userName: Joi.string().required(),
-        displayName: Joi.string().required(),
-      }),
-      session: Joi.object().required().keys({
-        _id: Joi.string().required(),
-      }),
-    });
+    await validateObject(data, userAssertion);
 
     vars.apiKey = data.apiKey;
   });
@@ -65,9 +58,9 @@ describe("Bucket and Directory Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      bucketId: Joi.string().required(),
-      rootDirectoryId: Joi.string().required(),
+      hasError: validators.hasErrorFalsy,
+      bucketId: validators.id,
+      rootDirectoryId: validators.id,
     });
   });
 
@@ -79,7 +72,7 @@ describe("Bucket and Directory Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
+      hasError: validators.hasErrorFalsy,
       bucketList: bucketListSchema,
     });
 
@@ -106,8 +99,8 @@ describe("Bucket and Directory Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      directoryId: Joi.string().required(),
+      hasError: validators.hasErrorFalsy,
+      directoryId: validators.id,
     });
 
     vars.level1Directory1Id = data.directoryId;
@@ -127,8 +120,8 @@ describe("Bucket and Directory Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      directoryId: Joi.string().required(),
+      hasError: validators.hasErrorFalsy,
+      directoryId: validators.id,
     });
 
     vars.level1Directory2Id = data.directoryId;
@@ -148,8 +141,8 @@ describe("Bucket and Directory Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
-      directoryId: Joi.string().required(),
+      hasError: validators.hasErrorFalsy,
+      directoryId: validators.id,
     });
   });
 
@@ -164,7 +157,7 @@ describe("Bucket and Directory Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
+      hasError: validators.hasErrorFalsy,
       directory: directorySchema,
       childDirectoryList: Joi.array().required().items(directorySchema),
     });
@@ -183,7 +176,7 @@ describe("Bucket and Directory Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
+      hasError: validators.hasErrorFalsy,
       directory: directorySchema,
       childDirectoryList: Joi.array().required().items(directorySchema),
     });
@@ -202,7 +195,7 @@ describe("Bucket and Directory Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
+      hasError: validators.hasErrorFalsy,
       directory: directorySchema,
       childDirectoryList: Joi.array().optional().max(0),
     });
@@ -221,7 +214,7 @@ describe("Bucket and Directory Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
+      hasError: validators.hasErrorFalsy,
     });
   });
 
@@ -233,7 +226,7 @@ describe("Bucket and Directory Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
+      hasError: validators.hasErrorFalsy,
       bucketList: bucketListSchema,
     });
 
@@ -260,7 +253,7 @@ describe("Bucket and Directory Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
+      hasError: validators.hasErrorFalsy,
     });
   });
 
@@ -272,7 +265,7 @@ describe("Bucket and Directory Suite", () => {
     );
 
     await validateObject(data, {
-      hasError: Joi.boolean().valid(false).required(),
+      hasError: validators.hasErrorFalsy,
       bucketList: bucketListSchema,
     });
 

@@ -3,6 +3,7 @@ import { AbstractApi } from "../../lib/abstract-api.js";
 import { throwOnFalsy, UserError } from "../../utility/coded-error.js";
 import { extract } from "../../utility/misc-utils.js";
 import { compareHashWithString } from "../../utility/security-utils.js";
+import { validators } from "../../validators.js";
 
 type CurrentRequest = {
   userName: string;
@@ -21,8 +22,8 @@ export class Api extends AbstractApi {
   get requestSchema() {
     return Joi.object()
       .keys({
-        userName: Joi.string().min(4).max(32).required(),
-        password: Joi.string().min(8).max(32).required(),
+        userName: validators.userName,
+        password: validators.password,
       })
       .required();
   }

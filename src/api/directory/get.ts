@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { AbstractApi } from "../../lib/abstract-api.js";
 import { strip } from "../../utility/misc-utils.js";
+import { validators } from "../../validators.js";
 
 type CurrentRequest = {
   bucketId: string;
@@ -19,8 +20,8 @@ export class Api extends AbstractApi {
   get requestSchema() {
     return Joi.object()
       .keys({
-        bucketId: Joi.string().min(1).max(64).required(),
-        directoryId: Joi.string().min(1).max(64).required(),
+        bucketId: validators.id,
+        directoryId: validators.id,
       })
       .required();
   }

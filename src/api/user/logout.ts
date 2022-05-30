@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { AbstractApi } from "../../lib/abstract-api.js";
+import { validators } from "../../validators.js";
 
 type CurrentRequest = {
   message: string;
@@ -17,10 +18,7 @@ export class Api extends AbstractApi {
   get requestSchema() {
     return Joi.object()
       .keys({
-        message: Joi.string()
-          .min(4)
-          .max(128 - 4)
-          .required(),
+        message: validators.logoutMessage,
       })
       .required();
   }

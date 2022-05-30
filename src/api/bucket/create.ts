@@ -2,6 +2,7 @@ import Joi from "joi";
 import { Generic } from "../../global.js";
 import { AbstractApi } from "../../lib/abstract-api.js";
 import { throwOnTruthy, UserError } from "../../utility/coded-error.js";
+import { validators } from "../../validators.js";
 
 type CurrentRequest = {
   name: string;
@@ -22,10 +23,10 @@ export class Api extends AbstractApi {
   get requestSchema() {
     return Joi.object()
       .keys({
-        name: Joi.string().min(4).max(32).required(),
-        cryptSpec: Joi.string().min(1).max(64).required(),
-        cryptData: Joi.string().min(1).max(2048).required(),
-        metaData: Joi.object().required(),
+        name: validators.bucketName,
+        cryptSpec: validators.cryptSpec,
+        cryptData: validators.cryptData,
+        metaData: validators.metaData,
       })
       .required();
   }

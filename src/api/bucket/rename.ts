@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { AbstractApi } from "../../lib/abstract-api.js";
 import { throwOnTruthy, UserError } from "../../utility/coded-error.js";
+import { validators } from "../../validators.js";
 
 type CurrentRequest = {
   name: string;
@@ -19,8 +20,8 @@ export class Api extends AbstractApi {
   get requestSchema() {
     return Joi.object()
       .keys({
-        name: Joi.string().min(4).max(32).required(),
-        bucketId: Joi.string().required(),
+        name: validators.bucketName,
+        bucketId: validators.id,
       })
       .required();
   }

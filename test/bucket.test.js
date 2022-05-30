@@ -21,16 +21,18 @@ const DEFAULT_PASSWORD = "PleaseChangeMe@YourEarliest2Day";
 
 const TEST_BUCKET_NAME = "testBucket1-" + Date.now();
 const TEST_BUCKET_NEW_NAME = "testBucket1Renamed-" + Date.now();
-const TEST_LEVEL_1_DIRECTORY_1_NAME = "testL1Dir1-" + Date.now();
-const TEST_LEVEL_1_DIRECTORY_2_NAME = "testL1Dir2-" + Date.now();
-const TEST_LEVEL_2_DIRECTORY_1_NAME = "testL2Dir1-" + Date.now();
+const TEST_DIRECTORY_A_NAME = "testDirA-" + Date.now();
+const TEST_DIRECTORY_A_A_NAME = "testDirAA-" + Date.now();
+const TEST_DIRECTORY_B_NAME = "testDirB-" + Date.now();
+const TEST_DIRECTORY_B_NAME_ALT = "testDirBAlt-" + Date.now();
 
 let vars = {
   apiKey: null,
   bucketId: null,
   rootDirectoryId: null,
-  level1Directory1Id: null,
-  level1Directory2Id: null,
+  idOfDirectoryA: null,
+  idOfDirectoryB: null,
+  idOfDirectoryAA: null,
 };
 
 describe("Bucket and Directory Suite", () => {
@@ -85,12 +87,12 @@ describe("Bucket and Directory Suite", () => {
     vars.rootDirectoryId = bucket.rootDirectoryId;
   });
 
-  test("(directory/create): Bucket1Root/Level1Directory1", async () => {
+  test("(directory/create): Bucket1Root/testDirA", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.apiKey,
       "/directory/create",
       {
-        name: TEST_LEVEL_1_DIRECTORY_1_NAME,
+        name: TEST_DIRECTORY_A_NAME,
         bucketId: vars.bucketId,
         parentDirectoryId: vars.rootDirectoryId,
         encryptedMetaData: "PLACEHOLDER",
@@ -103,15 +105,15 @@ describe("Bucket and Directory Suite", () => {
       directoryId: validators.id,
     });
 
-    vars.level1Directory1Id = data.directoryId;
+    vars.idOfDirectoryA = data.directoryId;
   });
 
-  test("(directory/create): Bucket1Root/Level1Directory2", async () => {
+  test("(directory/create): Bucket1Root/testDirB", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.apiKey,
       "/directory/create",
       {
-        name: TEST_LEVEL_1_DIRECTORY_2_NAME,
+        name: TEST_DIRECTORY_B_NAME,
         bucketId: vars.bucketId,
         parentDirectoryId: vars.rootDirectoryId,
         encryptedMetaData: "PLACEHOLDER",
@@ -124,17 +126,17 @@ describe("Bucket and Directory Suite", () => {
       directoryId: validators.id,
     });
 
-    vars.level1Directory2Id = data.directoryId;
+    vars.idOfDirectoryB = data.directoryId;
   });
 
-  test("(directory/create) Bucket1Root/Level1Directory1/Level2Directory1", async () => {
+  test("(directory/create) Bucket1Root/testDirA/testDirAA", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.apiKey,
       "/directory/create",
       {
-        name: TEST_LEVEL_2_DIRECTORY_1_NAME,
+        name: TEST_DIRECTORY_A_A_NAME,
         bucketId: vars.bucketId,
-        parentDirectoryId: vars.level1Directory1Id,
+        parentDirectoryId: vars.idOfDirectoryA,
         encryptedMetaData: "PLACEHOLDER",
         metaData: { createdFromApp: "Integration testing" },
       }
@@ -165,13 +167,13 @@ describe("Bucket and Directory Suite", () => {
     expect(data.childDirectoryList.length).toEqual(2);
   });
 
-  test("(directory/get): Bucket1Root/Level1Directory1/*", async () => {
+  test("(directory/get): Bucket1Root/testDirA/*", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.apiKey,
       "/directory/get",
       {
         bucketId: vars.bucketId,
-        directoryId: vars.level1Directory1Id,
+        directoryId: vars.idOfDirectoryA,
       }
     );
 
@@ -184,13 +186,13 @@ describe("Bucket and Directory Suite", () => {
     expect(data.childDirectoryList.length).toEqual(1);
   });
 
-  test("(directory/get): Bucket1Root/Level1Directory1/Level2Directory1/*", async () => {
+  test("(directory/get): Bucket1Root/testDirA/testDirAA/*", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.apiKey,
       "/directory/get",
       {
         bucketId: vars.bucketId,
-        directoryId: vars.level1Directory2Id,
+        directoryId: vars.idOfDirectoryB,
       }
     );
 
@@ -201,6 +203,41 @@ describe("Bucket and Directory Suite", () => {
     });
 
     expect(data.childDirectoryList.length).toEqual(0);
+  });
+
+  test("(directory/rename) Bucket1Root/testDirB => Bucket1Root/testDirBAlt", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/rename",
+      {
+        name: TEST_DIRECTORY_B_NAME_ALT,
+        bucketId: vars.bucketId,
+        directoryId: vars.idOfDirectoryB,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+    });
+  });
+
+  test("(directory/get): Bucket1Root/testDirB/* Ensure rename worked", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/get",
+      {
+        bucketId: vars.bucketId,
+        directoryId: vars.idOfDirectoryB,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+      directory: directorySchema,
+      childDirectoryList: Joi.array().required(),
+    });
+
+    expect(data.directory.name).toBe(TEST_DIRECTORY_B_NAME_ALT);
   });
 
   test("(bucket/rename): Affirmative", async () => {

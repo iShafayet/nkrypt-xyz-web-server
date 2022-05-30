@@ -28,7 +28,11 @@ export class DirectoryService {
     return doc;
   }
 
-  async findDirectoryByNameAndParent(name: string, bucketId: string, parentDirectoryId: string) {
+  async findDirectoryByNameAndParent(
+    name: string,
+    bucketId: string,
+    parentDirectoryId: string
+  ) {
     let doc = await this.db.findOneAsync({
       collection: collections.DIRECTORY,
       name,
@@ -65,5 +69,20 @@ export class DirectoryService {
       parentDirectoryId: null,
     });
     return list;
+  }
+
+  async setDirectoryName(bucketId: string, directoryId: string, name: string) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.DIRECTORY,
+        _id: directoryId,
+        bucketId,
+      },
+      {
+        $set: {
+          name,
+        },
+      }
+    );
   }
 }

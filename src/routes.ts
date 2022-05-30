@@ -16,4 +16,5 @@ export const apiNameList = [
   // directory
   "directory/create",
   "directory/get",
+  "directory/rename",
 ];

@@ -50,4 +50,28 @@ export class BucketService {
     });
     return list;
   }
+
+  async setBucketName(bucketId: string, name: string) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.BUCKET,
+        _id: bucketId,
+      },
+      {
+        $set: {
+          name,
+        },
+      }
+    );
+  }
+
+  async removeBucket(bucketId: string) {
+    return await this.db.removeAsync(
+      {
+        collection: collections.BUCKET,
+        _id: bucketId,
+      },
+      { multi: false }
+    );
+  }
 }

@@ -1,4 +1,6 @@
 import Joi from "joi";
+import { BucketPermission } from "./constant/bucket-permission.js";
+import { Generic } from "./global.js";
 
 export const validators = {
   id: Joi.string().length(16).required(),
@@ -26,4 +28,13 @@ export const validators = {
   hasErrorFalsy: Joi.boolean().valid(false).required(),
   hasErrorTruthy: Joi.boolean().valid(true).required(),
   apiKey: Joi.string().required(),
+
+  bucketPermissions: Joi.object()
+    .required()
+    .keys(
+      Object.keys(BucketPermission).reduce((map: Generic, key) => {
+        map[key] = Joi.boolean().required();
+        return map;
+      }, {})
+    ),
 };

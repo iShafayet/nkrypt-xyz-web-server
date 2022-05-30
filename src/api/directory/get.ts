@@ -31,7 +31,7 @@ export class Api extends AbstractApi {
   async handle(body: CurrentRequest) {
     let { bucketId, directoryId } = body;
 
-    requireBucketAuthorizationByBucketId(
+    await requireBucketAuthorizationByBucketId(
       this.interimData.userId as string,
       bucketId,
       BucketPermission.VIEW_CONTENT

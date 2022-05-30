@@ -29,18 +29,10 @@ export const bucketListSchema = Joi.array()
       bucketAuthorizations: Joi.array()
         .required()
         .items(
-          Joi.object()
-            .required()
-            .keys({
-              userId: Joi.string().required(),
-              permissions: Joi.object().required().keys({
-                MODIFY: Joi.boolean().required(),
-                MANAGE_AUTHORIZATION: Joi.boolean().required(),
-                DESTROY: Joi.boolean().required(),
-                VIEW_CONTENT: Joi.boolean().required(),
-                MANAGE_CONTENT: Joi.boolean().required(),
-              }),
-            })
+          Joi.object().required().keys({
+            userId: Joi.string().required(),
+            permissions: validators.bucketPermissions,
+          })
         ),
       rootDirectoryId: Joi.string().required(),
     })

@@ -26,6 +26,10 @@ const TEST_DIRECTORY_A_A_NAME = "testDirAA-" + Date.now();
 const TEST_DIRECTORY_B_NAME = "testDirB-" + Date.now();
 const TEST_DIRECTORY_B_NAME_ALT = "testDirBAlt-" + Date.now();
 
+const TEST_USER_USER_NAME = "testuser1-" + Date.now();
+const TEST_USER_DISPLAY_NAME = "Test User 1";
+const TEST_USER_PASSWORD = "ExamplePassword";
+
 let vars = {
   apiKey: null,
   bucketId: null,
@@ -33,6 +37,7 @@ let vars = {
   idOfDirectoryA: null,
   idOfDirectoryB: null,
   idOfDirectoryAA: null,
+  testUserId: null,
 };
 
 describe("Bucket and Directory Suite", () => {
@@ -45,6 +50,25 @@ describe("Bucket and Directory Suite", () => {
     await validateObject(data, userAssertion);
 
     vars.apiKey = data.apiKey;
+  });
+
+  test("(admin/iam/add-user): Create new user", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/admin/iam/add-user",
+      {
+        displayName: TEST_USER_DISPLAY_NAME,
+        userName: TEST_USER_USER_NAME,
+        password: TEST_USER_PASSWORD,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+      userId: validators.id,
+    });
+
+    vars.testUserId = data.userId;
   });
 
   test("(bucket/create): Affirmative", async () => {
@@ -280,6 +304,46 @@ describe("Bucket and Directory Suite", () => {
         (directory) => directory._id === vars.idOfDirectoryB
       )
     ).toBeTruthy();
+  });
+
+  test("(directory/delete) Bucket1Root/testDirA/testDirBAlt", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/delete",
+      {
+        bucketId: vars.bucketId,
+        directoryId: vars.idOfDirectoryB,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+    });
+  });
+
+  test("(directory/get): Bucket1Root/testDirA/* Ensure delete worked", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/get",
+      {
+        bucketId: vars.bucketId,
+        directoryId: vars.idOfDirectoryA,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+      directory: directorySchema,
+      childDirectoryList: Joi.array().required().items(directorySchema),
+    });
+
+    expect(data.childDirectoryList.length).toEqual(1);
+
+    expect(
+      data.childDirectoryList.find(
+        (directory) => directory._id === vars.idOfDirectoryB
+      )
+    ).toBeFalsy();
   });
 
   test("(bucket/rename): Affirmative", async () => {

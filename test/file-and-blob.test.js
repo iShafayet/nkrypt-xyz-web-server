@@ -23,6 +23,7 @@ import {
   fileSchema,
   bucketListSchema,
   userAssertion,
+  errorOfCode,
 } from "./testlib/common-test-schema.js";
 
 import { validators } from "../dist/validators.js";
@@ -52,7 +53,7 @@ let vars = {
   idOfFileP: null,
 };
 
-describe("Bucket and Directory Suite", () => {
+describe("File and Blob Suite", () => {
   test("(user/login): Preparational", async () => {
     const data = await callHappyPostJsonApi("/user/login", {
       userName: DEFAULT_USER_NAME,
@@ -275,7 +276,6 @@ describe("Bucket and Directory Suite", () => {
       newParentDirectoryId: vars.idOfDirectoryB,
       newName: TEST_FILE_P_NAME_ALT,
     });
-    console.log(data);
 
     await validateObject(data, {
       hasError: validators.hasErrorFalsy,
@@ -307,45 +307,53 @@ describe("Bucket and Directory Suite", () => {
     ).toBeTruthy();
   });
 
-  // test("(directory/delete) BuckXRoot/DirA/DirBAlt", async () => {
-  //   const data = await callHappyPostJsonApiWithAuth(
-  //     vars.apiKey,
-  //     "/directory/delete",
-  //     {
-  //       bucketId: vars.bucketId,
-  //       directoryId: vars.idOfDirectoryB,
-  //     }
-  //   );
+  test("(file/delete) BuckXRoot/DirB/FilePAlt", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/file/delete",
+      {
+        bucketId: vars.bucketId,
+        fileId: vars.idOfFileP,
+      }
+    );
 
-  //   await validateObject(data, {
-  //     hasError: validators.hasErrorFalsy,
-  //   });
-  // });
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+    });
+  });
 
-  // test("(directory/get): BuckXRoot/DirA/* Ensure delete worked", async () => {
-  //   const data = await callHappyPostJsonApiWithAuth(
-  //     vars.apiKey,
-  //     "/directory/get",
-  //     {
-  //       bucketId: vars.bucketId,
-  //       directoryId: vars.idOfDirectoryA,
-  //     }
-  //   );
+  test("(directory/get): BuckXRoot/DirB/* Ensure file delete worked", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/get",
+      {
+        bucketId: vars.bucketId,
+        directoryId: vars.idOfDirectoryB,
+      }
+    );
 
-  //   await validateObject(data, {
-  //     hasError: validators.hasErrorFalsy,
-  //     directory: directorySchema,
-  //     childDirectoryList: Joi.array().required().items(directorySchema),
-  //   });
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+      directory: directorySchema,
+      childDirectoryList: Joi.array().required().items(directorySchema),
+      childFileList: Joi.array().required().items(fileSchema),
+    });
 
-  //   expect(data.childDirectoryList.length).toEqual(1);
+    expect(data.childDirectoryList.length).toEqual(0);
+    expect(data.childFileList.length).toEqual(0);
+  });
 
-  //   expect(
-  //     data.childDirectoryList.find(
-  //       (directory) => directory._id === vars.idOfDirectoryB
-  //     )
-  //   ).toBeFalsy();
-  // });
+  test("(file/get): BuckXRoot/DirB/FilePAlt Ensure file was deleted", async () => {
+    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/file/get", {
+      bucketId: vars.bucketId,
+      fileId: vars.idOfFileP,
+    });
+
+    await validateObject(data, {
+      hasError: validators.hasErrorTruthy,
+      error: errorOfCode("FILE_NOT_IN_BUCKET"),
+    });
+  });
 
   // eof
 });

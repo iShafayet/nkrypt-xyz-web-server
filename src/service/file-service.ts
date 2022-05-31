@@ -133,4 +133,13 @@ export class FileService {
       }
     );
   }
+
+  async listFilesUnderDirectory(bucketId: string, parentDirectoryId: string) {
+    let list = await this.db.findAsync({
+      collection: collections.FILE,
+      bucketId,
+      parentDirectoryId,
+    });
+    return list;
+  }
 }

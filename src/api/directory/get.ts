@@ -1,7 +1,10 @@
 import Joi from "joi";
 import { BucketPermission } from "../../constant/bucket-permission.js";
 import { AbstractApi } from "../../lib/abstract-api.js";
-import { requireBucketAuthorizationByBucketId } from "../../utility/access-control-utils.js";
+import {
+  ensureDirectoryBelongsToBucket,
+  requireBucketAuthorizationByBucketId,
+} from "../../utility/access-control-utils.js";
 import { strip } from "../../utility/misc-utils.js";
 import { validators } from "../../validators.js";
 
@@ -31,6 +34,8 @@ export class Api extends AbstractApi {
   async handle(body: CurrentRequest) {
     let { bucketId, directoryId } = body;
 
+    await ensureDirectoryBelongsToBucket(bucketId, directoryId);
+
     await requireBucketAuthorizationByBucketId(
       this.interimData.userId as string,
       bucketId,
@@ -48,7 +53,10 @@ export class Api extends AbstractApi {
         directoryId
       );
 
-    let childFileList: any = [];
+    let childFileList = await dispatch.fileService.listFilesUnderDirectory(
+      bucketId,
+      directoryId
+    );
 
     strip(directory, ["collection"]);
     strip(childDirectoryList, ["collection"]);

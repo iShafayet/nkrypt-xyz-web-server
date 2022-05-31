@@ -72,3 +72,17 @@ export const ensureDirectoryBelongsToBucket = async (
     `Given directory does not belong to the given bucket`
   );
 };
+
+export const ensureFileBelongsToBucket = async (
+  bucketId: string,
+  fileId: string
+) => {
+  let file = await dispatch.fileService.findFileById(bucketId, fileId);
+
+  throwOnFalsy(
+    UserError,
+    file,
+    "FILE_NOT_IN_BUCKET",
+    `Given file does not belong to the given bucket`
+  );
+};

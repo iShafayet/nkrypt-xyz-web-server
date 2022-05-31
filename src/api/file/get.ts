@@ -7,7 +7,7 @@ import { validators } from "../../validators.js";
 
 type CurrentRequest = {
   bucketId: string;
-  directoryId: string;
+  fileId: string;
 };
 
 export class Api extends AbstractApi {
@@ -23,13 +23,13 @@ export class Api extends AbstractApi {
     return Joi.object()
       .keys({
         bucketId: validators.id,
-        directoryId: validators.id,
+        fileId: validators.id,
       })
       .required();
   }
 
   async handle(body: CurrentRequest) {
-    let { bucketId, directoryId } = body;
+    let { bucketId, fileId } = body;
 
     await requireBucketAuthorizationByBucketId(
       this.interimData.userId as string,
@@ -37,22 +37,9 @@ export class Api extends AbstractApi {
       BucketPermission.VIEW_CONTENT
     );
 
-    let directory = await dispatch.directoryService.findDirectoryById(
-      bucketId,
-      directoryId
-    );
+    let file = await dispatch.fileService.findFileById(bucketId, fileId);
 
-    let childDirectoryList =
-      await dispatch.directoryService.listChildrenOfDirectory(
-        bucketId,
-        directoryId
-      );
-
-    let childFileList: any = [];
-
-    strip(directory, ["collection"]);
-    strip(childDirectoryList, ["collection"]);
-    strip(childFileList, ["collection"]);
-    return { directory, childDirectoryList, childFileList };
+    strip(file, ["collection"]);
+    return { file };
   }
 }

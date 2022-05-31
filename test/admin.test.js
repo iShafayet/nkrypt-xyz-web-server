@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import Joi from "joi";
 
 import {

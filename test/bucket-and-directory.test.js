@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import Joi from "joi";
 
 import {
@@ -12,6 +10,7 @@ import {
   directorySchema,
   bucketListSchema,
   userAssertion,
+  fileSchema,
 } from "./testlib/common-test-schema.js";
 
 import { validators } from "../dist/validators.js";
@@ -203,6 +202,7 @@ describe("Bucket and Directory Suite", () => {
       hasError: validators.hasErrorFalsy,
       directory: directorySchema,
       childDirectoryList: Joi.array().required().items(directorySchema),
+      childFileList: Joi.array().required().items(fileSchema),
     });
 
     expect(data.childDirectoryList.length).toEqual(2);
@@ -222,6 +222,7 @@ describe("Bucket and Directory Suite", () => {
       hasError: validators.hasErrorFalsy,
       directory: directorySchema,
       childDirectoryList: Joi.array().required().items(directorySchema),
+      childFileList: Joi.array().required().items(fileSchema),
     });
 
     expect(data.childDirectoryList.length).toEqual(1);
@@ -241,6 +242,7 @@ describe("Bucket and Directory Suite", () => {
       hasError: validators.hasErrorFalsy,
       directory: directorySchema,
       childDirectoryList: Joi.array().optional().max(0),
+      childFileList: Joi.array().optional().max(0),
     });
 
     expect(data.childDirectoryList.length).toEqual(0);
@@ -276,6 +278,7 @@ describe("Bucket and Directory Suite", () => {
       hasError: validators.hasErrorFalsy,
       directory: directorySchema,
       childDirectoryList: Joi.array().required(),
+      childFileList: Joi.array().optional().max(0),
     });
 
     expect(data.directory.name).toBe(TEST_DIRECTORY_B_NAME_ALT);
@@ -376,6 +379,7 @@ describe("Bucket and Directory Suite", () => {
       hasError: validators.hasErrorFalsy,
       directory: directorySchema,
       childDirectoryList: Joi.array().required().items(directorySchema),
+      childFileList: Joi.array().required().items(fileSchema),
     });
 
     expect(data.childDirectoryList.length).toEqual(2);
@@ -416,6 +420,7 @@ describe("Bucket and Directory Suite", () => {
       hasError: validators.hasErrorFalsy,
       directory: directorySchema,
       childDirectoryList: Joi.array().required().items(directorySchema),
+      childFileList: Joi.array().required().items(fileSchema),
     });
 
     expect(data.childDirectoryList.length).toEqual(1);
@@ -533,6 +538,7 @@ describe("Bucket and Directory Suite", () => {
       hasError: validators.hasErrorFalsy,
       directory: directorySchema,
       childDirectoryList: Joi.array().required().items(directorySchema),
+      childFileList: Joi.array().required().items(fileSchema),
     });
 
     expect(data.childDirectoryList.length).toEqual(1);

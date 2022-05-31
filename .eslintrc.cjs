@@ -2,7 +2,7 @@
 module.exports = {
   root: true,
   parser: "@typescript-eslint/parser",
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "jest"],
   extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   rules: {
     "prefer-const": "off",
@@ -14,6 +14,7 @@ module.exports = {
   },
   env: {
     node: true,
+    "jest/globals": true,
   },
   ignorePatterns: ["dist/"],
 };

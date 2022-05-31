@@ -4,6 +4,7 @@ import { DirectoryService } from "../service/directory-service.js";
 import { FileService } from "../service/file-service.js";
 import { SessionService } from "../service/session-service.js";
 import { UserService } from "../service/user-service.js";
+import { AuthService } from "../service/auth-service.js";
 import { DatabaseEngine } from "./database-engine.js";
 
 export const prepareServiceDispatch = async (db: DatabaseEngine) => {
@@ -14,5 +15,6 @@ export const prepareServiceDispatch = async (db: DatabaseEngine) => {
     userService: new UserService(db),
     sessionService: new SessionService(db),
     adminService: new AdminService(db),
+    authService: new AuthService(db),
   };
 };

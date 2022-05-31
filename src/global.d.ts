@@ -6,6 +6,7 @@ import { DirectoryService } from "./service/directory-service";
 import { FileService } from "./service/file-service";
 import { SessionService } from "./service/session-service";
 import { UserService } from "./service/user-service";
+import { AuthService } from "./service/auth-service";
 
 declare global {
   var logger: Logger;
@@ -16,6 +17,7 @@ declare global {
     bucketService: BucketService;
     directoryService: DirectoryService;
     fileService: FileService;
+    authService: AuthService;
   };
 }
 

@@ -13,6 +13,7 @@ export const apiNameList = [
   "bucket/list",
   "bucket/rename",
   "bucket/destroy",
+  "bucket/set-authorization",
   // directory
   "directory/create",
   "directory/get",

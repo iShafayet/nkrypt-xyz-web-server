@@ -44,6 +44,9 @@ class Logger {
 
   urgent(...args: any) {
     if (!this.switches.important) return;
+    args.forEach((arg: any, index: number) => {
+      args[index] = JSON.stringify(arg, null, 2);
+    });
     console.log.apply(console, ["URGENT\t", ...args]);
   }
 

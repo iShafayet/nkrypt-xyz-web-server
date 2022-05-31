@@ -335,6 +335,7 @@ describe("Bucket and Directory Suite", () => {
       hasError: validators.hasErrorFalsy,
       directory: directorySchema,
       childDirectoryList: Joi.array().required(),
+      childFileList: Joi.array().required(),
     });
 
     let metaData = Object.assign(

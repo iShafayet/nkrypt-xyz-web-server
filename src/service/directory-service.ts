@@ -86,6 +86,44 @@ export class DirectoryService {
     );
   }
 
+  async setDirectoryEncryptedMetaData(
+    bucketId: string,
+    directoryId: string,
+    encryptedMetaData: string
+  ) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.DIRECTORY,
+        _id: directoryId,
+        bucketId,
+      },
+      {
+        $set: {
+          encryptedMetaData,
+        },
+      }
+    );
+  }
+
+  async setDirectoryMetaData(
+    bucketId: string,
+    directoryId: string,
+    metaData: Generic
+  ) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.DIRECTORY,
+        _id: directoryId,
+        bucketId,
+      },
+      {
+        $set: {
+          metaData,
+        },
+      }
+    );
+  }
+
   async deleteDirectory(bucketId: string, directoryId: string) {
     return await this.db.removeAsync(
       {

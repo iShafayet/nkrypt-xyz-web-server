@@ -21,4 +21,6 @@ export const apiNameList = [
   "directory/rename",
   "directory/move",
   "directory/delete",
+  "directory/set-metadata",
+  "directory/set-encrypted-metadata",
 ];

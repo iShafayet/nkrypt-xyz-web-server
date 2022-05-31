@@ -60,6 +60,13 @@ class Server {
     });
   }
 
+  async registerCustomHandler(
+    path: string,
+    fn: (req: ExpressCore.Request, res: ExpressCore.Response) => void
+  ) {
+    this._expressApp.post(path, fn);
+  }
+
   async registerJsonPostApi(path: string, ApiClass: IAbstractApi) {
     if (!ApiClass) {
       throw new DeveloperError(

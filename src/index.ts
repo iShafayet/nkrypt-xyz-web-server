@@ -1,4 +1,5 @@
 import pathlib from "path";
+import { blobWriteApiHandler, blobWriteApiPath } from "./api/blob/write.js";
 import constants from "./constant/common-constants.js";
 import { ConfigLoader } from "./lib/config-loader.js";
 import { DatabaseEngine } from "./lib/database-engine.js";
@@ -68,6 +69,11 @@ class Program {
         let apiModule = await import(path);
         await this.server.registerJsonPostApi(name, apiModule.Api);
       })
+    );
+
+    await this.server.registerCustomHandler(
+      blobWriteApiPath,
+      blobWriteApiHandler
     );
   }
 

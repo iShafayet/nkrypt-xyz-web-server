@@ -39,7 +39,7 @@ export class Api extends AbstractApi {
     let { name, bucketId, parentDirectoryId, encryptedMetaData, metaData } =
       body;
 
-    requireBucketAuthorizationByBucketId(
+    await requireBucketAuthorizationByBucketId(
       this.interimData.userId as string,
       bucketId,
       BucketPermission.MANAGE_CONTENT

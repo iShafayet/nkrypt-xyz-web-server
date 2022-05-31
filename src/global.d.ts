@@ -35,3 +35,9 @@ type GlobalPermissions = {
   MANAGE_ALL_USER: boolean;
   CREATE_USER: boolean;
 };
+
+type SerializedError = {
+  code: string;
+  message: string;
+  details: any;
+};

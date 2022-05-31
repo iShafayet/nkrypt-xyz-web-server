@@ -53,7 +53,7 @@ let vars = {
   idOfFileP: null,
 };
 
-describe("File and Blob Suite", () => {
+describe("File Suite", () => {
   test("(user/login): Preparational", async () => {
     const data = await callHappyPostJsonApi("/user/login", {
       userName: DEFAULT_USER_NAME,

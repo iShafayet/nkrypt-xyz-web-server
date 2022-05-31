@@ -397,6 +397,41 @@ describe("Bucket and Directory Suite", () => {
     expect(bucket2).not.toBeFalsy();
   });
 
+  test("(bucket/set-metadata): Affirmative", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/bucket/set-metadata",
+      {
+        metaData: {
+          exampleMetaData: "exampleValue",
+        },
+        bucketId: vars.bucketId,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+    });
+  });
+
+  test("(bucket/list): Ensure setting metaData worked", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/bucket/list",
+      {}
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+      bucketList: bucketListSchema,
+    });
+
+    let bucket = data.bucketList.find((bucket) => bucket._id == vars.bucketId);
+    expect(bucket).not.toBeFalsy();
+    expect(bucket.metaData).toHaveProperty("exampleMetaData");
+    expect(bucket.metaData.exampleMetaData).toEqual("exampleValue");
+  });
+
   test("(bucket/set-authorization): Affirmative", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.apiKey,
@@ -415,7 +450,7 @@ describe("Bucket and Directory Suite", () => {
     });
   });
 
-  test("(directory/get): Bucket1Root/* as TestUser", async () => {
+  test("(directory/get): Bucket1Root/* as TestUser to ensure bucket authorization worked", async () => {
     const data = await callHappyPostJsonApiWithAuth(
       vars.testUserApiKey,
       "/directory/get",

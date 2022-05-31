@@ -14,6 +14,7 @@ export const apiNameList = [
   "bucket/rename",
   "bucket/destroy",
   "bucket/set-authorization",
+  "bucket/set-metadata",
   // directory
   "directory/create",
   "directory/get",

@@ -70,6 +70,20 @@ export class BucketService {
     );
   }
 
+  async setBucketMetaData(bucketId: string, metaData: Generic) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.BUCKET,
+        _id: bucketId,
+      },
+      {
+        $set: {
+          metaData,
+        },
+      }
+    );
+  }
+
   async removeBucket(bucketId: string) {
     return await this.db.removeAsync(
       {

@@ -76,4 +76,11 @@ class Program {
   }
 }
 
+process.on("uncaughtException", function (err) {
+  console.log("Suppressing uncaughtException");
+  console.log("uncaughtException message:", JSON.stringify(err));
+  console.log("uncaughtException stack:", err.stack);
+  console.error(err);
+});
+
 new Program().start();

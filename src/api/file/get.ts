@@ -35,7 +35,7 @@ export class Api extends AbstractApi {
   async handle(body: CurrentRequest) {
     let { bucketId, fileId } = body;
 
-    ensureFileBelongsToBucket(bucketId, fileId);
+    await ensureFileBelongsToBucket(bucketId, fileId);
 
     await requireBucketAuthorizationByBucketId(
       this.interimData.userId as string,

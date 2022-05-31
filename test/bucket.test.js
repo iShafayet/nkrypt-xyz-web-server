@@ -30,6 +30,11 @@ const TEST_USER_USER_NAME = "testuser1-" + Date.now();
 const TEST_USER_DISPLAY_NAME = "Test User 1";
 const TEST_USER_PASSWORD = "ExamplePassword";
 
+const TEST_INITIAL_METADATA = { createdFromApp: "Integration testing" };
+const TEST_INITIAL_ENCRYPTED_METADATA = "PLACEHOLDER";
+const TEST_NEW_METADATA_PART = { example: "value" };
+const TEST_NEW_ENCRYPTED_METADATA = "PLACEHOLDER2";
+
 let vars = {
   apiKey: null,
   bucketId: null,
@@ -131,8 +136,8 @@ describe("Bucket and Directory Suite", () => {
         name: TEST_DIRECTORY_A_NAME,
         bucketId: vars.bucketId,
         parentDirectoryId: vars.rootDirectoryId,
-        encryptedMetaData: "PLACEHOLDER",
-        metaData: { createdFromApp: "Integration testing" },
+        encryptedMetaData: TEST_INITIAL_ENCRYPTED_METADATA,
+        metaData: TEST_INITIAL_METADATA,
       }
     );
 
@@ -152,8 +157,8 @@ describe("Bucket and Directory Suite", () => {
         name: TEST_DIRECTORY_B_NAME,
         bucketId: vars.bucketId,
         parentDirectoryId: vars.rootDirectoryId,
-        encryptedMetaData: "PLACEHOLDER",
-        metaData: { createdFromApp: "Integration testing" },
+        encryptedMetaData: TEST_INITIAL_ENCRYPTED_METADATA,
+        metaData: TEST_INITIAL_METADATA,
       }
     );
 
@@ -173,8 +178,8 @@ describe("Bucket and Directory Suite", () => {
         name: TEST_DIRECTORY_A_A_NAME,
         bucketId: vars.bucketId,
         parentDirectoryId: vars.idOfDirectoryA,
-        encryptedMetaData: "PLACEHOLDER",
-        metaData: { createdFromApp: "Integration testing" },
+        encryptedMetaData: TEST_INITIAL_ENCRYPTED_METADATA,
+        metaData: TEST_INITIAL_METADATA,
       }
     );
 
@@ -274,6 +279,70 @@ describe("Bucket and Directory Suite", () => {
     });
 
     expect(data.directory.name).toBe(TEST_DIRECTORY_B_NAME_ALT);
+  });
+
+  test("(directory/set-metadata) Bucket1Root/testDirBAlt", async () => {
+    let metaData = Object.assign(
+      {},
+      TEST_INITIAL_METADATA,
+      TEST_NEW_METADATA_PART
+    );
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/set-metadata",
+      {
+        metaData: metaData,
+        bucketId: vars.bucketId,
+        directoryId: vars.idOfDirectoryB,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+    });
+  });
+
+  test("(directory/set-metadata) Bucket1Root/testDirBAlt", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/set-encrypted-metadata",
+      {
+        encryptedMetaData: TEST_NEW_ENCRYPTED_METADATA,
+        bucketId: vars.bucketId,
+        directoryId: vars.idOfDirectoryB,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+    });
+  });
+
+  test("(directory/get): Bucket1Root/testDirBAlt/* Ensure metaData and encryptedMetaData worked", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/directory/get",
+      {
+        bucketId: vars.bucketId,
+        directoryId: vars.idOfDirectoryB,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+      directory: directorySchema,
+      childDirectoryList: Joi.array().required(),
+    });
+
+    let metaData = Object.assign(
+      {},
+      TEST_INITIAL_METADATA,
+      TEST_NEW_METADATA_PART
+    );
+    expect(data.directory.encryptedMetaData).toEqual(
+      TEST_NEW_ENCRYPTED_METADATA
+    );
+    expect(data.directory.metaData).toStrictEqual(metaData);
   });
 
   test("(directory/move) Bucket1Root/testDirBAlt => Bucket1Root/testDirA/testDirBAlt", async () => {

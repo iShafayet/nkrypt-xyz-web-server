@@ -29,11 +29,20 @@ export const validators = {
   hasErrorTruthy: Joi.boolean().valid(true).required(),
   apiKey: Joi.string().required(),
 
-  bucketPermissions: Joi.object()
+  allBucketPermissions: Joi.object()
     .required()
     .keys(
       Object.keys(BucketPermission).reduce((map: Generic, key) => {
         map[key] = Joi.boolean().required();
+        return map;
+      }, {})
+    ),
+
+  partialBucketPermissions: Joi.object()
+    .required()
+    .keys(
+      Object.keys(BucketPermission).reduce((map: Generic, key) => {
+        map[key] = Joi.boolean().optional();
         return map;
       }, {})
     ),

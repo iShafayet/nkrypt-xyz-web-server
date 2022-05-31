@@ -31,7 +31,7 @@ export const bucketListSchema = Joi.array()
         .items(
           Joi.object().required().keys({
             userId: Joi.string().required(),
-            permissions: validators.bucketPermissions,
+            permissions: validators.allBucketPermissions,
           })
         ),
       rootDirectoryId: Joi.string().required(),

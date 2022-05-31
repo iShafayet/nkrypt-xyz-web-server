@@ -38,6 +38,7 @@ let vars = {
   idOfDirectoryB: null,
   idOfDirectoryAA: null,
   testUserId: null,
+  testUserApiKey: null,
 };
 
 describe("Bucket and Directory Suite", () => {
@@ -69,6 +70,17 @@ describe("Bucket and Directory Suite", () => {
     });
 
     vars.testUserId = data.userId;
+  });
+
+  test("(user/login): Preparational", async () => {
+    const data = await callHappyPostJsonApi("/user/login", {
+      userName: TEST_USER_USER_NAME,
+      password: TEST_USER_PASSWORD,
+    });
+
+    await validateObject(data, userAssertion);
+
+    vars.testUserApiKey = data.apiKey;
   });
 
   test("(bucket/create): Affirmative", async () => {
@@ -383,6 +395,43 @@ describe("Bucket and Directory Suite", () => {
         bucket.name === TEST_BUCKET_NEW_NAME && bucket._id == vars.bucketId
     );
     expect(bucket2).not.toBeFalsy();
+  });
+
+  test("(bucket/set-authorization): Affirmative", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.apiKey,
+      "/bucket/set-authorization",
+      {
+        targetUserId: vars.testUserId,
+        bucketId: vars.bucketId,
+        permissionsToSet: {
+          VIEW_CONTENT: true,
+        },
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+    });
+  });
+
+  test("(directory/get): Bucket1Root/* as TestUser", async () => {
+    const data = await callHappyPostJsonApiWithAuth(
+      vars.testUserApiKey,
+      "/directory/get",
+      {
+        bucketId: vars.bucketId,
+        directoryId: vars.rootDirectoryId,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+      directory: directorySchema,
+      childDirectoryList: Joi.array().required().items(directorySchema),
+    });
+
+    expect(data.childDirectoryList.length).toEqual(1);
   });
 
   test("(bucket/destroy): Affirmative", async () => {

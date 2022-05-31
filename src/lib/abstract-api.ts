@@ -1,20 +1,15 @@
 import Nedb from "@seald-io/nedb";
 import * as ExpressCore from "express-serve-static-core";
 import Joi from "joi";
-import { Generic, JsonValue } from "../global.js";
+import { Generic, JsonValue, SerializedError } from "../global.js";
 import {
   CodedError,
   DeveloperError,
   UserError,
 } from "../utility/coded-error.js";
+import { stringifyErrorObject } from "../utility/error-utils.js";
 import { Config } from "./config-loader.js";
 import { Server } from "./server.js";
-
-type SerializedError = {
-  code: string;
-  message: string;
-  details: any;
-};
 
 const joiValidationOptions = {
   abortEarly: true,
@@ -121,7 +116,7 @@ abstract class AbstractApi {
         logger.error(<Error>ex);
       }
 
-      let serializedError = this._stringifyErrorObject(<Error>ex);
+      let serializedError = stringifyErrorObject(<Error>ex);
       let statusCode = this._detectHttpStatusCode(serializedError);
 
       this._sendResponse(statusCode, {
@@ -134,37 +129,6 @@ abstract class AbstractApi {
   _sendResponse(statusCode: number, data: JsonValue) {
     logger.log(statusCode, this.apiPath, data);
     this._expressResponse.send(data);
-  }
-
-  _stringifyErrorObject(errorObject: Error): SerializedError {
-    let details = {};
-
-    if (!(errorObject instanceof Error)) {
-      throw new DeveloperError(
-        "DEVELOPER_ERROR",
-        "expected errorObject to be an instanceof Error"
-      );
-    }
-
-    let code = "GENERIC_SERVER_ERROR";
-    if ("code" in errorObject) {
-      code = (errorObject as CodedError).code;
-    }
-
-    if ("isJoi" in errorObject) {
-      code = "VALIDATION_ERROR";
-      details = (errorObject as Generic).details;
-    }
-
-    let message =
-      "We have encountered an unexpected server error. " +
-      "It has been logged and administrators will be notified.";
-
-    if ("message" in errorObject) {
-      message = errorObject.message;
-    }
-
-    return { code, message, details };
   }
 
   // ============================== region: request processing - end ==============================

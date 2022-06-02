@@ -1,7 +1,9 @@
 import { Generic, SerializedError } from "../global.js";
 import { CodedError, DeveloperError } from "./coded-error.js";
 
-export const stringifyErrorObject = (errorObject: Error): SerializedError => {
+export const stringifyErrorObject = (
+  errorObject: Error
+): [SerializedError, string] => {
   let details = {};
 
   if (!(errorObject instanceof Error)) {
@@ -29,5 +31,34 @@ export const stringifyErrorObject = (errorObject: Error): SerializedError => {
     message = errorObject.message;
   }
 
-  return { code, message, details };
+  let name = errorObject.name;
+
+  return [{ code, message, details }, name];
+};
+
+export const detectHttpStatusCode = (
+  serializedError: SerializedError,
+  errorName: string | null
+) => {
+  if (["VALIDATION_ERROR", "APIKEY_MISSING"].includes(serializedError.code)) {
+    return 400;
+  }
+
+  if (["APIKEY_INVALID", "APIKEY_EXPIRED"].includes(serializedError.code)) {
+    return 401;
+  }
+
+  if (["ACCESS_DENIED"].includes(serializedError.code)) {
+    return 403;
+  }
+
+  if (["DEVELOPER_ERROR"].includes(serializedError.code)) {
+    return 500;
+  }
+
+  if (errorName === "UserError") {
+    return 400;
+  }
+
+  return 500;
 };

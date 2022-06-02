@@ -1,13 +1,21 @@
 import * as ExpressCore from "express-serve-static-core";
-import Joi from "joi";
+import Joi, { func } from "joi";
+import stream from "stream";
+import { promisify } from "util";
 import { BucketPermission } from "../../constant/bucket-permission.js";
 import {
   ensureFileBelongsToBucket,
   requireBucketAuthorizationByBucketId,
 } from "../../utility/access-control-utils.js";
 import { CodedError, UserError } from "../../utility/coded-error.js";
-import { stringifyErrorObject } from "../../utility/error-utils.js";
+import {
+  detectHttpStatusCode,
+  stringifyErrorObject,
+} from "../../utility/error-utils.js";
+import { createSizeLimiterPassthroughStream } from "../../utility/stream-utils.js";
 import { validators } from "../../validators.js";
+
+const pipeline = promisify(stream.pipeline);
 
 export const blobWriteApiPath = "/api/blob/write/:bucketId/:fileId";
 
@@ -34,34 +42,44 @@ export const blobWriteApiHandler = async (
       BucketPermission.MANAGE_CONTENT
     );
 
-    /* TODO -
-    1. insert blob { _id, fileId, startedAt, finishedAt, status }
-    2. set startedAt to now
-    3. pipe request to file
-    4. limit file size while piping
-    5. on successful end, set finishedAt and status
-    6. reply 200
-    7. remove any previous blob of fileId
-    8. update updatedAt of file
-    */
+    let { blob, stream: fileStream } =
+      await dispatch.blobService.createInProgressBlob(bucketId, fileId);
 
-    res.send({
-      apiKey,
-      userId,
-      sessionId,
-      user,
-      bucketId,
-      fileId,
-    });
+    try {
+      await pipeline(
+        req,
+        dispatch.blobService.createStandardSizeLimiter(),
+        fileStream
+      );
+
+      await dispatch.blobService.markBlobAsFinished(bucketId, fileId, blob._id);
+
+      res.send({
+        hasError: false,
+        blobId: blob._id,
+      });
+    } catch (err) {
+      logger.error(err as Error);
+
+      await dispatch.blobService.markBlobAsErroneous(
+        bucketId,
+        fileId,
+        blob._id
+      );
+
+      throw err;
+    }
   } catch (ex) {
     if (
       typeof ex === "object" &&
       ex &&
-      ("isJoi" in ex || ex instanceof CodedError)
+      ("isJoi" in ex || ex instanceof Error)
     ) {
-      res.status(400).send(stringifyErrorObject(ex as Error));
+      let [serializedError, errorName] = stringifyErrorObject(<Error>ex);
+      let statusCode = detectHttpStatusCode(serializedError, errorName);
+      res.status(statusCode).send(serializedError);
     } else {
-      res.end("Unknown error occurred.");
+      res.status(500).end("An unexpected error occurred.");
       console.error(ex);
     }
   }

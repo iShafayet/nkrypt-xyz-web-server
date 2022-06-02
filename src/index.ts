@@ -1,6 +1,7 @@
 import pathlib from "path";
 import { blobWriteApiHandler, blobWriteApiPath } from "./api/blob/write.js";
 import constants from "./constant/common-constants.js";
+import { BlobStorage } from "./lib/blob-storage.js";
 import { ConfigLoader } from "./lib/config-loader.js";
 import { DatabaseEngine } from "./lib/database-engine.js";
 import { Logger } from "./lib/logger.js";
@@ -30,6 +31,7 @@ let config = ConfigLoader.loadConfig();
 class Program {
   db!: DatabaseEngine;
   server!: Server;
+  blobStorage!: BlobStorage;
 
   async start() {
     try {
@@ -42,19 +44,18 @@ class Program {
 
   async _initialize() {
     this.db = new DatabaseEngine(config);
-    await this._initiateDatabase();
+    await this.db.init();
 
-    await prepareServiceDispatch(this.db);
+    this.blobStorage = new BlobStorage(config);
+    await this.blobStorage.init();
+
+    await prepareServiceDispatch(this.db, this.blobStorage);
 
     await dispatch.adminService.createDefaultAdminAccountIfNotPresent();
 
     this.server = new Server(config, this.db);
     await this._registerEndpoints();
     await this._startServer();
-  }
-
-  async _initiateDatabase() {
-    await this.db.init();
   }
 
   async _registerEndpoints() {

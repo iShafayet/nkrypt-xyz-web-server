@@ -1,6 +1,7 @@
 import Joi from "joi";
 
 import {
+  callRawPostApi,
   callHappyPostJsonApi,
   callHappyPostJsonApiWithAuth,
   validateObject,
@@ -16,6 +17,8 @@ import {
 
 import { validators } from "../dist/validators.js";
 
+import { generateRandomBase64String } from "../dist/utility/string-utils.js";
+
 const DEFAULT_USER_NAME = "admin";
 const DEFAULT_PASSWORD = "PleaseChangeMe@YourEarliest2Day";
 
@@ -24,6 +27,8 @@ const TEST_FILE_P_NAME = "FileP-" + Date.now();
 
 const TEST_INITIAL_METADATA = { createdFromApp: "Integration testing" };
 const TEST_INITIAL_ENCRYPTED_METADATA = "PLACEHOLDER";
+
+const TEST_STRING_LENGTH = generateRandomBase64String(1024 * 1024);
 
 let vars = {
   apiKey: null,
@@ -87,6 +92,15 @@ describe("Blob Suite", () => {
     });
 
     vars.idOfFileP = data.fileId;
+  });
+
+  test("(blob/write) Into BuckXRoot/FileP", async () => {
+    let endPoint = `/blob/write/${vars.bucketId}/${vars.idOfFileP}`;
+    let data = await callRawPostApi(endPoint, vars.apiKey, TEST_STRING_LENGTH);
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+      blobId: validators.id,
+    });
   });
 
   // eof

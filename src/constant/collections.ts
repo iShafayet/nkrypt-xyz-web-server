@@ -5,6 +5,7 @@ const collections = {
   BUCKET: "bucket",
   DIRECTORY: "directory",
   FILE: "file",
+  BLOB: "blob",
 };
 
 export default collections;

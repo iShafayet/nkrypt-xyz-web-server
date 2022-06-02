@@ -5,7 +5,7 @@ import { ensureDir, resolvePath } from "../utility/file-utils.js";
 import { Config } from "./config-loader.js";
 
 class DatabaseEngine {
-  config: Config;
+  public config: Config;
   private _dir: string;
   private _dbFilePath: string;
   connection!: Nedb;

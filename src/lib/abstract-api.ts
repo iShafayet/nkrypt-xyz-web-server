@@ -7,7 +7,10 @@ import {
   DeveloperError,
   UserError,
 } from "../utility/coded-error.js";
-import { stringifyErrorObject } from "../utility/error-utils.js";
+import {
+  detectHttpStatusCode,
+  stringifyErrorObject,
+} from "../utility/error-utils.js";
 import { Config } from "./config-loader.js";
 import { Server } from "./server.js";
 
@@ -116,8 +119,8 @@ abstract class AbstractApi {
         logger.error(<Error>ex);
       }
 
-      let serializedError = stringifyErrorObject(<Error>ex);
-      let statusCode = this._detectHttpStatusCode(serializedError);
+      let [serializedError, errorName] = stringifyErrorObject(<Error>ex);
+      let statusCode = detectHttpStatusCode(serializedError, errorName);
 
       this._sendResponse(statusCode, {
         hasError: true,
@@ -132,26 +135,6 @@ abstract class AbstractApi {
   }
 
   // ============================== region: request processing - end ==============================
-
-  _detectHttpStatusCode(serializedError: SerializedError) {
-    if (["VALIDATION_ERROR", "APIKEY_MISSING"].includes(serializedError.code)) {
-      return 400;
-    }
-
-    if (["APIKEY_INVALID", "APIKEY_EXPIRED"].includes(serializedError.code)) {
-      return 401;
-    }
-
-    if (["ACCESS_DENIED"].includes(serializedError.code)) {
-      return 403;
-    }
-
-    if (["DEVELOPER_ERROR"].includes(serializedError.code)) {
-      return 500;
-    }
-
-    return 500;
-  }
 }
 
 interface IAbstractApi {

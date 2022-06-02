@@ -18,4 +18,19 @@ const generateRandomStringCaseInsensitive = (length: number) => {
   return result;
 };
 
-export { generateRandomString, generateRandomStringCaseInsensitive };
+let charset3 =
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/";
+
+const generateRandomBase64String = (length: number) => {
+  let result = "";
+  for (let i = length; i > 0; --i) {
+    result += charset3[Math.floor(Math.random() * charset.length)];
+  }
+  return result;
+};
+
+export {
+  generateRandomString,
+  generateRandomStringCaseInsensitive,
+  generateRandomBase64String,
+};

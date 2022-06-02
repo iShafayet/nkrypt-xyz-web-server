@@ -60,10 +60,26 @@ const validateObject = async (data, objectKeysMap) => {
   );
 };
 
+const callRawPostApi = async (endPoint, authToken, body) => {
+  const basePath = "http://localhost:9041/api";
+  const url = basePath + endPoint;
+  let headers = { "Content-Type": "text/plain" };
+  if (authToken) {
+    headers["Authorization"] = `Bearer ${authToken}`;
+  }
+  const response = await fetch(url, {
+    method: "post",
+    body,
+    headers,
+  });
+  return response.json();
+};
+
 export {
   callHappyPostJsonApiWithAuth,
   callPostJsonApi,
   callHappyPostJsonApi,
   validateObject,
   validateSchema,
+  callRawPostApi,
 };

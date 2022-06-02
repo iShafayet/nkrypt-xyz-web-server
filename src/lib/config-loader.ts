@@ -11,6 +11,7 @@ type Config = {
   };
   blobStorage: {
     dir: string;
+    maxFileSizeBytes: number;
   };
 };
 
@@ -29,6 +30,7 @@ class ConfigLoader {
       },
       blobStorage: {
         dir: "./nkrypt-xyz-local-data/blob/",
+        maxFileSizeBytes: 1024 * 1024 * 1024,
       },
     };
 

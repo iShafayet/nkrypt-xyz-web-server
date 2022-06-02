@@ -7,10 +7,15 @@ import { FileService } from "./service/file-service";
 import { SessionService } from "./service/session-service";
 import { UserService } from "./service/user-service";
 import { AuthService } from "./service/auth-service";
+import { BlobService } from "./service/blob-service";
+import { DatabaseEngine } from "./lib/database-engine.js";
+import { Config } from "./lib/config-loader.js";
 
 declare global {
   var logger: Logger;
   var dispatch: {
+    db: DatabaseEngine;
+    config: Config;
     userService: UserService;
     sessionService: SessionService;
     adminService: AdminService;
@@ -18,6 +23,7 @@ declare global {
     directoryService: DirectoryService;
     fileService: FileService;
     authService: AuthService;
+    blobService: BlobService;
   };
 }
 

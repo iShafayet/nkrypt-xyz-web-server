@@ -28,7 +28,8 @@ const TEST_FILE_P_NAME = "FileP-" + Date.now();
 const TEST_INITIAL_METADATA = { createdFromApp: "Integration testing" };
 const TEST_INITIAL_ENCRYPTED_METADATA = "PLACEHOLDER";
 
-const TEST_STRING_LENGTH = generateRandomBase64String(1024 * 1024);
+const TEST_STRING = generateRandomBase64String(1024 * 1024);
+const TEST_STRING_2 = generateRandomBase64String(1024 * 1024);
 
 let vars = {
   apiKey: null,
@@ -96,11 +97,32 @@ describe("Blob Suite", () => {
 
   test("(blob/write) Into BuckXRoot/FileP", async () => {
     let endPoint = `/blob/write/${vars.bucketId}/${vars.idOfFileP}`;
-    let data = await callRawPostApi(endPoint, vars.apiKey, TEST_STRING_LENGTH);
+    let data = await (
+      await callRawPostApi(endPoint, vars.apiKey, TEST_STRING)
+    ).json();
     await validateObject(data, {
       hasError: validators.hasErrorFalsy,
       blobId: validators.id,
     });
+  });
+
+  test("(blob/write) Again Into BuckXRoot/FileP", async () => {
+    let endPoint = `/blob/write/${vars.bucketId}/${vars.idOfFileP}`;
+    let data = await (
+      await callRawPostApi(endPoint, vars.apiKey, TEST_STRING_2)
+    ).json();
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+      blobId: validators.id,
+    });
+  });
+
+  test("(blob/read) Read BuckXRoot/FileP", async () => {
+    let endPoint = `/blob/read/${vars.bucketId}/${vars.idOfFileP}`;
+    let data = await (
+      await callRawPostApi(endPoint, vars.apiKey, TEST_STRING_2)
+    ).text();
+    expect(data).toEqual(TEST_STRING_2);
   });
 
   // eof

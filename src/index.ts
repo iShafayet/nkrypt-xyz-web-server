@@ -1,4 +1,5 @@
 import pathlib from "path";
+import { blobReadApiHandler, blobReadApiPath } from "./api/blob/read.js";
 import { blobWriteApiHandler, blobWriteApiPath } from "./api/blob/write.js";
 import constants from "./constant/common-constants.js";
 import { BlobStorage } from "./lib/blob-storage.js";
@@ -75,6 +76,11 @@ class Program {
     await this.server.registerCustomHandler(
       blobWriteApiPath,
       blobWriteApiHandler
+    );
+
+    await this.server.registerCustomHandler(
+      blobReadApiPath,
+      blobReadApiHandler
     );
   }
 

@@ -72,7 +72,7 @@ const callRawPostApi = async (endPoint, authToken, body) => {
     body,
     headers,
   });
-  return response.json();
+  return response;
 };
 
 export {

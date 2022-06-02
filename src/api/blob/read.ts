@@ -17,14 +17,14 @@ import { validators } from "../../validators.js";
 
 const pipeline = promisify(stream.pipeline);
 
-export const blobWriteApiPath = "/api/blob/write/:bucketId/:fileId";
+export const blobReadApiPath = "/api/blob/read/:bucketId/:fileId";
 
 let schema = Joi.object().required().keys({
   bucketId: validators.id,
   fileId: validators.id,
 });
 
-export const blobWriteApiHandler = async (
+export const blobReadApiHandler = async (
   req: ExpressCore.Request,
   res: ExpressCore.Response
 ) => {
@@ -39,42 +39,21 @@ export const blobWriteApiHandler = async (
     await requireBucketAuthorizationByBucketId(
       userId,
       bucketId,
-      BucketPermission.MANAGE_CONTENT
+      BucketPermission.VIEW_CONTENT
     );
 
-    let { blob, stream: fileStream } =
-      await dispatch.blobService.createInProgressBlob(bucketId, fileId);
+    let blob = await dispatch.blobService.findBlobByBucketIdAndFileId(
+      bucketId,
+      fileId
+    );
 
-    try {
-      await pipeline(
-        req,
-        dispatch.blobService.createStandardSizeLimiter(),
-        fileStream
-      );
-
-      await dispatch.blobService.markBlobAsFinished(bucketId, fileId, blob._id);
-
-      await dispatch.blobService.removeAllOtherBlobs(
-        bucketId,
-        fileId,
-        blob._id
-      );
-
-      res.send({
-        hasError: false,
-        blobId: blob._id,
-      });
-    } catch (err) {
-      logger.error(err as Error);
-
-      await dispatch.blobService.markBlobAsErroneous(
-        bucketId,
-        fileId,
-        blob._id
-      );
-
-      throw err;
+    if (!blob) {
+      throw new UserError("BLOB_NOT_FOUND", "Desired blob could not be found");
     }
+
+    let stream = dispatch.blobService.createReadableStreamFromBlobId(blob._id);
+
+    await pipeline(stream, res);
   } catch (ex) {
     if (
       typeof ex === "object" &&

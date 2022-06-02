@@ -1,4 +1,4 @@
-import { createWriteStream } from "fs";
+import { createReadStream, createWriteStream, promises } from "fs";
 import { ensureDir, resolvePath } from "../utility/file-utils.js";
 import { Config } from "./config-loader.js";
 
@@ -19,6 +19,17 @@ class BlobStorage {
     let path = resolvePath(this._dir, blobId);
     let stream = createWriteStream(path);
     return stream;
+  }
+
+  createReadableStream(blobId: string) {
+    let path = resolvePath(this._dir, blobId);
+    let stream = createReadStream(path);
+    return stream;
+  }
+
+  async removeByBlobId(blobId: string) {
+    let path = resolvePath(this._dir, blobId);
+    await promises.unlink(path);
   }
 }
 

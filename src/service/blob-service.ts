@@ -69,132 +69,44 @@ export class BlobService {
     );
   }
 
+  async findBlobByBucketIdAndFileId(bucketId: string, fileId: string) {
+    let list = await this.db
+      .findAsync({
+        collection: collections.BLOB,
+        bucketId,
+        fileId,
+      })
+      .sort({ finishedAt: -1 });
+
+    let doc = list.length ? list[0] : null;
+
+    return doc;
+  }
+
+  createReadableStreamFromBlobId(blobId: string) {
+    return this.blobStorage.createReadableStream(blobId);
+  }
+
   async removeAllOtherBlobs(bucketId: string, fileId: string, blobId: string) {
-    let blob: Generic = await this.db.insertAsync({
+    let list = await this.db.findAsync({
       collection: collections.BLOB,
       bucketId,
       fileId,
-      startedAt: Date.now(),
-      finishedAt: null,
-      status: "started",
-      createdAt: Date.now(),
+      _id: { $ne: blobId },
     });
 
-    let stream = this.blobStorage.createWritableStream(blob._id);
+    for (let blob of list) {
+      await this.blobStorage.removeByBlobId(blob._id);
+    }
 
-    return { blob, stream };
+    return await this.db.removeAsync(
+      {
+        collection: collections.BLOB,
+        bucketId,
+        fileId,
+        _id: { $ne: blobId },
+      },
+      { multi: false }
+    );
   }
-
-  // async findFileById(bucketId: string, fileId: string) {
-  //   let doc = await this.db.findOneAsync({
-  //     collection: collections.BLOB,
-  //     bucketId,
-  //     _id: fileId,
-  //   });
-  //   return doc;
-  // }
-
-  // async findFileByNameAndParent(
-  //   name: string,
-  //   bucketId: string,
-  //   parentDirectoryId: string
-  // ) {
-  //   let doc = await this.db.findOneAsync({
-  //     collection: collections.FILE,
-  //     name,
-  //     bucketId,
-  //     parentDirectoryId,
-  //   });
-  //   return doc;
-  // }
-
-  // async setFileName(bucketId: string, fileId: string, name: string) {
-  //   return await this.db.updateAsync(
-  //     {
-  //       collection: collections.FILE,
-  //       _id: fileId,
-  //       bucketId,
-  //     },
-  //     {
-  //       $set: {
-  //         name,
-  //       },
-  //     }
-  //   );
-  // }
-
-  // async setFileEncryptedMetaData(
-  //   bucketId: string,
-  //   fileId: string,
-  //   encryptedMetaData: string
-  // ) {
-  //   return await this.db.updateAsync(
-  //     {
-  //       collection: collections.FILE,
-  //       _id: fileId,
-  //       bucketId,
-  //     },
-  //     {
-  //       $set: {
-  //         encryptedMetaData,
-  //       },
-  //     }
-  //   );
-  // }
-
-  // async setFileMetaData(bucketId: string, fileId: string, metaData: Generic) {
-  //   return await this.db.updateAsync(
-  //     {
-  //       collection: collections.FILE,
-  //       _id: fileId,
-  //       bucketId,
-  //     },
-  //     {
-  //       $set: {
-  //         metaData,
-  //       },
-  //     }
-  //   );
-  // }
-
-  // async deleteFile(bucketId: string, fileId: string) {
-  //   return await this.db.removeAsync(
-  //     {
-  //       collection: collections.FILE,
-  //       _id: fileId,
-  //       bucketId,
-  //     },
-  //     { multi: false }
-  //   );
-  // }
-
-  // async moveFile(
-  //   bucketId: string,
-  //   fileId: string,
-  //   newParentDirectoryId: string,
-  //   newName: string
-  // ) {
-  //   return await this.db.updateAsync(
-  //     {
-  //       collection: collections.FILE,
-  //       _id: fileId,
-  //       bucketId,
-  //     },
-  //     {
-  //       $set: {
-  //         parentDirectoryId: newParentDirectoryId,
-  //         name: newName,
-  //       },
-  //     }
-  //   );
-  // }
-
-  // async listFilesUnderDirectory(bucketId: string, parentDirectoryId: string) {
-  //   let list = await this.db.findAsync({
-  //     collection: collections.FILE,
-  //     bucketId,
-  //     parentDirectoryId,
-  //   });
-  //   return list;
-  // }
 }

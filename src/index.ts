@@ -17,8 +17,8 @@ wipeOutLocalData();
 // We initiate logger and inject it into global so that it is usable by everyone.
 let logger = (global.logger = new Logger({
   switches: {
-    debug: false,
-    log: false,
+    debug: true,
+    log: true,
     important: true,
     warning: true,
     error: true,
@@ -55,8 +55,9 @@ class Program {
     await dispatch.adminService.createDefaultAdminAccountIfNotPresent();
 
     this.server = new Server(config, this.db);
+    await this.server.prepare();
     await this._registerEndpoints();
-    await this._startServer();
+    await this.server.start();
   }
 
   async _registerEndpoints() {
@@ -82,10 +83,6 @@ class Program {
       blobReadApiPath,
       blobReadApiHandler
     );
-  }
-
-  async _startServer() {
-    await this.server.start();
   }
 }
 

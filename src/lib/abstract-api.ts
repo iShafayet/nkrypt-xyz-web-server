@@ -33,7 +33,7 @@ abstract class AbstractApi {
   constructor(
     private apiPath: string,
     private server: Server,
-    private networkDetails: { ip: string; requestUid: string | null },
+    private networkDetails: { ip: string },
     private _expressRequest: ExpressCore.Request,
     private _expressResponse: ExpressCore.Response
   ) {
@@ -70,7 +70,7 @@ abstract class AbstractApi {
   async _composeAndValidateSchema(body: JsonValue) {
     let schema = this.requestSchema;
 
-    // Note: Throws validation error
+    // Note: Throws ValidationError
     let validatedBody = await schema.validateAsync(body, joiValidationOptions);
     return validatedBody;
   }
@@ -115,7 +115,7 @@ abstract class AbstractApi {
       this._sendResponse(200, response);
     } catch (ex: unknown) {
       // There is no need to log UserErrors since they are always logged as response.
-      if (!(ex instanceof UserError)) {
+      if (!(ex instanceof UserError) && !(ex instanceof Joi.ValidationError)) {
         logger.error(<Error>ex);
       }
 
@@ -130,8 +130,13 @@ abstract class AbstractApi {
   }
 
   _sendResponse(statusCode: number, data: JsonValue) {
-    logger.log(statusCode, this.apiPath, data);
-    this._expressResponse.send(data);
+    logger.log(
+      statusCode,
+      this.apiPath,
+      (this._expressRequest as Generic).uuid,
+      "\n" + JSON.stringify(data, null, 2)
+    );
+    this._expressResponse.status(statusCode).send(data);
   }
 
   // ============================== region: request processing - end ==============================
@@ -141,7 +146,7 @@ interface IAbstractApi {
   new (
     apiPath: string,
     server: Server,
-    networkDetails: { ip: string; requestUid: string | null },
+    networkDetails: { ip: string },
     _expressRequest: ExpressCore.Request,
     _expressResponse: ExpressCore.Response
   ): AbstractApi;

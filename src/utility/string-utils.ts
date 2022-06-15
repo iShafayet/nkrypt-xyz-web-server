@@ -1,3 +1,5 @@
+import { randomUUID } from "crypto";
+
 let charset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 const generateRandomString = (length: number) => {
@@ -29,7 +31,12 @@ const generateRandomBase64String = (length: number) => {
   return result;
 };
 
+const generateUuid = () => {
+  return randomUUID();
+};
+
 export {
+  generateUuid,
   generateRandomString,
   generateRandomStringCaseInsensitive,
   generateRandomBase64String,

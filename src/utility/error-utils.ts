@@ -52,6 +52,10 @@ export const detectHttpStatusCode = (
     return 403;
   }
 
+  if (["AUTHORIZATION_HEADER_MISSING", "AUTHORIZATION_HEADER_MALFORMATTED"].includes(serializedError.code)) {
+    return 412;
+  }
+
   if (["DEVELOPER_ERROR"].includes(serializedError.code)) {
     return 500;
   }

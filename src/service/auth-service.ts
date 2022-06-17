@@ -22,7 +22,7 @@ export class AuthService {
     );
 
     throwOnFalsy(
-      DeveloperError,
+      UserError,
       authorizationHeader.length > 0,
       "AUTHORIZATION_HEADER_MISSING",
       "Authorization header is missing"

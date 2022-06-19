@@ -40,11 +40,13 @@ export const detectHttpStatusCode = (
   serializedError: SerializedError,
   errorName: string | null
 ) => {
-  if (["VALIDATION_ERROR", "APIKEY_MISSING"].includes(serializedError.code)) {
+  if (
+    ["VALIDATION_ERROR", "API_KEY_NOT_FOUND"].includes(serializedError.code)
+  ) {
     return 400;
   }
 
-  if (["APIKEY_INVALID", "APIKEY_EXPIRED"].includes(serializedError.code)) {
+  if (["API_KEY_EXPIRED"].includes(serializedError.code)) {
     return 401;
   }
 
@@ -52,11 +54,20 @@ export const detectHttpStatusCode = (
     return 403;
   }
 
-  if (["AUTHORIZATION_HEADER_MISSING", "AUTHORIZATION_HEADER_MALFORMATTED"].includes(serializedError.code)) {
+  if (
+    [
+      "AUTHORIZATION_HEADER_MISSING",
+      "AUTHORIZATION_HEADER_MALFORMATTED",
+    ].includes(serializedError.code)
+  ) {
     return 412;
   }
 
-  if (["DEVELOPER_ERROR"].includes(serializedError.code)) {
+  if (
+    ["DEVELOPER_ERROR", "API_KEY_CREATION_FAILED"].includes(
+      serializedError.code
+    )
+  ) {
     return 500;
   }
 

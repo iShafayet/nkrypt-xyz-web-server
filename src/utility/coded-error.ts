@@ -14,7 +14,6 @@ class CodedError extends ExtendableError {
   public code: string;
 
   constructor(code: string, message = "Unnamed error occurred.") {
-    message = `${code}: ${message}`;
     super(message);
     this.code = code;
   }

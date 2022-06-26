@@ -12,7 +12,9 @@ import {
   detectHttpStatusCode,
   stringifyErrorObject,
 } from "../../utility/error-utils.js";
-import { createSizeLimiterPassthroughStream } from "../../utility/stream-utils.js";
+import {
+  createDelayerTransformStream,
+} from "../../utility/stream-utils.js";
 import { validators } from "../../validators.js";
 
 const pipeline = promisify(stream.pipeline);

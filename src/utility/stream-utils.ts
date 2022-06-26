@@ -1,4 +1,4 @@
-import stream from "stream";
+import stream, { Transform } from "stream";
 
 export const createSizeLimiterPassthroughStream = (sizeLimit: number) => {
   let count = 0;
@@ -15,4 +15,14 @@ export const createSizeLimiterPassthroughStream = (sizeLimit: number) => {
     },
   });
   return sizeLimiter;
+};
+
+export const createDelayerTransformStream = (duration: number) => {
+  return new Transform({
+    transform(chunk, encoding, callback) {
+      setTimeout(() => {
+        callback(null, chunk);
+      }, duration);
+    },
+  });
 };

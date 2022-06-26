@@ -54,7 +54,7 @@ export class Api extends AbstractApi {
       UserError,
       exists,
       "FILE_NAME_ALREADY_IN_USE",
-      `A file with the provided name ${name} already exists in the parent file.`
+      `A file with the provided name ${name} already exists in the parent directory.`
     );
 
     let file: Generic = await dispatch.fileService.createFile(

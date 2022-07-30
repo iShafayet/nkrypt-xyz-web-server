@@ -14,8 +14,8 @@ import { appRootDirPath, toFileUrl } from "./utility/file-utils.js";
 // We initiate logger and inject it into global so that it is usable by everyone.
 let logger = (global.logger = new Logger({
   switches: {
-    debug: true,
-    log: true,
+    debug: false,
+    log: false,
     important: true,
     warning: true,
     error: true,

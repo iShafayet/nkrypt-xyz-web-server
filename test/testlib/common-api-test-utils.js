@@ -29,8 +29,10 @@ const callHappyPostJsonApi = async (endPoint, postData) => {
   const response = await callPostJsonApi(endPoint, postData);
 
   if (response.status !== 200) {
-    console.log(response.status);
-    console.log(await response.text());
+    console.log("UNSUCCESSFUL Endpoint: ", endPoint);
+    console.log("UNSUCCESSFUL Request: ", postData);
+    console.log("UNSUCCESSFUL Status: ", response.status);
+    console.log("UNSUCCESSFUL Response: ", await response.text());
     throw new Error("Expected 200");
   }
 
@@ -41,8 +43,11 @@ const callHappyPostJsonApiWithAuth = async (authToken, endPoint, postData) => {
   const response = await callPostJsonApi(endPoint, postData, authToken);
 
   if (response.status !== 200) {
-    console.log(response.status);
-    console.log(await response.text());
+    console.log("UNSUCCESSFUL Endpoint: ", endPoint);
+    console.log("UNSUCCESSFUL authToken: ", authToken);
+    console.log("UNSUCCESSFUL Request: ", postData);
+    console.log("UNSUCCESSFUL Status: ", response.status);
+    console.log("UNSUCCESSFUL Response: ", await response.text());
     throw new Error("Expected 200");
   }
 

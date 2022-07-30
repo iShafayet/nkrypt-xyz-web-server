@@ -1,6 +1,7 @@
 import Joi from "joi";
 
 import {
+  callPostJsonApi,
   callHappyPostJsonApi,
   callHappyPostJsonApiWithAuth,
   validateObject,
@@ -52,10 +53,9 @@ describe("User Suite", () => {
   });
 
   test("(user/assert): Ensure apiKey is invalidated", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
-      vars.apiKey,
-      "/user/assert"
-    );
+    const response = await callPostJsonApi("/user/assert", {}, vars.apiKey);
+    expect(response.status).toEqual(401);
+    let data = await response.json();
 
     await validateObject(data, {
       hasError: validators.hasErrorTruthy,
@@ -154,10 +154,9 @@ describe("User Suite", () => {
   });
 
   test("(user/assert): Ensure apiKey is invalidated when password is updated", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
-      vars.apiKey,
-      "/user/assert"
-    );
+    const response = await callPostJsonApi("/user/assert", {}, vars.apiKey);
+    expect(response.status).toEqual(401);
+    let data = await response.json();
 
     await validateObject(data, {
       hasError: validators.hasErrorTruthy,

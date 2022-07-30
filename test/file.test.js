@@ -55,7 +55,7 @@ let vars = {
 
 describe("File Suite", () => {
   test("(user/login): Preparational", async () => {
-    const data = await callHappyPostJsonApi("/user/login", {
+    const data = await callHappyPostJsonApi(200, "/user/login", {
       userName: DEFAULT_USER_NAME,
       password: DEFAULT_PASSWORD,
     });
@@ -66,7 +66,7 @@ describe("File Suite", () => {
   });
 
   test("(bucket/create): Affirmative", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/bucket/create",
       {
@@ -88,7 +88,7 @@ describe("File Suite", () => {
   });
 
   test("(directory/create): BuckXRoot/DirA", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/create",
       {
@@ -109,7 +109,7 @@ describe("File Suite", () => {
   });
 
   test("(directory/create): BuckXRoot/DirB", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/create",
       {
@@ -130,7 +130,7 @@ describe("File Suite", () => {
   });
 
   test("(directory/get): BuckXRoot/*", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/get",
       {
@@ -150,7 +150,7 @@ describe("File Suite", () => {
   });
 
   test("(file/create): BuckXRoot/DirA/FileP", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/file/create",
       {
@@ -171,7 +171,7 @@ describe("File Suite", () => {
   });
 
   test("(file/get): BuckXRoot/DirA/FileP", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/file/get", {
+    const data = await callHappyPostJsonApiWithAuth(200, vars.apiKey, "/file/get", {
       bucketId: vars.bucketId,
       fileId: vars.idOfFileP,
     });
@@ -183,7 +183,7 @@ describe("File Suite", () => {
   });
 
   test("(file/rename)  BuckXRoot/DirA/FileP => BuckXRoot/DirA/FilePAlt", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/file/rename",
       {
@@ -199,7 +199,7 @@ describe("File Suite", () => {
   });
 
   test("(file/get): BuckXRoot/DirA/FilePAlt Ensure rename worked", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/file/get", {
+    const data = await callHappyPostJsonApiWithAuth(200, vars.apiKey, "/file/get", {
       bucketId: vars.bucketId,
       fileId: vars.idOfFileP,
     });
@@ -218,7 +218,7 @@ describe("File Suite", () => {
       TEST_INITIAL_METADATA,
       TEST_NEW_METADATA_PART
     );
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/file/set-metadata",
       {
@@ -234,7 +234,7 @@ describe("File Suite", () => {
   });
 
   test("(file/set-metadata) BuckXRoot/DirA/FilePAlt", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/file/set-encrypted-metadata",
       {
@@ -250,7 +250,7 @@ describe("File Suite", () => {
   });
 
   test("(file/get): BuckXRoot/DirA/FilePAlt Ensure setting metaData and encryptedMetaData worked", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/file/get", {
+    const data = await callHappyPostJsonApiWithAuth(200, vars.apiKey, "/file/get", {
       bucketId: vars.bucketId,
       fileId: vars.idOfFileP,
     });
@@ -270,7 +270,7 @@ describe("File Suite", () => {
   });
 
   test("(file/move) BuckXRoot/DirA/FilePAlt => BuckXRoot/DirB/FilePAlt", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/file/move", {
+    const data = await callHappyPostJsonApiWithAuth(200, vars.apiKey, "/file/move", {
       bucketId: vars.bucketId,
       fileId: vars.idOfFileP,
       newParentDirectoryId: vars.idOfDirectoryB,
@@ -283,7 +283,7 @@ describe("File Suite", () => {
   });
 
   test("(directory/get): BuckXRoot/DirB/* Ensure move worked", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/get",
       {
@@ -308,7 +308,7 @@ describe("File Suite", () => {
   });
 
   test("(file/delete) BuckXRoot/DirB/FilePAlt", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/file/delete",
       {
@@ -323,7 +323,7 @@ describe("File Suite", () => {
   });
 
   test("(directory/get): BuckXRoot/DirB/* Ensure file delete worked", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/get",
       {
@@ -344,7 +344,7 @@ describe("File Suite", () => {
   });
 
   test("(file/get): BuckXRoot/DirB/FilePAlt Ensure file was deleted", async () => {
-    const data = await callHappyPostJsonApiWithAuth(vars.apiKey, "/file/get", {
+    const data = await callHappyPostJsonApiWithAuth(400, vars.apiKey, "/file/get", {
       bucketId: vars.bucketId,
       fileId: vars.idOfFileP,
     });

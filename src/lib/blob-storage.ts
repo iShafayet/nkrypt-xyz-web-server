@@ -1,6 +1,6 @@
 import { createReadStream, createWriteStream, promises } from "fs";
 import { ensureDir, resolvePath } from "../utility/file-utils.js";
-import { Config } from "./config-loader.js";
+import { Config } from "./config.js";
 
 class BlobStorage {
   config: Config;

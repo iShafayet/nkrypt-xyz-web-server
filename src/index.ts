@@ -3,16 +3,13 @@ import { blobReadApiHandler, blobReadApiPath } from "./api/blob/read.js";
 import { blobWriteApiHandler, blobWriteApiPath } from "./api/blob/write.js";
 import constants from "./constant/common-constants.js";
 import { BlobStorage } from "./lib/blob-storage.js";
-import { ConfigLoader } from "./lib/config-loader.js";
+import { Config } from "./lib/config.js";
 import { DatabaseEngine } from "./lib/database-engine.js";
 import { Logger } from "./lib/logger.js";
 import { Server } from "./lib/server.js";
 import { prepareServiceDispatch } from "./lib/service-dispatch.js";
 import { apiNameList } from "./routes.js";
 import { appRootDirPath, toFileUrl } from "./utility/file-utils.js";
-import { wipeOutLocalData } from "./utility/wipe-out.js";
-
-wipeOutLocalData();
 
 // We initiate logger and inject it into global so that it is usable by everyone.
 let logger = (global.logger = new Logger({
@@ -27,15 +24,15 @@ let logger = (global.logger = new Logger({
 }));
 await logger.init();
 
-let config = ConfigLoader.loadConfig();
-
-class Program {
+export class NkWebServerProgram {
   db!: DatabaseEngine;
   server!: Server;
   blobStorage!: BlobStorage;
+  config!: Config;
 
-  async start() {
+  async start(config: Config) {
     try {
+      this.config = config;
       await this._initialize();
     } catch (ex) {
       logger.log("Error propagated to root level. Throwing again.");
@@ -44,17 +41,17 @@ class Program {
   }
 
   async _initialize() {
-    this.db = new DatabaseEngine(config);
+    this.db = new DatabaseEngine(this.config);
     await this.db.init();
 
-    this.blobStorage = new BlobStorage(config);
+    this.blobStorage = new BlobStorage(this.config);
     await this.blobStorage.init();
 
     await prepareServiceDispatch(this.db, this.blobStorage);
 
     await dispatch.adminService.createDefaultAdminAccountIfNotPresent();
 
-    this.server = new Server(config, this.db);
+    this.server = new Server(this.config, this.db);
     await this.server.prepare();
     await this._registerEndpoints();
     await this.server.start();
@@ -93,4 +90,3 @@ process.on("uncaughtException", function (err) {
   console.error(err);
 });
 
-new Program().start();

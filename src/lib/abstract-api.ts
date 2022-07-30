@@ -11,7 +11,7 @@ import {
   detectHttpStatusCode,
   stringifyErrorObject,
 } from "../utility/error-utils.js";
-import { Config } from "./config-loader.js";
+import { Config } from "./config.js";
 import { Server } from "./server.js";
 
 const joiValidationOptions = {

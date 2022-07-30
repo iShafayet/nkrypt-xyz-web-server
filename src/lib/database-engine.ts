@@ -2,7 +2,7 @@ import Nedb from "@seald-io/nedb";
 import collections from "../constant/collections.js";
 import constants from "../constant/common-constants.js";
 import { ensureDir, resolvePath } from "../utility/file-utils.js";
-import { Config } from "./config-loader.js";
+import { Config } from "./config.js";
 
 class DatabaseEngine {
   public config: Config;

@@ -6,12 +6,13 @@
   "license": "MIT",
   "private": true,
   "type": "module",
-  "main": "src/index.js",
+  "main": "src/start.ts",
   "scripts": {
     "build": "npx tsc",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/start-dev.js\"",
+    "dev-amnesiac": "concurrently \"npx tsc --watch\" \"nodemon -q dist/start-dev.js --amnesiac\"",
     "lint": "eslint .",
-    "start": "node dist/index.js",
+    "start": "node dist/start.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {

@@ -9,7 +9,7 @@ import { UserService } from "./service/user-service";
 import { AuthService } from "./service/auth-service";
 import { BlobService } from "./service/blob-service";
 import { DatabaseEngine } from "./lib/database-engine.js";
-import { Config } from "./lib/config-loader.js";
+import { Config } from "./lib/config.js";
 
 declare global {
   var logger: Logger;

@@ -9,7 +9,7 @@ import { DeveloperError } from "../utility/coded-error.js";
 import { generateUuid } from "../utility/string-utils.js";
 import { joinUrlParts } from "../utility/url-utils.js";
 import { IAbstractApi } from "./abstract-api.js";
-import { Config } from "./config-loader.js";
+import { Config } from "./config.js";
 import { DatabaseEngine } from "./database-engine.js";
 
 const jsonParser = bodyParser.json({

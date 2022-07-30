@@ -25,30 +25,30 @@ const callPostJsonApi = async (endPoint, postData, authToken = null) => {
   return response;
 };
 
-const callHappyPostJsonApi = async (endPoint, postData) => {
+const callHappyPostJsonApi = async (expectedStatus, endPoint, postData) => {
   const response = await callPostJsonApi(endPoint, postData);
 
-  if (response.status !== 200) {
+  if (response.status !== expectedStatus) {
     console.log("UNSUCCESSFUL Endpoint: ", endPoint);
     console.log("UNSUCCESSFUL Request: ", postData);
     console.log("UNSUCCESSFUL Status: ", response.status);
     console.log("UNSUCCESSFUL Response: ", await response.text());
-    throw new Error("Expected 200");
+    throw new Error(`Expected ${expectedStatus} got ${response.status}`);
   }
 
   return await response.json();
 };
 
-const callHappyPostJsonApiWithAuth = async (authToken, endPoint, postData) => {
+const callHappyPostJsonApiWithAuth = async (expectedStatus, authToken, endPoint, postData) => {
   const response = await callPostJsonApi(endPoint, postData, authToken);
 
-  if (response.status !== 200) {
+  if (response.status !== expectedStatus) {
     console.log("UNSUCCESSFUL Endpoint: ", endPoint);
     console.log("UNSUCCESSFUL authToken: ", authToken);
     console.log("UNSUCCESSFUL Request: ", postData);
     console.log("UNSUCCESSFUL Status: ", response.status);
     console.log("UNSUCCESSFUL Response: ", await response.text());
-    throw new Error("Expected 200");
+    throw new Error(`Expected ${expectedStatus} got ${response.status}`);
   }
 
   return await response.json();

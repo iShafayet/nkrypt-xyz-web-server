@@ -28,7 +28,7 @@ let vars = {
 
 describe("User Suite", () => {
   test("(user/login): Affirmative", async () => {
-    const data = await callHappyPostJsonApi("/user/login", {
+    const data = await callHappyPostJsonApi(200, "/user/login", {
       userName: DEFAULT_USER_NAME,
       password: DEFAULT_PASSWORD,
     });
@@ -39,7 +39,7 @@ describe("User Suite", () => {
   });
 
   test("(user/logout): Affirmative", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/user/logout",
       {
@@ -64,7 +64,7 @@ describe("User Suite", () => {
   });
 
   test("(user/login): Again", async () => {
-    const data = await callHappyPostJsonApi("/user/login", {
+    const data = await callHappyPostJsonApi(200, "/user/login", {
       userName: DEFAULT_USER_NAME,
       password: DEFAULT_PASSWORD,
     });
@@ -75,7 +75,7 @@ describe("User Suite", () => {
   });
 
   test("(user/list): Affirmative", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/user/list",
       {}
@@ -93,7 +93,7 @@ describe("User Suite", () => {
   });
 
   test("(user/update-profile): Affirmative", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/user/update-profile",
       {
@@ -107,7 +107,7 @@ describe("User Suite", () => {
   });
 
   test("(user/list): Confirm profile was updated", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/user/list",
       {}
@@ -125,7 +125,7 @@ describe("User Suite", () => {
   });
 
   test("(user/update-profile): Revert name change", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/user/update-profile",
       {
@@ -139,7 +139,7 @@ describe("User Suite", () => {
   });
 
   test("(user/update-password): Affirmative", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/user/update-password",
       {

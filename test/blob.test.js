@@ -42,7 +42,7 @@ let vars = {
 
 describe("Blob Suite", () => {
   test("(user/login): Preparational", async () => {
-    const data = await callHappyPostJsonApi("/user/login", {
+    const data = await callHappyPostJsonApi(200, "/user/login", {
       userName: DEFAULT_USER_NAME,
       password: DEFAULT_PASSWORD,
     });
@@ -53,7 +53,7 @@ describe("Blob Suite", () => {
   });
 
   test("(bucket/create): Preparational", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/bucket/create",
       {
@@ -75,7 +75,7 @@ describe("Blob Suite", () => {
   });
 
   test("(file/create): BuckXRoot/FileP", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/file/create",
       {

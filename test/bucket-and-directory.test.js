@@ -47,7 +47,7 @@ let vars = {
 
 describe("Bucket and Directory Suite", () => {
   test("(user/login): Preparational", async () => {
-    const data = await callHappyPostJsonApi("/user/login", {
+    const data = await callHappyPostJsonApi(200, "/user/login", {
       userName: DEFAULT_USER_NAME,
       password: DEFAULT_PASSWORD,
     });
@@ -58,7 +58,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(admin/iam/add-user): Create new user", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/admin/iam/add-user",
       {
@@ -77,7 +77,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(user/login): Preparational", async () => {
-    const data = await callHappyPostJsonApi("/user/login", {
+    const data = await callHappyPostJsonApi(200, "/user/login", {
       userName: TEST_USER_USER_NAME,
       password: TEST_USER_PASSWORD,
     });
@@ -88,7 +88,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(bucket/create): Affirmative", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/bucket/create",
       {
@@ -107,7 +107,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(bucket/list): Affirmative", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/bucket/list",
       {}
@@ -128,7 +128,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/create): Bucket1Root/testDirA", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/create",
       {
@@ -149,7 +149,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/create): Bucket1Root/testDirB", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/create",
       {
@@ -170,7 +170,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/create) Bucket1Root/testDirA/testDirAA", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/create",
       {
@@ -189,7 +189,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/get): Bucket1Root/*", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/get",
       {
@@ -209,7 +209,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/get): Bucket1Root/testDirA/*", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/get",
       {
@@ -229,7 +229,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/get): Bucket1Root/testDirA/testDirAA/*", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/get",
       {
@@ -249,7 +249,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/rename) Bucket1Root/testDirB => Bucket1Root/testDirBAlt", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/rename",
       {
@@ -265,7 +265,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/get): Bucket1Root/testDirB/* Ensure rename worked", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/get",
       {
@@ -290,7 +290,7 @@ describe("Bucket and Directory Suite", () => {
       TEST_INITIAL_METADATA,
       TEST_NEW_METADATA_PART
     );
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/set-metadata",
       {
@@ -306,7 +306,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/set-metadata) Bucket1Root/testDirBAlt", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/set-encrypted-metadata",
       {
@@ -322,7 +322,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/get): Bucket1Root/testDirBAlt/* Ensure metaData and encryptedMetaData worked", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/get",
       {
@@ -350,7 +350,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/move) Bucket1Root/testDirBAlt => Bucket1Root/testDirA/testDirBAlt", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/move",
       {
@@ -367,7 +367,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/get): Bucket1Root/testDirA/* Ensure move worked", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/get",
       {
@@ -393,7 +393,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/delete) Bucket1Root/testDirA/testDirBAlt", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/delete",
       {
@@ -408,7 +408,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/get): Bucket1Root/testDirA/* Ensure delete worked", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/directory/get",
       {
@@ -434,7 +434,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(bucket/rename): Affirmative", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/bucket/rename",
       {
@@ -449,7 +449,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(bucket/list): Ensure rename worked", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/bucket/list",
       {}
@@ -473,7 +473,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(bucket/set-metadata): Affirmative", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/bucket/set-metadata",
       {
@@ -490,7 +490,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(bucket/list): Ensure setting metaData worked", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/bucket/list",
       {}
@@ -508,7 +508,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(bucket/set-authorization): Affirmative", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/bucket/set-authorization",
       {
@@ -526,7 +526,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(directory/get): Bucket1Root/* as TestUser to ensure bucket authorization worked", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.testUserApiKey,
       "/directory/get",
       {
@@ -546,7 +546,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(bucket/destroy): Affirmative", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/bucket/destroy",
       {
@@ -561,7 +561,7 @@ describe("Bucket and Directory Suite", () => {
   });
 
   test("(bucket/list): Ensure destroy worked", async () => {
-    const data = await callHappyPostJsonApiWithAuth(
+    const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/bucket/list",
       {}

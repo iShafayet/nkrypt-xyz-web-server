@@ -14,20 +14,18 @@ export const stringifyErrorObject = (
   }
 
   let code = "GENERIC_SERVER_ERROR";
-  if ("code" in errorObject) {
+  let message =
+    "We have encountered an unexpected server error. " +
+    "It has been logged and administrators will be notified.";
+
+  if (errorObject instanceof CodedError){
     code = (errorObject as CodedError).code;
+    message = errorObject.message;
   }
 
   if ("isJoi" in errorObject) {
     code = "VALIDATION_ERROR";
     details = (errorObject as Generic).details;
-  }
-
-  let message =
-    "We have encountered an unexpected server error. " +
-    "It has been logged and administrators will be notified.";
-
-  if ("message" in errorObject) {
     message = errorObject.message;
   }
 

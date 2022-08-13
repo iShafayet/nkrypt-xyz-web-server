@@ -45,7 +45,7 @@ let vars = {
   testUserApiKey: null,
 };
 
-describe("Bucket and Directory Suite", () => {
+describe.skip("Bucket and Directory Suite", () => {
   test("(user/login): Preparational", async () => {
     const data = await callHappyPostJsonApi(200, "/user/login", {
       userName: DEFAULT_USER_NAME,

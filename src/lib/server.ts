@@ -49,7 +49,7 @@ class Server {
       let description = `HTTP ${req.method} ${req.url} ${
         (req as Generic).uuid
       }`;
-      logger.debug(description);
+      logger.log(description);
       return next();
     });
 
@@ -77,7 +77,7 @@ class Server {
     // Finally reject anything not supported
     this._expressApp.all("*", (req, res) => {
       let description = `REJECT ${req.method} ${req.url}`;
-      logger.debug(description);
+      logger.log(description);
       return res.status(400).send("Not supported");
     });
 

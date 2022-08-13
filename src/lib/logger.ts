@@ -33,7 +33,7 @@ class Logger {
   }
 
   debug(...args: any) {
-    if (!this.switches.log) return;
+    if (!this.switches.debug) return;
     console.log.apply(console, ["DEBUG\t", ...args]);
   }
 

@@ -8,6 +8,7 @@ import {
   requireBucketAuthorizationByBucketId,
 } from "../../utility/access-control-utils.js";
 import { CodedError, UserError } from "../../utility/coded-error.js";
+import { prepareAndSendCustomApiErrorResponse } from "../../utility/error-response-utils.js";
 import {
   detectHttpStatusCode,
   stringifyErrorObject,
@@ -78,17 +79,6 @@ export const blobWriteApiHandler = async (
       throw err;
     }
   } catch (ex) {
-    if (
-      typeof ex === "object" &&
-      ex &&
-      ("isJoi" in ex || ex instanceof Error)
-    ) {
-      let [serializedError, errorName] = stringifyErrorObject(<Error>ex);
-      let statusCode = detectHttpStatusCode(serializedError, errorName);
-      res.status(statusCode).send(serializedError);
-    } else {
-      res.status(500).end("An unexpected error occurred.");
-      console.error(ex);
-    }
+    prepareAndSendCustomApiErrorResponse(ex, req, res);
   }
 };

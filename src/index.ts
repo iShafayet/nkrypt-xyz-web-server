@@ -14,8 +14,8 @@ import { appRootDirPath, toFileUrl } from "./utility/file-utils.js";
 // We initiate logger and inject it into global so that it is usable by everyone.
 let logger = (global.logger = new Logger({
   switches: {
-    debug: false,
-    log: false,
+    debug: true,
+    log: true,
     important: true,
     warning: true,
     error: true,
@@ -35,7 +35,7 @@ export class NkWebServerProgram {
       this.config = config;
       await this._initialize();
     } catch (ex) {
-      logger.log("Error propagated to root level. Throwing again.");
+      logger.log("Error was propagated to root level. Throwing again.");
       throw ex;
     }
   }

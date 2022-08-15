@@ -1,3 +1,7 @@
+const STYLE = {
+  FgYellow: "\x1b[33m"
+};
+
 class Logger {
   private switches = {
     debug: true,
@@ -34,7 +38,7 @@ class Logger {
 
   debug(...args: any) {
     if (!this.switches.debug) return;
-    console.log.apply(console, ["DEBUG\t", ...args]);
+    console.log.apply(console, [STYLE.FgYellow, "DEBUG\t", ...args]);
   }
 
   log(...args: any) {

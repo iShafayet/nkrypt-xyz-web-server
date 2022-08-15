@@ -5,9 +5,9 @@ import { Generic } from "./global.js";
 export const validators = {
   id: Joi.string().length(16).required(),
 
-  bucketName: Joi.string().min(4).max(32).required(),
-  directoryName: Joi.string().min(4).max(32).required(),
-  fileName: Joi.string().min(4).max(32).required(),
+  bucketName: Joi.string().min(1).max(64).required(),
+  directoryName: Joi.string().min(1).max(256).required(),
+  fileName: Joi.string().min(1).max(256).required(),
 
   displayName: Joi.string().min(4).max(128).required(),
   userName: Joi.string().min(4).max(32).required(),

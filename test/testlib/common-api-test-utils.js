@@ -65,10 +65,11 @@ const validateObject = async (data, objectKeysMap) => {
   );
 };
 
-const callRawPostApi = async (endPoint, authToken, body) => {
+const callRawPostApi = async (endPoint, authToken, body, additionalHeaders = {}) => {
   const basePath = "http://localhost:9041/api";
   const url = basePath + endPoint;
   let headers = { "Content-Type": "text/plain" };
+  Object.assign(headers, additionalHeaders);
   if (authToken) {
     headers["Authorization"] = `Bearer ${authToken}`;
   }

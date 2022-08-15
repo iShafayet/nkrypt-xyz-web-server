@@ -3,6 +3,7 @@ import Joi, { func } from "joi";
 import stream from "stream";
 import { promisify } from "util";
 import { BucketPermission } from "../../constant/bucket-permission.js";
+import constants from "../../constant/common-constants.js";
 import {
   ensureFileBelongsToBucket,
   requireBucketAuthorizationByBucketId,
@@ -51,6 +52,10 @@ export const blobReadApiHandler = async (
     if (!blob) {
       throw new UserError("BLOB_NOT_FOUND", "Desired blob could not be found");
     }
+
+    res.setHeader("Access-Control-Expose-Headers",constants.webServer.BLOB_API_CRYPTO_META_HEADER_NAME);
+    res.setHeader("Content-Type", "application/octet-stream");
+    res.setHeader(constants.webServer.BLOB_API_CRYPTO_META_HEADER_NAME, blob.cryptoMetaHeaderContent);
 
     let stream = dispatch.blobService.createReadableStreamFromBlobId(blob._id);
     await pipeline(stream, res);

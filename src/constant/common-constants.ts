@@ -7,6 +7,7 @@ const constants = {
     INTENTIONAL_REQUEST_DELAY_MS: 100,
     INTENTIONAL_BLOB_UPLOAD_DELAY_MS: 400,
     FALLBACK_PORT: 8080,
+    BLOB_API_CRYPTO_META_HEADER_NAME: "nk-crypto-meta"
   },
   database: {
     CORE_FILE_NAME: "core.db",

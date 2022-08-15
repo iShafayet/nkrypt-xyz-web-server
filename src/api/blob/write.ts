@@ -3,11 +3,12 @@ import Joi, { func } from "joi";
 import stream from "stream";
 import { promisify } from "util";
 import { BucketPermission } from "../../constant/bucket-permission.js";
+import constants from "../../constant/common-constants.js";
 import {
   ensureFileBelongsToBucket,
   requireBucketAuthorizationByBucketId,
 } from "../../utility/access-control-utils.js";
-import { CodedError, UserError } from "../../utility/coded-error.js";
+import { CodedError, DeveloperError, UserError } from "../../utility/coded-error.js";
 import { prepareAndSendCustomApiErrorResponse } from "../../utility/error-response-utils.js";
 import {
   detectHttpStatusCode,
@@ -45,8 +46,14 @@ export const blobWriteApiHandler = async (
       BucketPermission.MANAGE_CONTENT
     );
 
+    let cryptoMetaHeaderContent = req.headers[constants.webServer.BLOB_API_CRYPTO_META_HEADER_NAME];
+
+    if (!cryptoMetaHeaderContent || (typeof cryptoMetaHeaderContent === "object" && Array.isArray(cryptoMetaHeaderContent))) {
+      throw new DeveloperError("CRYPTO_META_HEADER_INVALID", `Provided ${constants.webServer.BLOB_API_CRYPTO_META_HEADER_NAME} header is invalid`);
+    }
+
     let { blob, stream: fileStream } =
-      await dispatch.blobService.createInProgressBlob(bucketId, fileId);
+      await dispatch.blobService.createInProgressBlob(bucketId, fileId, cryptoMetaHeaderContent);
 
     try {
       await pipeline(

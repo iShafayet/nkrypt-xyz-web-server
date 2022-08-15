@@ -46,9 +46,8 @@ class Server {
       (req as Generic).uuid = uuid;
 
       // Log including UUID
-      let description = `HTTP ${req.method} ${req.url} ${
-        (req as Generic).uuid
-      }`;
+      let description = `HTTP ${req.method} ${req.url} ${(req as Generic).uuid
+        }`;
       logger.log(description);
       return next();
     });
@@ -58,7 +57,7 @@ class Server {
       res.header("Access-Control-Allow-Origin", "*");
       res.header(
         "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+        `Origin, X-Requested-With, Content-Type, Accept, Authorization, ${constants.webServer.BLOB_API_CRYPTO_META_HEADER_NAME}`
       );
       return next();
     });

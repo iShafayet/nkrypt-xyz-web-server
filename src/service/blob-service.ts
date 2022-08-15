@@ -20,7 +20,7 @@ export class BlobService {
     );
   }
 
-  async createInProgressBlob(bucketId: string, fileId: string) {
+  async createInProgressBlob(bucketId: string, fileId: string, cryptoMetaHeaderContent: string) {
     let blob: Generic = await this.db.insertAsync({
       collection: collections.BLOB,
       bucketId,
@@ -29,6 +29,7 @@ export class BlobService {
       finishedAt: null,
       status: "started",
       createdAt: Date.now(),
+      cryptoMetaHeaderContent
     });
 
     let stream = this.blobStorage.createWritableStream(blob._id);

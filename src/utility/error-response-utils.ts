@@ -28,7 +28,7 @@ export const prepareAndSendCustomApiErrorResponse = (
       "\n" + JSON.stringify(serializedError, null, 2)
     );
     console.log("Sending sadness", statusCode, serializedError)
-    res.status(statusCode).send(serializedError);
+    res.status(statusCode).send({ hasError: true, error: serializedError });
   } else {
     res.status(500).end("An unexpected error occurred.");
     console.error(ex);

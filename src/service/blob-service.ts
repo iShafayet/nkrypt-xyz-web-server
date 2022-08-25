@@ -1,4 +1,5 @@
 import Nedb from "@seald-io/nedb";
+import { ReadStream } from "fs";
 import collections from "../constant/collections.js";
 import { Generic } from "../global.js";
 import { BlobStorage } from "../lib/blob-storage.js";
@@ -84,8 +85,10 @@ export class BlobService {
     return doc;
   }
 
-  createReadableStreamFromBlobId(blobId: string) {
-    return this.blobStorage.createReadableStream(blobId);
+  async createReadableStreamFromBlobId(blobId: string): Promise<{ readStream: ReadStream, sizeOfStream: number }> {
+    let sizeOfStream = await this.blobStorage.queryBlobSize(blobId);
+    let readStream = this.blobStorage.createReadableStream(blobId);
+    return { sizeOfStream, readStream }
   }
 
   async removeAllOtherBlobs(bucketId: string, fileId: string, blobId: string) {

@@ -2,6 +2,7 @@ import bodyParser from "body-parser";
 import express from "express";
 import * as ExpressCore from "express-serve-static-core";
 import http from "http";
+import pathlib from "path";
 import constants from "../constant/common-constants.js";
 import { ErrorCode } from "../constant/error-codes.js";
 import { Generic } from "../global.js";
@@ -11,6 +12,7 @@ import { joinUrlParts } from "../utility/url-utils.js";
 import { IAbstractApi } from "./abstract-api.js";
 import { Config } from "./config.js";
 import { DatabaseEngine } from "./database-engine.js";
+import { registerStaticRequestHandlers } from "./static-content.js";
 
 const jsonParser = bodyParser.json({
   limit: "100kb",
@@ -73,6 +75,9 @@ class Server {
   }
 
   _initializeWebServer() {
+    // static content
+    registerStaticRequestHandlers(this._expressApp);
+
     // Finally reject anything not supported
     this._expressApp.all("*", (req, res) => {
       let description = `REJECT ${req.method} ${req.url}`;

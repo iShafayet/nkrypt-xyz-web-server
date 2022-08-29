@@ -4,6 +4,7 @@ import collections from "../constant/collections.js";
 import { Generic } from "../global.js";
 import { BlobStorage } from "../lib/blob-storage.js";
 import { DatabaseEngine } from "../lib/database-engine.js";
+import { UserError } from "../utility/coded-error.js";
 import { createSizeLimiterPassthroughStream } from "../utility/stream-utils.js";
 
 export class BlobService {
@@ -15,9 +16,9 @@ export class BlobService {
     this.blobStorage = blobStorage;
   }
 
-  createStandardSizeLimiter() {
+  createStandardSizeLimiter(startingOffset: number = 0, byteCountWrapper: Generic = { byteCount: 0 }) {
     return createSizeLimiterPassthroughStream(
-      dispatch.config.blobStorage.maxFileSizeBytes
+      dispatch.config.blobStorage.maxFileSizeBytes - startingOffset, byteCountWrapper
     );
   }
 
@@ -35,6 +36,22 @@ export class BlobService {
 
     let stream = this.blobStorage.createWritableStream(blob._id);
 
+    return { blob, stream };
+  }
+
+  async getInProgressBlob(bucketId: string, fileId: string, blobId: string, startOffset: number) {
+    let blob = await this.db
+      .findOneAsync({
+        collection: collections.BLOB,
+        bucketId,
+        fileId,
+        _id: blobId,
+        status: "started",
+      });
+    if (!blob) {
+      throw new UserError("BLOB_INVALID", "No in-progress blob found with the given ID");
+    }
+    let stream = this.blobStorage.createWritableStream(blobId, startOffset);
     return { blob, stream };
   }
 

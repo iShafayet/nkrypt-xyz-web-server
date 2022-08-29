@@ -198,5 +198,74 @@ describe.only("Blob Suite", () => {
 
   }, TIMEOUT_FOR_LONG_RUNNING_TASKS);
 
+  test("(blob/write) Quantized Stream Into BuckXRoot/FileP", async () => {
+    const dumpData = crypto.randomBytes(TEST_BINARY_FILE_1_SIZE);
+    writeFileSync(TEST_BINARY_FILE_1_LOCATION, dumpData);
+
+    const makeEndpoint = (blobId, offset, shouldEnd) => {
+      return `/blob/write-quantized/${vars.bucketId}/${vars.idOfFileP}/${blobId}/${offset}/${shouldEnd}`;
+    }
+
+    let blobId = null;
+
+    // 50000000  50_000_000
+    const chunk1Start = 0;
+    const chunk2Start = 20_000_000;
+    const chunk3Start = 40_000_000;
+
+    {
+      let stream = createReadStream(TEST_BINARY_FILE_1_LOCATION, { start: chunk1Start, end: chunk2Start - 1 });
+      let endPoint = makeEndpoint(blobId, chunk1Start, false);
+      let data = await (
+        await callRawPostApi(endPoint, vars.apiKey, stream, TEST_FAKE_CRYPTO_META_HEADER)
+      ).json();
+      await validateObject(data, {
+        hasError: validators.hasErrorFalsy,
+        blobId: validators.id,
+        bytesTransfered: Joi.number().required()
+      });
+      expect(data.bytesTransfered).toBe(20_000_000);
+      blobId = data.blobId;
+      vars.testLocalRandomFile1Path = pathlib.join(TEST_DATA_LOCATION, "/blob/", data.blobId);
+    }
+
+    {
+      let stream = createReadStream(TEST_BINARY_FILE_1_LOCATION, { start: chunk2Start, end: chunk3Start - 1 });
+      let endPoint = makeEndpoint(blobId, chunk2Start, false);
+      let data = await (
+        await callRawPostApi(endPoint, vars.apiKey, stream, TEST_FAKE_CRYPTO_META_HEADER)
+      ).json();
+      await validateObject(data, {
+        hasError: validators.hasErrorFalsy,
+        blobId: validators.id,
+        bytesTransfered: Joi.number().required()
+      });
+      expect(data.bytesTransfered).toBe(20_000_000);
+      blobId = data.blobId;
+      vars.testLocalRandomFile1Path = pathlib.join(TEST_DATA_LOCATION, "/blob/", data.blobId);
+    }
+
+    {
+      let stream = createReadStream(TEST_BINARY_FILE_1_LOCATION, { start: chunk3Start });
+      let endPoint = makeEndpoint(blobId, chunk3Start, true);
+      let data = await (
+        await callRawPostApi(endPoint, vars.apiKey, stream, TEST_FAKE_CRYPTO_META_HEADER)
+      ).json();
+      await validateObject(data, {
+        hasError: validators.hasErrorFalsy,
+        blobId: validators.id,
+        bytesTransfered: Joi.number().required()
+      });
+      expect(data.bytesTransfered).toBe(10_000_000);
+      blobId = data.blobId;
+      vars.testLocalRandomFile1Path = pathlib.join(TEST_DATA_LOCATION, "/blob/", data.blobId);
+    }
+
+    // compare buffers to make sure they are equal.
+    let f1 = readFileSync(TEST_BINARY_FILE_1_LOCATION);
+    let f2 = readFileSync(vars.testLocalRandomFile1Path);
+    expect(Buffer.compare(f1, f2)).toBe(0);
+  });
+
   // eof
 });

@@ -1,7 +1,7 @@
 import { createReadStream, createWriteStream, promises } from "fs";
 import { ensureDir, resolvePath } from "../utility/file-utils.js";
 import { Config } from "./config.js";
-import { stat } from "fs/promises";
+import fsPromises from "fs/promises";
 
 class BlobStorage {
   config: Config;
@@ -16,15 +16,15 @@ class BlobStorage {
     ensureDir(this._dir);
   }
 
-  createWritableStream(blobId: string) {
+  createWritableStream(blobId: string, start: number = 0) {
     let path = resolvePath(this._dir, blobId);
-    let stream = createWriteStream(path);
+    let stream = createWriteStream(path, { start, flags: 'a+' });
     return stream;
   }
 
   async queryBlobSize(blobId: string) {
     let path = resolvePath(this._dir, blobId);
-    let stats = (await stat(path))
+    let stats = (await fsPromises.stat(path))
     return stats.size;
   }
 

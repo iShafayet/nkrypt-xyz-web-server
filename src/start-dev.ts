@@ -45,7 +45,7 @@ let config: Config = {
   },
   blobStorage: {
     dir: "./nkrypt-xyz-local-data/blob/",
-    maxFileSizeBytes: 1024 * 1024 * 1024,
+    maxFileSizeBytes: 10 * 1024 * 1024 * 1024,
   },
 };
 

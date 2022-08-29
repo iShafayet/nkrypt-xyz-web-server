@@ -1,13 +1,15 @@
 import stream, { Transform } from "stream";
+import { Generic } from "../global.js";
+import { CodedError } from "./coded-error.js";
 
-export const createSizeLimiterPassthroughStream = (sizeLimit: number) => {
-  let count = 0;
+export const createSizeLimiterPassthroughStream = (sizeLimit: number, byteCountWrapper: Generic) => {
+  byteCountWrapper.byteCount = 0;
   const sizeLimiter = new stream.Transform({
     transform: function transformer(chunk, encoding, callback) {
-      count += chunk.length;
+      byteCountWrapper.byteCount += chunk.length;
 
-      if (count > sizeLimit) {
-        callback(new Error("Sigh"));
+      if (byteCountWrapper.byteCount > sizeLimit) {
+        callback(new CodedError("BLOB_SIZE_EXCEEDS_LIMIT", "Rejected attempt to write file larger than allowed"));
         return;
       }
 

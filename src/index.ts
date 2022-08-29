@@ -1,6 +1,7 @@
 import pathlib from "path";
 import { blobReadApiHandler, blobReadApiPath } from "./api/blob/read.js";
 import { blobWriteApiHandler, blobWriteApiPath } from "./api/blob/write.js";
+import { blobWriteQuantizedApiHandler, blobWriteQuantizedApiPath } from "./api/blob/write-quantized.js";
 import constants from "./constant/common-constants.js";
 import { BlobStorage } from "./lib/blob-storage.js";
 import { Config } from "./lib/config.js";
@@ -79,6 +80,11 @@ export class NkWebServerProgram {
     await this.server.registerCustomHandler(
       blobReadApiPath,
       blobReadApiHandler
+    );
+
+    await this.server.registerCustomHandler(
+      blobWriteQuantizedApiPath,
+      blobWriteQuantizedApiHandler
     );
   }
 }

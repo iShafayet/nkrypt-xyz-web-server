@@ -88,7 +88,7 @@ describe("User Suite", () => {
 
     expect(data.userList).toContainEqual({
       userName: "admin",
-      displayName: "Administrator",
+      displayName: "Default Admin",
     });
   });
 
@@ -129,7 +129,7 @@ describe("User Suite", () => {
       vars.apiKey,
       "/user/update-profile",
       {
-        displayName: "Administrator",
+        displayName: "Default Admin",
       }
     );
 

@@ -8,6 +8,7 @@ import { UserService } from "../service/user-service.js";
 import { AuthService } from "../service/auth-service.js";
 import { BlobService } from "../service/blob-service.js";
 import { BlobStorage } from "./blob-storage.js";
+import { MetricsService } from "../service/metrics-service.js";
 
 export const prepareServiceDispatch = async (
   db: DatabaseEngine,
@@ -24,5 +25,6 @@ export const prepareServiceDispatch = async (
     adminService: new AdminService(db),
     authService: new AuthService(db),
     blobService: new BlobService(db, blobStorage),
+    metricsService: new MetricsService(db, blobStorage),
   };
 };

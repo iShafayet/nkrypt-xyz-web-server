@@ -31,4 +31,6 @@ export const apiNameList = [
   "file/delete",
   "file/set-metadata",
   "file/set-encrypted-metadata",
+  // metrics
+  "metrics/get-summary"
 ];

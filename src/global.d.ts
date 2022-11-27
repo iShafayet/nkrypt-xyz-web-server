@@ -9,6 +9,7 @@ import { UserService } from "./service/user-service";
 import { AuthService } from "./service/auth-service";
 import { BlobService } from "./service/blob-service";
 import { DatabaseEngine } from "./lib/database-engine.js";
+import { MetricsService } from "./service/metrics-service.js";
 import { Config } from "./lib/config.js";
 
 declare global {
@@ -24,6 +25,7 @@ declare global {
     fileService: FileService;
     authService: AuthService;
     blobService: BlobService;
+    metricsService: MetricsService;
   };
 }
 

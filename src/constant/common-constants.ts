@@ -25,7 +25,7 @@ const constants = {
   iam: {
     API_KEY_LENGTH: 128,
     DEFAULT_ADMIN_USER_NAME: "admin",
-    DEFAULT_ADMIN_DISPLAY_NAME: "Administrator",
+    DEFAULT_ADMIN_DISPLAY_NAME: "Default Admin",
     DEFAULT_ADMIN_USER_PASSWORD: "PleaseChangeMe@YourEarliest2Day",
     SESSION_VALIDITY_DURATION_MS: 7 * 24 * 60 * 60 * 1000,
   },

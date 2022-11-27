@@ -1,10 +1,10 @@
 import fs from "fs";
-import { dirname, join } from "path";
+import pathlib from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 
 // NOTE: The relative pathing will have to be adjusted if this file is moved elsewhere.
-const appRootDirPath = join(
-  dirname(fileURLToPath(import.meta.url)),
+const appRootDirPath = pathlib.join(
+  pathlib.dirname(fileURLToPath(import.meta.url)),
   "../../dist/"
 );
 
@@ -13,11 +13,15 @@ const ensureDir = (dirpath: string) => {
 };
 
 const resolvePath = (...paths: string[]) => {
-  return join(...paths);
+  return pathlib.join(...paths);
 };
 
 const toFileUrl = (path: string) => {
   return pathToFileURL(path).toString();
 };
 
-export { ensureDir, resolvePath, appRootDirPath, toFileUrl };
+const getAbsolutePath = (path: string) => {
+  return pathlib.resolve(path)
+};
+
+export { ensureDir, resolvePath, getAbsolutePath, appRootDirPath, toFileUrl };

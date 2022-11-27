@@ -62,7 +62,7 @@ let vars = {
   testLocalRandomFile1Path: null
 };
 
-describe.only("Blob Suite", () => {
+describe("Blob Suite", () => {
   test("(user/login): Preparational", async () => {
     const data = await callHappyPostJsonApi(200, "/user/login", {
       userName: DEFAULT_USER_NAME,

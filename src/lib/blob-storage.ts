@@ -1,7 +1,8 @@
+import checkDiskSpace from 'check-disk-space';
 import { createReadStream, createWriteStream, promises } from "fs";
-import { ensureDir, resolvePath } from "../utility/file-utils.js";
-import { Config } from "./config.js";
 import fsPromises from "fs/promises";
+import { ensureDir, getAbsolutePath, resolvePath } from "../utility/file-utils.js";
+import { Config } from "./config.js";
 
 class BlobStorage {
   config: Config;
@@ -37,6 +38,10 @@ class BlobStorage {
   async removeByBlobId(blobId: string) {
     let path = resolvePath(this._dir, blobId);
     await promises.unlink(path);
+  }
+
+  async queryUsage(): Promise<{ free: number, size: number }> {
+    return checkDiskSpace(getAbsolutePath(this._dir));
   }
 }
 

@@ -163,4 +163,30 @@ describe("User Suite", () => {
       error: errorOfCode("API_KEY_EXPIRED"),
     });
   });
+
+  test("(user/login): With changed password", async () => {
+    const data = await callHappyPostJsonApi(200, "/user/login", {
+      userName: DEFAULT_USER_NAME,
+      password: UPDATED_PASSWORD,
+    });
+
+    await validateObject(data, userAssertion);
+
+    vars.apiKey = data.apiKey;
+  });
+
+  test("(user/update-password): Revert password change", async () => {
+    const data = await callHappyPostJsonApiWithAuth(200,
+      vars.apiKey,
+      "/user/update-password",
+      {
+        currentPassword: UPDATED_PASSWORD,
+        newPassword: DEFAULT_PASSWORD,
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy,
+    });
+  });
 });

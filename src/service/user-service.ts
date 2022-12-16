@@ -78,7 +78,7 @@ export class UserService {
       },
       {
         $set: {
-          newPassword,
+          password: newPassword,
         },
       }
     );

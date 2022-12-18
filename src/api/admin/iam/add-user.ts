@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { GlobalPermission } from "../../../constant/global-permission.js";
+import { getDefaultGlobalPermissionsForNewStandardUser, GlobalPermission } from "../../../constant/global-permission.js";
 import { Generic } from "../../../global.js";
 import { AbstractApi } from "../../../lib/abstract-api.js";
 import { requireGlobalPermission } from "../../../utility/access-control-utils.js";
@@ -51,10 +51,7 @@ export class Api extends AbstractApi {
       displayName,
       userName,
       password,
-      {
-        CREATE_USER: true,
-        MANAGE_ALL_USER: false,
-      }
+      getDefaultGlobalPermissionsForNewStandardUser()
     );
 
     return { userId: user._id };

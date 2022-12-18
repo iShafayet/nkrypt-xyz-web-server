@@ -67,6 +67,23 @@ export class UserService {
     return userList;
   }
 
+  async queryUsers(userIdList: string[], userNameList: string[]) {
+    let query = {
+      collection: collections.USER,
+      $or: [
+        {
+          _id: { $in: userIdList },
+        },
+        {
+          userName: { $in: userNameList },
+        },
+      ]
+    };
+
+    let userList = await this.db.findAsync(query);
+    return userList;
+  }
+
   async updateUserPassword(
     _id: string,
     newPassword: { hash: string; salt: string }

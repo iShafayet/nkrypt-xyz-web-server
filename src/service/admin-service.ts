@@ -53,7 +53,7 @@ export class AdminService {
       createdAt: Date.now(),
       isBanned: false,
     });
-  },
+  }
 
   async setGlobalPermission(
     userId: string,

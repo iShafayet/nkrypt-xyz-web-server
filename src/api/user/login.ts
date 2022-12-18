@@ -50,7 +50,7 @@ export class Api extends AbstractApi {
 
     return {
       apiKey,
-      user: extract(user, ["_id", "userName", "displayName"]),
+      user: extract(user, ["_id", "userName", "displayName", "globalPermissions"]),
       session: extract(session, ["_id"]),
     };
   }

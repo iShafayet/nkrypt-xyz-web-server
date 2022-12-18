@@ -42,7 +42,7 @@ export class AdminService {
     displayName: string,
     userName: string,
     password: string,
-    globalPermissions: GlobalPermissions
+    globalPermissions: Record<string, boolean>
   ) {
     return await this.db.insertAsync({
       collection: collections.USER,
@@ -53,5 +53,22 @@ export class AdminService {
       createdAt: Date.now(),
       isBanned: false,
     });
+  },
+
+  async setGlobalPermission(
+    userId: string,
+    globalPermissions: Record<string, boolean>
+  ) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.USER,
+        _id: userId
+      },
+      {
+        $set: {
+          globalPermissions,
+        },
+      }
+    );
   }
 }

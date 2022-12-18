@@ -4,10 +4,12 @@ export const apiNameList = [
   "user/assert",
   "user/logout",
   "user/list",
+  "user/find",
   "user/update-profile",
   "user/update-password",
   // admin
   "admin/iam/add-user",
+  "admin/iam/set-global-permissions",
   // bucket
   "bucket/create",
   "bucket/list",

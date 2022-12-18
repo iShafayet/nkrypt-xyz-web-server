@@ -28,7 +28,7 @@ export class Api extends AbstractApi {
 
     return {
       apiKey: this.interimData.apiKey as string,
-      user: extract(user, ["_id", "userName", "displayName"]),
+      user: extract(user, ["_id", "userName", "displayName", "globalPermissions"]),
       session: extract(session, ["_id"]),
     };
   }

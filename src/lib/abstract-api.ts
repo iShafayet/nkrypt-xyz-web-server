@@ -62,7 +62,7 @@ abstract class AbstractApi {
 
   abstract get requiresAuthentication(): boolean;
 
-  abstract handle(body: JsonValue): Promise<JsonValue>;
+  abstract handle(body: JsonValue): Promise<Generic>;
 
   // ============================== region: properties - end ==============================
   // ============================== region: request processing - start ==============================

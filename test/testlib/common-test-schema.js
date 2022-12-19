@@ -44,6 +44,7 @@ export const bucketListSchema = Joi.array()
         .items(
           Joi.object().required().keys({
             userId: Joi.string().required(),
+            notes: Joi.string().required(),
             permissions: validators.allBucketPermissions,
           })
         ),

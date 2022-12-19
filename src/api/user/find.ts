@@ -39,6 +39,7 @@ export class Api extends AbstractApi {
 
     let userList = (await dispatch.userService.queryUsers(userIdList, userNameList)).map((user) => {
       let _user = {
+        _id: user._id,
         userName: user.userName,
         displayName: user.displayName,
       }

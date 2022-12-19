@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { BucketPermission } from "../../constant/bucket-permission.js";
+import { miscConstants } from "../../constant/misc-constants.js";
 import { Generic } from "../../global.js";
 import { AbstractApi } from "../../lib/abstract-api.js";
 import { requireBucketAuthorizationByBucketId } from "../../utility/access-control-utils.js";
@@ -59,7 +60,8 @@ export class Api extends AbstractApi {
     if (!authorization) {
       await dispatch.bucketService.authorizeUserWithAllPermissionsForbidden(
         bucketId,
-        targetUserId
+        targetUserId,
+        miscConstants.BUCKET_NEW_DEFAULT_AUTHORIZATION_MESSAGE_fn(this.interimData.user.userName)
       );
       bucket = await dispatch.bucketService.findBucketById(bucketId);
       authorization = bucket.bucketAuthorizations.find(

@@ -1,6 +1,7 @@
 import Nedb from "@seald-io/nedb";
 import { BucketPermission } from "../constant/bucket-permission.js";
 import collections from "../constant/collections.js";
+import { miscConstants } from "../constant/misc-constants.js";
 import { Generic } from "../global.js";
 import { DatabaseEngine } from "../lib/database-engine.js";
 
@@ -43,6 +44,7 @@ export class BucketService {
       bucketAuthorizations: [
         {
           userId: userId,
+          notes: miscConstants.BUCKET_CREATOR_AUTHORIZATION_MESSAGE,
           permissions: this.createNewBucketPermissionAllAllowed(),
         },
       ],
@@ -110,7 +112,8 @@ export class BucketService {
 
   async authorizeUserWithAllPermissionsForbidden(
     bucketId: string,
-    userId: string
+    userId: string,
+    notes: string
   ) {
     return await this.db.updateAsync(
       {
@@ -121,6 +124,7 @@ export class BucketService {
         $push: {
           bucketAuthorizations: {
             userId,
+            notes,
             permissions: this.createNewBucketPermissionAllForbidden(),
           },
         },

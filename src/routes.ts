@@ -3,6 +3,8 @@ export const apiNameList = [
   "user/login",
   "user/assert",
   "user/logout",
+  "user/logout-all-sessions",
+  "user/list-all-sessions",
   "user/list",
   "user/find",
   "user/update-profile",

@@ -1,6 +1,7 @@
 import Nedb from "@seald-io/nedb";
 import collections from "../constant/collections.js";
 import constants from "../constant/common-constants.js";
+import { miscConstants } from "../constant/misc-constants.js";
 import { Generic } from "../global";
 import { DatabaseEngine } from "../lib/database-engine.js";
 import {
@@ -53,6 +54,15 @@ export class SessionService {
     return { session, apiKey };
   }
 
+
+  async listSessionsByUserIdOrFail(userId: string) {
+    let sessionList = await this.db.findAsync({
+      collection: collections.SESSION,
+      userId: userId,
+    }).sort({ createdAt: -1 }).limit(miscConstants.SESSION_LIST_ALL_COUNT_LIMIT);
+    return sessionList;
+  }
+
   async getSessionByIdOrFail(_id: string) {
     let session = await this.db.findOneAsync({
       collection: collections.SESSION,
@@ -96,6 +106,7 @@ export class SessionService {
     return await this.db.updateAsync(
       {
         collection: collections.SESSION,
+        hasExpired: false,
         userId,
       },
       {

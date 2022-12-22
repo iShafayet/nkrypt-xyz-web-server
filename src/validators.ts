@@ -18,7 +18,7 @@ export const validators = {
 
   metaData: Joi.object().required(),
 
-  encryptedMetaData: Joi.string().min(1).max(2048).required(),
+  encryptedMetaData: Joi.string().min(1).max(1024 * 1024).required(),
 
   logoutMessage: Joi.string()
     .min(4)

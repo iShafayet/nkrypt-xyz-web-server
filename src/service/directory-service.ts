@@ -2,6 +2,7 @@ import Nedb from "@seald-io/nedb";
 import collections from "../constant/collections.js";
 import { Generic } from "../global.js";
 import { DatabaseEngine } from "../lib/database-engine.js";
+import { Directory } from "../model/core-db-entities.js";
 
 export class DirectoryService {
   db: Nedb;
@@ -46,19 +47,25 @@ export class DirectoryService {
     name: string,
     bucketId: string,
     metaData: Generic,
-    encryptedMetaData: string | null,
+    encryptedMetaData: string,
     createdByUserId: string,
     parentDirectoryId: string | null
   ) {
-    return await this.db.insertAsync({
-      collection: collections.DIRECTORY,
+    let data: Directory = {
+      _id: undefined,
       name,
-      bucketId,
       metaData,
       encryptedMetaData,
-      createdByUserId,
+      bucketId,
       parentDirectoryId,
+      createdByUserIdentifier: `${createdByUserId}@.`,
       createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    return await this.db.insertAsync({
+      collection: collections.DIRECTORY,
+      ...data
     });
   }
 
@@ -81,6 +88,7 @@ export class DirectoryService {
       {
         $set: {
           name,
+          updatedAt: Date.now()
         },
       }
     );
@@ -100,6 +108,7 @@ export class DirectoryService {
       {
         $set: {
           encryptedMetaData,
+          updatedAt: Date.now()
         },
       }
     );
@@ -119,6 +128,7 @@ export class DirectoryService {
       {
         $set: {
           metaData,
+          updatedAt: Date.now()
         },
       }
     );
@@ -151,6 +161,7 @@ export class DirectoryService {
         $set: {
           parentDirectoryId: newParentDirectoryId,
           name: newName,
+          updatedAt: Date.now()
         },
       }
     );

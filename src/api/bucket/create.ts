@@ -61,7 +61,7 @@ export class Api extends AbstractApi {
       `${name} Root`,
       bucket._id,
       metaData,
-      null,
+      "{}",
       this.interimData.userId as string,
       null
     );

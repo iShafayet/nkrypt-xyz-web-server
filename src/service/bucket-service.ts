@@ -4,6 +4,7 @@ import collections from "../constant/collections.js";
 import { miscConstants } from "../constant/misc-constants.js";
 import { Generic } from "../global.js";
 import { DatabaseEngine } from "../lib/database-engine.js";
+import { Bucket } from "../model/core-db-entities.js";
 
 export class BucketService {
   db: Nedb;
@@ -32,22 +33,28 @@ export class BucketService {
     name: string,
     cryptSpec: string,
     cryptData: string,
-    metaData: Generic,
-    userId: string
+    metaData: Record<string, never>,
+    createdByUserId: string
   ) {
-    return await this.db.insertAsync({
-      collection: collections.BUCKET,
+    let data: Bucket = {
+      _id: undefined,
       name,
       cryptSpec,
       cryptData,
       metaData,
-      bucketAuthorizations: [
-        {
-          userId: userId,
-          notes: miscConstants.BUCKET_CREATOR_AUTHORIZATION_MESSAGE,
-          permissions: this.createNewBucketPermissionAllAllowed(),
-        },
-      ],
+      bucketAuthorizations: [{
+        userId: createdByUserId,
+        notes: miscConstants.BUCKET_CREATOR_AUTHORIZATION_MESSAGE,
+        permissions: this.createNewBucketPermissionAllAllowed(),
+      },],
+      createdByUserIdentifier: `${createdByUserId}@.`,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    return await this.db.insertAsync({
+      collection: collections.BUCKET,
+      ...data
     });
   }
 
@@ -67,6 +74,7 @@ export class BucketService {
       {
         $set: {
           name,
+          updatedAt: Date.now()
         },
       }
     );
@@ -81,6 +89,7 @@ export class BucketService {
       {
         $set: {
           metaData,
+          updatedAt: Date.now()
         },
       }
     );

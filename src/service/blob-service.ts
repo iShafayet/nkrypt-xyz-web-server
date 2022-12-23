@@ -4,6 +4,7 @@ import collections from "../constant/collections.js";
 import { Generic } from "../global.js";
 import { BlobStorage } from "../lib/blob-storage.js";
 import { DatabaseEngine } from "../lib/database-engine.js";
+import { Blob } from "../model/core-db-entities.js";
 import { UserError } from "../utility/coded-error.js";
 import { createSizeLimiterPassthroughStream } from "../utility/stream-utils.js";
 
@@ -22,16 +23,23 @@ export class BlobService {
     );
   }
 
-  async createInProgressBlob(bucketId: string, fileId: string, cryptoMetaHeaderContent: string) {
-    let blob: Generic = await this.db.insertAsync({
-      collection: collections.BLOB,
+  async createInProgressBlob(bucketId: string, fileId: string, cryptoMetaHeaderContent: string, createdByUserId: string) {
+    let data: Blob = {
+      _id: undefined,
       bucketId,
       fileId,
+      cryptoMetaHeaderContent,
       startedAt: Date.now(),
       finishedAt: null,
       status: "started",
+      createdByUserIdentifier: `${createdByUserId}@.`,
       createdAt: Date.now(),
-      cryptoMetaHeaderContent
+      updatedAt: Date.now(),
+    };
+
+    let blob: Generic = await this.db.insertAsync({
+      collection: collections.BLOB,
+      ...data
     });
 
     let stream = this.blobStorage.createWritableStream(blob._id);
@@ -66,6 +74,7 @@ export class BlobService {
       {
         $set: {
           status: "error",
+          updatedAt: Date.now()
         },
       }
     );
@@ -83,6 +92,7 @@ export class BlobService {
         $set: {
           status: "finished",
           finishedAt: Date.now(),
+          updatedAt: Date.now()
         },
       }
     );

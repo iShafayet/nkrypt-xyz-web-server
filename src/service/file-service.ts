@@ -2,6 +2,7 @@ import Nedb from "@seald-io/nedb";
 import collections from "../constant/collections.js";
 import { Generic } from "../global.js";
 import { DatabaseEngine } from "../lib/database-engine.js";
+import { File } from "../model/core-db-entities.js";
 
 export class FileService {
   db: Nedb;
@@ -37,19 +38,27 @@ export class FileService {
     name: string,
     bucketId: string,
     metaData: Generic,
-    encryptedMetaData: string | null,
+    encryptedMetaData: string,
     createdByUserId: string,
-    parentDirectoryId: string | null
+    parentDirectoryId: string
   ) {
-    return await this.db.insertAsync({
-      collection: collections.FILE,
+    let data: File = {
+      _id: undefined,
       name,
-      bucketId,
       metaData,
       encryptedMetaData,
-      createdByUserId,
+      bucketId,
       parentDirectoryId,
+      sizeAfterEncryptionBytes: 0,
+      createdByUserIdentifier: `${createdByUserId}@.`,
       createdAt: Date.now(),
+      updatedAt: Date.now(),
+      contentUpdatedAt: Date.now(),
+    };
+
+    return await this.db.insertAsync({
+      collection: collections.FILE,
+      ...data
     });
   }
 
@@ -63,6 +72,22 @@ export class FileService {
       {
         $set: {
           name,
+          updatedAt: Date.now()
+        },
+      }
+    );
+  }
+
+  async setFileContentUpdateAt(bucketId: string, fileId: string, epoc: number) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.FILE,
+        _id: fileId,
+        bucketId,
+      },
+      {
+        $set: {
+          updatedAt: epoc,
         },
       }
     );
@@ -82,6 +107,7 @@ export class FileService {
       {
         $set: {
           encryptedMetaData,
+          updatedAt: Date.now()
         },
       }
     );
@@ -97,6 +123,7 @@ export class FileService {
       {
         $set: {
           metaData,
+          updatedAt: Date.now()
         },
       }
     );
@@ -129,6 +156,7 @@ export class FileService {
         $set: {
           parentDirectoryId: newParentDirectoryId,
           name: newName,
+          updatedAt: Date.now()
         },
       }
     );

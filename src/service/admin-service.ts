@@ -2,7 +2,6 @@ import Nedb from "@seald-io/nedb";
 import collections from "../constant/collections.js";
 import constants from "../constant/common-constants.js";
 import { GlobalPermission } from "../constant/global-permission.js";
-import { GlobalPermissions } from "../global";
 import { DatabaseEngine } from "../lib/database-engine.js";
 import { calculateHashOfString } from "../utility/security-utils.js";
 

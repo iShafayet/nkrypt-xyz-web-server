@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { BucketPermission } from "./constant/bucket-permission.js";
+import { GlobalPermission } from "./constant/global-permission.js";
 import { Generic } from "./global.js";
 
 export const validators = {
@@ -46,4 +47,16 @@ export const validators = {
         return map;
       }, {})
     ),
+
+    allGlobalPermissions: Joi.object()
+    .required()
+    .keys(
+      Object.keys(GlobalPermission).reduce((map: Generic, key) => {
+        map[key] = Joi.boolean().required();
+        return map;
+      }, {})
+    ),    
+
+  dateRequired: Joi.number().required(),
+  dateRequiredNullable: Joi.number().required().allow(null),
 };

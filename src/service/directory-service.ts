@@ -20,7 +20,7 @@ export class DirectoryService {
     return list;
   }
 
-  async findDirectoryById(bucketId: string, directoryId: string) {
+  async findDirectoryById(bucketId: string, directoryId: string): Promise<Directory> {
     let doc = await this.db.findOneAsync({
       collection: collections.DIRECTORY,
       bucketId,

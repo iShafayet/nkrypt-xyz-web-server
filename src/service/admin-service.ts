@@ -3,6 +3,7 @@ import collections from "../constant/collections.js";
 import constants from "../constant/common-constants.js";
 import { GlobalPermission } from "../constant/global-permission.js";
 import { DatabaseEngine } from "../lib/database-engine.js";
+import { User } from "../model/core-db-entities.js";
 import { calculateHashOfString } from "../utility/security-utils.js";
 
 export class AdminService {
@@ -19,8 +20,8 @@ export class AdminService {
     });
 
     if (!defaultAdmin) {
-      await this.db.insertAsync({
-        collection: collections.USER,
+      let data: User = {
+        _id: undefined,
         displayName: constants.iam.DEFAULT_ADMIN_DISPLAY_NAME,
         userName: constants.iam.DEFAULT_ADMIN_USER_NAME,
         password: calculateHashOfString(
@@ -32,7 +33,12 @@ export class AdminService {
           [GlobalPermission.CREATE_BUCKET]: true,
         },
         createdAt: Date.now(),
+        updatedAt: Date.now(),
         isBanned: false,
+      }
+      await this.db.insertAsync({
+        collection: collections.USER,
+        ...data
       });
     }
   }
@@ -43,14 +49,19 @@ export class AdminService {
     password: string,
     globalPermissions: Record<string, boolean>
   ) {
-    return await this.db.insertAsync({
-      collection: collections.USER,
+    let data: User = {
+      _id: undefined,
       displayName,
       userName,
       password: calculateHashOfString(password),
       globalPermissions,
       createdAt: Date.now(),
+      updatedAt: Date.now(),
       isBanned: false,
+    }
+    return await this.db.insertAsync({
+      collection: collections.USER,
+      ...data
     });
   }
 
@@ -66,6 +77,7 @@ export class AdminService {
       {
         $set: {
           globalPermissions,
+          updatedAt: Date.now(),
         },
       }
     );

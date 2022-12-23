@@ -4,6 +4,7 @@ import constants from "../constant/common-constants.js";
 import { miscConstants } from "../constant/misc-constants.js";
 import { Generic } from "../global";
 import { DatabaseEngine } from "../lib/database-engine.js";
+import { Session } from "../model/core-db-entities.js";
 import {
   DeveloperError,
   throwOnFalsy,
@@ -33,14 +34,19 @@ export class SessionService {
         apiKey,
       });
       if (!exists) {
-        session = await this.db.insertAsync({
-          collection: collections.SESSION,
+        let data: Session = {
+          _id: undefined,
           userId: user._id,
           apiKey,
           hasExpired: false,
           expiredAt: null,
           expireReason: null,
           createdAt: Date.now(),
+          updatedAt: Date.now()
+        }
+        session = await this.db.insertAsync({
+          collection: collections.SESSION,
+          ...data
         });
       }
       throwOnFalsy(
@@ -97,6 +103,7 @@ export class SessionService {
           hasExpired: true,
           expireReason: `${LOGOUT_MESSAGE_PREFIX}${message}`,
           expiredAt: Date.now(),
+          updatedAt: Date.now(),
         },
       }
     );
@@ -114,6 +121,7 @@ export class SessionService {
           hasExpired: true,
           expireReason: `${FORCE_LOGOUT_MESSAGE_PREFIX}${message}`,
           expiredAt: Date.now(),
+          updatedAt: Date.now(),
         },
       },
       {

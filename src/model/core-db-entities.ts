@@ -1,3 +1,25 @@
+type User = {
+  _id: string | null | undefined;
+  displayName: string;
+  userName: string;
+  password: { hash: string, salt: string };
+  globalPermissions: Record<string, boolean>;
+  isBanned: boolean;
+  createdAt: number;
+  updatedAt: number;
+};
+
+type Session = {
+  _id: string | null | undefined;
+  userId: string;
+  apiKey: string
+  hasExpired: boolean;
+  expiredAt: number | null;
+  expireReason: string | null
+  createdAt: number;
+  updatedAt: number;
+};
+
 type Bucket = {
   _id: string | null | undefined;
   name: string;
@@ -55,4 +77,4 @@ type Blob = {
   updatedAt: number;
 }
 
-export { File, Bucket, Directory, Blob }
+export { User, Session, File, Bucket, Directory, Blob }

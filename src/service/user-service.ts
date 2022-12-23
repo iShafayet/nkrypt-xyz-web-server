@@ -55,6 +55,7 @@ export class UserService {
       {
         $set: {
           displayName,
+          updatedAt: Date.now(),
         },
       }
     );
@@ -96,6 +97,7 @@ export class UserService {
       {
         $set: {
           password: newPassword,
+          updatedAt: Date.now(),
         },
       }
     );

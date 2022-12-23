@@ -62,8 +62,8 @@ let vars = {
   testLocalRandomFile1Path: null
 };
 
-describe.only("Metrics Suite", () => {
-  test.only("(user/login): Preparational", async () => {
+describe("Metrics Suite", () => {
+  test("(user/login): Preparational", async () => {
     const data = await callHappyPostJsonApi(200, "/user/login", {
       userName: DEFAULT_USER_NAME,
       password: DEFAULT_PASSWORD,
@@ -74,7 +74,7 @@ describe.only("Metrics Suite", () => {
     vars.apiKey = data.apiKey;
   });
 
-  test.only("(metrics/get-summary): Affirmative", async () => {
+  test("(metrics/get-summary): Affirmative", async () => {
     const data = await callHappyPostJsonApiWithAuth(200,
       vars.apiKey,
       "/metrics/get-summary", {}

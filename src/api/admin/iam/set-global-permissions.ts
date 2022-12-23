@@ -37,16 +37,15 @@ export class Api extends AbstractApi {
 
     let user = await dispatch.userService.findUserByIdOrFail(userId);
 
-    let _globalPermissions: Record<string, boolean> = {};
     Object.keys(GlobalPermission).forEach(key => {
       if (globalPermissions.hasOwnProperty(key)) {
-        _globalPermissions[key] = !!globalPermissions[key];
+        user.globalPermissions[key] = !!globalPermissions[key];
       }
     });
 
     await dispatch.adminService.setGlobalPermission(
       userId,
-      globalPermissions
+      user.globalPermissions
     );
 
     return {};

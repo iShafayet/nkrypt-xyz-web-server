@@ -61,8 +61,6 @@ export const blobWriteQuantizedApiHandler = async (
       throw new DeveloperError("CRYPTO_META_HEADER_INVALID", `Provided ${constants.webServer.BLOB_API_CRYPTO_META_HEADER_NAME} header is invalid`);
     }
 
-    logger.important({ bucketId, fileId, blobId, offset, shouldEnd });
-
     let blob, fileStream: WriteStream;
     if (blobId === null) {
       ({ blob, stream: fileStream } =

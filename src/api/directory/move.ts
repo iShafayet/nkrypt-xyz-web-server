@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { BucketPermission } from "../../constant/bucket-permission.js";
 import { AbstractApi } from "../../lib/abstract-api.js";
+import { Directory } from "../../model/core-db-entities.js";
 import {
   ensureDirectoryBelongsToBucket,
   requireBucketAuthorizationByBucketId,
@@ -66,6 +67,8 @@ export class Api extends AbstractApi {
       `A directory with the provided name "${newName}" already exists in the new parent directory.`
     );
 
+    await this.avoidCircularParentage(bucketId, directoryId, newParentDirectoryId);
+
     await dispatch.directoryService.moveDirectory(
       bucketId,
       directoryId,
@@ -74,5 +77,28 @@ export class Api extends AbstractApi {
     );
 
     return {};
+  }
+
+  async avoidCircularParentage(bucketId: string, directoryId: string, newParentDirectoryId: string) {
+    let directory = await dispatch.directoryService.findDirectoryById(bucketId, directoryId);
+
+    let sourceDirectoryChain = await this.constructDirectoryChain(bucketId, directory.parentDirectoryId as string);
+    let targetDirectoryChain = await this.constructDirectoryChain(bucketId, newParentDirectoryId);
+
+    if (targetDirectoryChain.indexOf(sourceDirectoryChain + "/" + directoryId) === 0) {
+      logger.debug("Illegal move of ", directoryId, " from ", sourceDirectoryChain, " to ", targetDirectoryChain);
+      throw new UserError("INVALID_MOVE_OPERATION", "Moving a directory inside itself is not possible.");
+    }
+  }
+
+  async constructDirectoryChain(bucketId: string, directoryId: string) {
+    let chain = [directoryId];
+    while (true) {
+      let directory = await dispatch.directoryService.findDirectoryById(bucketId, directoryId);
+      if (!directory || !directory.parentDirectoryId) break;
+      directoryId = directory.parentDirectoryId;
+      chain.unshift(directoryId);
+    }
+    return chain.join("/")
   }
 }

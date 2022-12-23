@@ -29,20 +29,8 @@ declare global {
   };
 }
 
-type JsonValue =
-  | string
-  | number
-  | boolean
-  | { [x: string]: JsonValue }
-  | Array<JsonValue>;
-
 // We type-alias any as Generic to easily mark improvement scopes without adding comments
 type Generic = any;
-
-type GlobalPermissions = {
-  MANAGE_ALL_USER: boolean;
-  CREATE_USER: boolean;
-};
 
 type SerializedError = {
   code: string;

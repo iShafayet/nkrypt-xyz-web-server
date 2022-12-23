@@ -53,7 +53,7 @@ export const blobWriteApiHandler = async (
     }
 
     let { blob, stream: fileStream } =
-      await dispatch.blobService.createInProgressBlob(bucketId, fileId, cryptoMetaHeaderContent);
+      await dispatch.blobService.createInProgressBlob(bucketId, fileId, cryptoMetaHeaderContent, userId);
 
     try {
       await pipeline(
@@ -63,6 +63,8 @@ export const blobWriteApiHandler = async (
       );
 
       await dispatch.blobService.markBlobAsFinished(bucketId, fileId, blob._id);
+
+      await dispatch.fileService.setFileContentUpdateAt(bucketId, fileId, Date.now());
 
       await dispatch.blobService.removeAllOtherBlobs(
         bucketId,

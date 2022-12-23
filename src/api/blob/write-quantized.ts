@@ -66,7 +66,7 @@ export const blobWriteQuantizedApiHandler = async (
     let blob, fileStream: WriteStream;
     if (blobId === null) {
       ({ blob, stream: fileStream } =
-        await dispatch.blobService.createInProgressBlob(bucketId, fileId, cryptoMetaHeaderContent));
+        await dispatch.blobService.createInProgressBlob(bucketId, fileId, cryptoMetaHeaderContent, userId));
     } else {
       ({ blob, stream: fileStream } =
         await dispatch.blobService.getInProgressBlob(bucketId, fileId, blobId, offset));

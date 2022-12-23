@@ -1,7 +1,7 @@
 import Nedb from "@seald-io/nedb";
 import * as ExpressCore from "express-serve-static-core";
 import Joi from "joi";
-import { Generic, JsonValue, SerializedError } from "../global.js";
+import { Generic, SerializedError } from "../global.js";
 import {
   CodedError,
   DeveloperError,
@@ -62,12 +62,12 @@ abstract class AbstractApi {
 
   abstract get requiresAuthentication(): boolean;
 
-  abstract handle(body: JsonValue): Promise<Generic>;
+  abstract handle(body: Generic): Promise<Generic>;
 
   // ============================== region: properties - end ==============================
   // ============================== region: request processing - start ==============================
 
-  async _composeAndValidateSchema(body: JsonValue) {
+  async _composeAndValidateSchema(body: Generic) {
     let schema = this.requestSchema;
 
     // Note: Throws ValidationError
@@ -79,7 +79,7 @@ abstract class AbstractApi {
     return await dispatch.authService.authenticate(this._expressRequest);
   }
 
-  async _preHandleJsonPostApi(parsedJsonBody: JsonValue) {
+  async _preHandleJsonPostApi(parsedJsonBody: Generic) {
     try {
       if (!this.isEnabled) {
         throw new DeveloperError(
@@ -88,7 +88,7 @@ abstract class AbstractApi {
         );
       }
 
-      let body: JsonValue = {};
+      let body: Generic = {};
       if (this.requestSchema !== null) {
         body = await this._composeAndValidateSchema(parsedJsonBody);
 
@@ -129,7 +129,7 @@ abstract class AbstractApi {
     }
   }
 
-  _sendResponse(statusCode: number, data: JsonValue) {
+  _sendResponse(statusCode: number, data: Generic) {
     logger.log(
       statusCode,
       this.apiPath,
@@ -143,7 +143,7 @@ abstract class AbstractApi {
 }
 
 interface IAbstractApi {
-  new (
+  new(
     apiPath: string,
     server: Server,
     networkDetails: { ip: string },

@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 
 import { validators } from "../../dist/validators.js";
+import { GlobalPermission } from "../../dist/constant/global-permission.js";
 
 import Joi from "joi";
 
@@ -12,8 +13,9 @@ export const directorySchema = Joi.object()
     parentDirectoryId: Joi.string().min(1).max(64).allow(null).required(),
     encryptedMetaData: Joi.string().min(1).max(2048).allow(null).required(),
     metaData: Joi.object().required(),
-    createdAt: Joi.number().required(),
-    createdByUserId: Joi.string().required(),
+    createdAt: validators.dateRequired,
+    updatedAt: validators.dateRequired,
+    createdByUserIdentifier: Joi.string().required(),
   })
   .optional();
 
@@ -25,8 +27,11 @@ export const fileSchema = Joi.object()
     parentDirectoryId: Joi.string().min(1).max(64).allow(null).required(),
     encryptedMetaData: Joi.string().min(1).max(2048).allow(null).required(),
     metaData: Joi.object().required(),
-    createdAt: Joi.number().required(),
-    createdByUserId: Joi.string().required(),
+    sizeAfterEncryptionBytes: Joi.number().required(),
+    createdAt: validators.dateRequired,
+    updatedAt: validators.dateRequired,
+    contentUpdatedAt: validators.dateRequired,
+    createdByUserIdentifier: Joi.string().required(),
   })
   .optional();
 
@@ -49,6 +54,9 @@ export const bucketListSchema = Joi.array()
           })
         ),
       rootDirectoryId: Joi.string().required(),
+      createdByUserIdentifier: Joi.string().required(),
+      createdAt: validators.dateRequired,
+      updatedAt: validators.dateRequired
     })
   );
 
@@ -59,6 +67,13 @@ export const userAssertion = {
     _id: validators.id,
     userName: validators.userName,
     displayName: validators.displayName,
+    globalPermissions: (() => {
+      let keys = {};
+      Object.keys(GlobalPermission).forEach(permission => {
+        keys[permission] = Joi.boolean().required()
+      });
+      return Joi.object().required(keys);
+    })(),
   }),
   session: Joi.object().required().keys({
     _id: validators.id,
@@ -78,8 +93,32 @@ export const errorOfCode = (code) => {
 export const userListSchema = Joi.array()
   .items(
     Joi.object().keys({
+      _id: validators.id,
       userName: validators.userName,
       displayName: validators.displayName,
+    })
+  )
+  .required();
+
+export const userListWithPermissionsSchema = Joi.array()
+  .items(
+    Joi.object().keys({
+      _id: validators.id,
+      userName: validators.userName,
+      displayName: validators.displayName,
+      globalPermissions: validators.allGlobalPermissions
+    })
+  )
+  .required();
+
+export const sessionListSchema = Joi.array()
+  .items(
+    Joi.object().keys({
+      isCurrentSession: Joi.boolean().required(),
+      hasExpired: Joi.boolean().required(),
+      expireReason: Joi.string().allow(null).required(),
+      createdAt: Joi.number().required(),
+      expiredAt: Joi.number().required().allow(null)
     })
   )
   .required();

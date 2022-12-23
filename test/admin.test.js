@@ -19,6 +19,7 @@ const TEST_USER_PASSWORD = "ExamplePassword";
 
 let vars = {
   apiKey: null,
+  newUserId: null
 };
 
 describe("Admin Suite", () => {
@@ -48,14 +49,35 @@ describe("Admin Suite", () => {
       hasError: validators.hasErrorFalsy,
       userId: validators.id,
     });
+
+    vars.newUserId = data.userId;
   });
 
-  test("(user/login): Ensure newly created user can log in", async () => {
+  test("(admin/iam/set-global-permissions): Set Global Permissions", async () => {
+    const data = await callHappyPostJsonApiWithAuth(200,
+      vars.apiKey,
+      "/admin/iam/set-global-permissions",
+      {
+        userId: vars.newUserId,
+        globalPermissions: {
+          CREATE_USER: true,
+        }
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy
+    });
+  });
+
+  test("(user/login): Ensure newly created user can log in and has the newly set permission", async () => {
     const data = await callHappyPostJsonApi(200, "/user/login", {
       userName: TEST_USER_USER_NAME,
       password: TEST_USER_PASSWORD,
     });
 
     await validateObject(data, userAssertion);
+
+    expect(data.user.globalPermissions.CREATE_USER).toBe(true);
   });
 });

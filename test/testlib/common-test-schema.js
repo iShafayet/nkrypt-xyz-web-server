@@ -5,19 +5,17 @@ import { GlobalPermission } from "../../dist/constant/global-permission.js";
 
 import Joi from "joi";
 
-export const directorySchema = Joi.object()
-  .keys({
-    _id: Joi.string().required(),
-    name: Joi.string().min(4).max(32).required(),
-    bucketId: Joi.string().min(1).max(64).required(),
-    parentDirectoryId: Joi.string().min(1).max(64).allow(null).required(),
-    encryptedMetaData: Joi.string().min(1).max(2048).allow(null).required(),
-    metaData: Joi.object().required(),
-    createdAt: validators.dateRequired,
-    updatedAt: validators.dateRequired,
-    createdByUserIdentifier: Joi.string().required(),
-  })
-  .optional();
+export const directorySchema = Joi.object().optional().keys({
+  _id: Joi.string().required(),
+  name: Joi.string().min(4).max(32).required(),
+  bucketId: Joi.string().min(1).max(64).required(),
+  parentDirectoryId: Joi.string().min(1).max(64).allow(null).required(),
+  encryptedMetaData: Joi.string().min(1).max(2048).allow(null).required(),
+  metaData: Joi.object().required(),
+  createdAt: validators.dateRequired,
+  updatedAt: validators.dateRequired,
+  createdByUserIdentifier: Joi.string().required(),
+});
 
 export const fileSchema = Joi.object()
   .keys({

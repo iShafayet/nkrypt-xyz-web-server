@@ -40,7 +40,7 @@ export class AdminService {
         collection: collections.USER,
         ...data
       });
-      logger.debug(`Created default admin with userName ${data.userName}.`);
+      logger.log(`Created default admin with userName ${data.userName}.`);
     }
   }
 

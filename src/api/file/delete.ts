@@ -60,6 +60,8 @@ export class Api extends AbstractApi {
 
     await dispatch.fileService.deleteFile(bucketId, fileId);
 
+    await dispatch.blobService.removeAllBlobsOfFile(bucketId, fileId);
+
     return {};
   }
 }

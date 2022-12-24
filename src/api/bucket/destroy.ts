@@ -56,7 +56,18 @@ export class Api extends AbstractApi {
 
     await dispatch.bucketService.removeBucket(bucketId);
 
-    // TODO Recursively delete all directories and files;
+    let directory = await dispatch.directoryService.findRootDirectoryByBucketId(bucketId);
+    if (directory) {
+      await dispatch.directoryService.deleteDirectory(bucketId, directory._id!);
+      dispatch.directoryService.deleteDirectoryAndChildrenInTheBackground(bucketId, directory)
+        .then(() => {
+          logger.log("Deletion of directory and children finished in the background.");
+        })
+        .catch(ex => {
+          logger.log("Deletion of directory and children failed in the background.");
+          logger.error(ex);
+        });
+    }
 
     return {};
   }

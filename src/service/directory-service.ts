@@ -78,6 +78,15 @@ export class DirectoryService {
     return list;
   }
 
+  async findRootDirectoryByBucketId(bucketId: string): Promise<Directory> {
+    let doc = await this.db.findOneAsync({
+      collection: collections.DIRECTORY,
+      bucketId,
+      parentDirectoryId: null,
+    });
+    return doc;
+  }
+
   async setDirectoryName(bucketId: string, directoryId: string, name: string) {
     return await this.db.updateAsync(
       {
@@ -165,5 +174,19 @@ export class DirectoryService {
         },
       }
     );
+  }
+
+  async deleteDirectoryAndChildrenInTheBackground(bucketId: string, parentDirectory: Directory) {
+    let fileList = await dispatch.fileService.listFilesUnderDirectory(bucketId, parentDirectory._id!);
+    for (let file of fileList) {
+      await dispatch.fileService.deleteFile(bucketId, file._id);
+      await dispatch.blobService.removeAllBlobsOfFile(bucketId, file._id);
+    }
+
+    let directoryList = await dispatch.directoryService.listChildrenOfDirectory(bucketId, parentDirectory._id!);
+    for (let directory of directoryList) {
+      await dispatch.directoryService.deleteDirectory(bucketId, directory._id!);
+      await this.deleteDirectoryAndChildrenInTheBackground(bucketId, directory);
+    }
   }
 }

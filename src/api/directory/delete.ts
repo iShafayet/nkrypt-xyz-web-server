@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { BucketPermission } from "../../constant/bucket-permission.js";
 import { AbstractApi } from "../../lib/abstract-api.js";
+import { Directory } from "../../model/core-db-entities.js";
 import {
   ensureDirectoryBelongsToBucket,
   requireBucketAuthorizationByBucketId,
@@ -60,6 +61,17 @@ export class Api extends AbstractApi {
 
     await dispatch.directoryService.deleteDirectory(bucketId, directoryId);
 
+    dispatch.directoryService.deleteDirectoryAndChildrenInTheBackground(bucketId, existingDirectory)
+      .then(() => {
+        logger.log("Deletion of directory and children finished in the background.");
+      })
+      .catch(ex => {
+        logger.log("Deletion of directory and children failed in the background.");
+        logger.error(ex);
+      });
+
     return {};
   }
+
+
 }

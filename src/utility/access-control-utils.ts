@@ -45,8 +45,8 @@ export const requireBucketAuthorizationByBucketId = async (
 
   requiredPermissions.forEach((permission: Generic) => {
     if (
-      !(permission in authorization.permissions) ||
-      authorization.permissions[permission] === false
+      !(permission in authorization!.permissions) ||
+      authorization!.permissions[permission] === false
     ) {
       throw new UserError(
         "INSUFFICIENT_BUCKET_PERMISSION",

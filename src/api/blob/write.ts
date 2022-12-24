@@ -62,14 +62,14 @@ export const blobWriteApiHandler = async (
         fileStream
       );
 
-      await dispatch.blobService.markBlobAsFinished(bucketId, fileId, blob._id);
+      await dispatch.blobService.markBlobAsFinished(bucketId, fileId, blob._id!);
 
       await dispatch.fileService.setFileContentUpdateAt(bucketId, fileId, Date.now());
 
       await dispatch.blobService.removeAllOtherBlobs(
         bucketId,
         fileId,
-        blob._id
+        blob._id!
       );
 
       res.send({
@@ -82,7 +82,7 @@ export const blobWriteApiHandler = async (
       await dispatch.blobService.markBlobAsErroneous(
         bucketId,
         fileId,
-        blob._id
+        blob._id!
       );
 
       throw err;

@@ -1,5 +1,5 @@
 import Nedb from "@seald-io/nedb";
-import { ReadStream } from "fs";
+import { ReadStream, WriteStream } from "fs";
 import collections from "../constant/collections.js";
 import { Generic } from "../global.js";
 import { BlobStorage } from "../lib/blob-storage.js";
@@ -23,7 +23,8 @@ export class BlobService {
     );
   }
 
-  async createInProgressBlob(bucketId: string, fileId: string, cryptoMetaHeaderContent: string, createdByUserId: string) {
+  async createInProgressBlob(bucketId: string, fileId: string, cryptoMetaHeaderContent: string, createdByUserId: string):
+    Promise<{ blob: Blob, stream: WriteStream }> {
     let data: Blob = {
       _id: undefined,
       bucketId,
@@ -47,7 +48,8 @@ export class BlobService {
     return { blob, stream };
   }
 
-  async getInProgressBlob(bucketId: string, fileId: string, blobId: string, startOffset: number) {
+  async getInProgressBlob(bucketId: string, fileId: string, blobId: string, startOffset: number):
+    Promise<{ blob: Blob, stream: WriteStream }> {
     let blob = await this.db
       .findOneAsync({
         collection: collections.BLOB,
@@ -98,7 +100,7 @@ export class BlobService {
     );
   }
 
-  async findBlobByBucketIdAndFileId(bucketId: string, fileId: string) {
+  async findBlobByBucketIdAndFileId(bucketId: string, fileId: string): Promise<Blob> {
     let list = await this.db
       .findAsync({
         collection: collections.BLOB,

@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { Generic } from "../../global.js";
 import { AbstractApi } from "../../lib/abstract-api.js";
 import { extract } from "../../utility/misc-utils.js";
 import { validators } from "../../validators.js";
@@ -25,7 +26,9 @@ export class Api extends AbstractApi {
       this.interimData.userId as string,
     );
 
-    sessionList.forEach(session => session.isCurrentSession = session._id === this.interimData.sessionId);
+    sessionList.forEach(session => {
+      (session as Generic).isCurrentSession = session._id === this.interimData.sessionId;
+    });
 
     sessionList = sessionList.map(session => extract(session,
       ['isCurrentSession', 'hasExpired', 'expireReason', 'createdAt', 'expiredAt']));

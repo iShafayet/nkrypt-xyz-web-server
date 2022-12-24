@@ -57,7 +57,7 @@ export const blobReadApiHandler = async (
     res.setHeader("Content-Type", "application/octet-stream");
     res.setHeader(constants.webServer.BLOB_API_CRYPTO_META_HEADER_NAME, blob.cryptoMetaHeaderContent);
 
-    let { readStream: stream, sizeOfStream } = await dispatch.blobService.createReadableStreamFromBlobId(blob._id);
+    let { readStream: stream, sizeOfStream } = await dispatch.blobService.createReadableStreamFromBlobId(blob._id!);
     res.setHeader("Content-Length", sizeOfStream);
 
     await pipeline(stream, res);

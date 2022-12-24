@@ -13,7 +13,7 @@ export class AdminService {
     this.db = dbEngine.connection;
   }
 
-  async createDefaultAdminAccountIfNotPresent() {
+  async createDefaultAdminAccountIfNotPresent(): Promise<void> {
     let defaultAdmin = await this.db.findOneAsync({
       collection: collections.USER,
       userName: constants.iam.DEFAULT_ADMIN_USER_NAME,
@@ -40,6 +40,7 @@ export class AdminService {
         collection: collections.USER,
         ...data
       });
+      logger.debug(`Created default admin with userName ${data.userName}.`);
     }
   }
 
@@ -48,7 +49,7 @@ export class AdminService {
     userName: string,
     password: string,
     globalPermissions: Record<string, boolean>
-  ) {
+  ): Promise<User> {
     let data: User = {
       _id: undefined,
       displayName,

@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { AbstractApi } from "../../lib/abstract-api.js";
+import { User } from "../../model/core-db-entities.js";
 import { validators } from "../../validators.js";
 
 type CurrentRequest = { filters: { by: string, userName: string, userId: string }[], includeGlobalPermissions: boolean };
@@ -37,11 +38,12 @@ export class Api extends AbstractApi {
       }
     }
 
-    let userList = (await dispatch.userService.queryUsers(userIdList, userNameList)).map((user) => {
+    let userList = (await dispatch.userService.queryUsers(userIdList, userNameList)).map((user: User) => {
       let _user = {
         _id: user._id,
         userName: user.userName,
         displayName: user.displayName,
+        isBanned: user.isBanned
       }
       if (body.includeGlobalPermissions) {
         (<any>_user).globalPermissions = user.globalPermissions

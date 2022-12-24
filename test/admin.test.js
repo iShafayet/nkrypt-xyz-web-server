@@ -3,10 +3,11 @@ import Joi from "joi";
 import {
   callHappyPostJsonApi,
   callHappyPostJsonApiWithAuth,
+  callPostJsonApi,
   validateObject,
 } from "./testlib/common-api-test-utils.js";
 
-import { userAssertion } from "./testlib/common-test-schema.js";
+import { userAssertion, errorOfCode } from "./testlib/common-test-schema.js";
 
 import { validators } from "../dist/validators.js";
 
@@ -79,5 +80,34 @@ describe("Admin Suite", () => {
     await validateObject(data, userAssertion);
 
     expect(data.user.globalPermissions.CREATE_USER).toBe(true);
+  });
+
+  test("(admin/iam/set-banning-status): Set Banning Status", async () => {
+    const data = await callHappyPostJsonApiWithAuth(200,
+      vars.apiKey,
+      "/admin/iam/set-banning-status",
+      {
+        userId: vars.newUserId,
+        isBanned: true
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy
+    });
+  });
+
+  test("(user/login): Ensure user cannot log in", async () => {
+    const response = await callPostJsonApi("/user/login", {
+      userName: TEST_USER_USER_NAME,
+      password: TEST_USER_PASSWORD,
+    });
+    expect(response.status).toEqual(403);
+    let data = await response.json();
+
+    await validateObject(data, {
+      hasError: validators.hasErrorTruthy,
+      error: errorOfCode("USER_BANNED"),
+    });
   });
 });

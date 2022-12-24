@@ -102,4 +102,22 @@ export class UserService {
       }
     );
   }
+
+  async setBanningStatus(
+    _id: string,
+    isBanned: boolean
+  ) {
+    return await this.db.updateAsync(
+      {
+        collection: collections.USER,
+        _id,
+      },
+      {
+        $set: {
+          isBanned,
+          updatedAt: Date.now(),
+        },
+      }
+    );
+  }
 }

@@ -17,6 +17,8 @@ const DEFAULT_PASSWORD = "PleaseChangeMe@YourEarliest2Day";
 const TEST_USER_USER_NAME = "testuser1-" + Date.now();
 const TEST_USER_DISPLAY_NAME = "Test User 1";
 const TEST_USER_PASSWORD = "ExamplePassword";
+const TEST_USER_OVERWRITTEN_PASSWORD = "ExamplePassword1";
+
 
 let vars = {
   apiKey: null,
@@ -109,5 +111,45 @@ describe("Admin Suite", () => {
       hasError: validators.hasErrorTruthy,
       error: errorOfCode("USER_BANNED"),
     });
+  });
+
+  test("(admin/iam/set-banning-status): Set Banning Status", async () => {
+    const data = await callHappyPostJsonApiWithAuth(200,
+      vars.apiKey,
+      "/admin/iam/set-banning-status",
+      {
+        userId: vars.newUserId,
+        isBanned: false
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy
+    });
+  });
+
+  test("(admin/iam/overwrite-user-password): Affirmative", async () => {
+    const data = await callHappyPostJsonApiWithAuth(200,
+      vars.apiKey,
+      "/admin/iam/overwrite-user-password",
+      {
+        userId: vars.newUserId,
+        newPassword: TEST_USER_OVERWRITTEN_PASSWORD
+      }
+    );
+
+    await validateObject(data, {
+      hasError: validators.hasErrorFalsy
+    });
+  });
+
+
+  test("(user/login): Ensure user can log in with overwritten password", async () => {
+    const data = await callHappyPostJsonApi(200, "/user/login", {
+      userName: TEST_USER_USER_NAME,
+      password: TEST_USER_OVERWRITTEN_PASSWORD,
+    });
+
+    await validateObject(data, userAssertion);
   });
 });

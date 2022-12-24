@@ -153,7 +153,42 @@ export class BlobService {
         fileId,
         _id: { $ne: blobId },
       },
-      { multi: false }
+      { multi: false } // FIXME why multi: false?
+    );
+  }
+
+  async removeAllBlobsOfFile(bucketId: string, fileId: string) {
+    let list = await this.db.findAsync({
+      collection: collections.BLOB,
+      bucketId,
+      fileId,
+    });
+
+    for (let blob of list) {
+      try {
+        await this.blobStorage.removeByBlobId(blob._id);
+      } catch (ex) {
+        if (
+          ex &&
+          typeof ex === "object" &&
+          "code" in ex &&
+          (<Generic>ex).code === "ENOENT"
+        ) {
+          // the file not being there is not a catastrophe in this case
+          ("pass");
+        } else {
+          throw ex;
+        }
+      }
+    }
+
+    return await this.db.removeAsync(
+      {
+        collection: collections.BLOB,
+        bucketId,
+        fileId,
+      },
+      { multi: true }
     );
   }
 }

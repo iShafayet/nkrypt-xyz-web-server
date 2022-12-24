@@ -52,12 +52,12 @@ export class Api extends AbstractApi {
     let newPasswordBlock = calculateHashOfString(newPassword);
 
     await dispatch.userService.updateUserPassword(
-      this.interimData.userId as string,
+      this.interimData.userId!,
       newPasswordBlock
     );
 
     await dispatch.sessionService.expireAllSessionByUserId(
-      this.interimData.userId as string,
+      this.interimData.userId!,
       "All sessions expired due to password change."
     );
 

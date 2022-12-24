@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { AbstractApi } from "../../lib/abstract-api.js";
-import { throwOnFalsy, UserError } from "../../utility/coded-error.js";
+import { throwOnFalsy, throwOnTruthy, UserError } from "../../utility/coded-error.js";
 import { extract } from "../../utility/misc-utils.js";
 import { compareHashWithString } from "../../utility/security-utils.js";
 import { validators } from "../../validators.js";
@@ -32,6 +32,12 @@ export class Api extends AbstractApi {
     let { userName, password } = body;
 
     let user = await dispatch.userService.findUserOrFail(userName);
+
+    throwOnTruthy(UserError,
+      user.isBanned,
+      "USER_BANNED",
+      "You are currently banned from logging in."
+    );
 
     let isPasswordCorrect = compareHashWithString(
       password,

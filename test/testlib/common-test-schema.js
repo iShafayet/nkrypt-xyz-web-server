@@ -94,6 +94,7 @@ export const userListSchema = Joi.array()
       _id: validators.id,
       userName: validators.userName,
       displayName: validators.displayName,
+      isBanned: Joi.boolean().required()
     })
   )
   .required();
@@ -104,6 +105,7 @@ export const userListWithPermissionsSchema = Joi.array()
       _id: validators.id,
       userName: validators.userName,
       displayName: validators.displayName,
+      isBanned: Joi.boolean().required(),
       globalPermissions: validators.allGlobalPermissions
     })
   )

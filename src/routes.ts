@@ -12,6 +12,7 @@ export const apiNameList = [
   // admin
   "admin/iam/add-user",
   "admin/iam/set-global-permissions",
+  "admin/iam/set-banning-status",
   // bucket
   "bucket/create",
   "bucket/list",

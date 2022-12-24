@@ -48,7 +48,7 @@ export const detectHttpStatusCode = (
     return 401;
   }
 
-  if (["ACCESS_DENIED"].includes(serializedError.code)) {
+  if (["ACCESS_DENIED", "USER_BANNED"].includes(serializedError.code)) {
     return 403;
   }
 

@@ -3,10 +3,10 @@ import * as ExpressCore from "express-serve-static-core";
 import constants from "../constant/common-constants.js";
 import { DatabaseEngine } from "../lib/database-engine.js";
 import {
-    DeveloperError,
-    throwOnFalsy,
-    throwOnTruthy,
-    UserError
+  DeveloperError,
+  throwOnFalsy,
+  throwOnTruthy,
+  UserError
 } from "../utility/coded-error.js";
 
 export class AuthService {
@@ -32,15 +32,15 @@ export class AuthService {
     throwOnFalsy(
       UserError,
       parts.length === 2 &&
-        parts[0].toLowerCase().indexOf("bearer") === 0 &&
-        parts[1].length === constants.iam.API_KEY_LENGTH,
+      parts[0].toLowerCase().indexOf("bearer") === 0 &&
+      parts[1].length === constants.iam.API_KEY_LENGTH,
       "AUTHORIZATION_HEADER_MALFORMATTED",
       "Authorization header is malformatted"
     );
-    let apiKey = parts.pop();
+    let apiKey = parts.pop() as string;
 
     let session = await dispatch.sessionService.getSessionByApiKey(
-      apiKey as string
+      apiKey
     );
 
     throwOnFalsy(

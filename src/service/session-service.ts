@@ -22,9 +22,9 @@ export class SessionService {
     this.db = dbEngine.connection;
   }
 
-  async createNewUniqueSession(user: Generic) {
+  async createNewUniqueSession(user: Generic): Promise<{ session: Session, apiKey: string }> {
     let apiKey;
-    let session, exists;
+    let session: Session, exists;
     let safetyCap = constants.std.SAFETY_CAP;
     do {
       apiKey = generateRandomString(constants.iam.API_KEY_LENGTH);
@@ -57,11 +57,11 @@ export class SessionService {
       );
     } while (exists);
 
-    return { session, apiKey };
+    return { session: session!, apiKey };
   }
 
 
-  async listSessionsByUserIdOrFail(userId: string) {
+  async listSessionsByUserIdOrFail(userId: string): Promise<Session[]> {
     let sessionList = await this.db.findAsync({
       collection: collections.SESSION,
       userId: userId,
@@ -69,7 +69,7 @@ export class SessionService {
     return sessionList;
   }
 
-  async getSessionByIdOrFail(_id: string) {
+  async getSessionByIdOrFail(_id: string): Promise<Session> {
     let session = await this.db.findOneAsync({
       collection: collections.SESSION,
       _id,
@@ -85,7 +85,7 @@ export class SessionService {
     return session;
   }
 
-  async getSessionByApiKey(apiKey: string) {
+  async getSessionByApiKey(apiKey: string): Promise<Session> {
     return await this.db.findOneAsync({
       collection: collections.SESSION,
       apiKey,

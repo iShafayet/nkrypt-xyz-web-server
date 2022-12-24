@@ -79,12 +79,12 @@ export const blobWriteQuantizedApiHandler = async (
       );
 
       if (shouldEnd) {
-        await dispatch.blobService.markBlobAsFinished(bucketId, fileId, blob._id);
+        await dispatch.blobService.markBlobAsFinished(bucketId, fileId, blob._id!);
 
         await dispatch.blobService.removeAllOtherBlobs(
           bucketId,
           fileId,
-          blob._id
+          blob._id!
         );
       }
 
@@ -99,7 +99,7 @@ export const blobWriteQuantizedApiHandler = async (
       await dispatch.blobService.markBlobAsErroneous(
         bucketId,
         fileId,
-        blob._id
+        blob._id!
       );
 
       throw err;

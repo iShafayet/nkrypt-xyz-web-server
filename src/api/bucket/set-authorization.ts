@@ -70,7 +70,7 @@ export class Api extends AbstractApi {
     }
 
     Object.keys(permissionsToSet).forEach((permission) => {
-      authorization.permissions[permission] = permissionsToSet[permission];
+      authorization!.permissions[permission] = permissionsToSet[permission];
     });
     await dispatch.bucketService.setAuthorizationList(
       bucketId,

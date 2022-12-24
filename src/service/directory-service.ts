@@ -11,7 +11,7 @@ export class DirectoryService {
     this.db = dbEngine.connection;
   }
 
-  async listChildrenOfDirectory(bucketId: string, parentDirectoryId: string) {
+  async listChildrenOfDirectory(bucketId: string, parentDirectoryId: string): Promise<Directory[]> {
     let list = await this.db.findAsync({
       collection: collections.DIRECTORY,
       bucketId,
@@ -33,7 +33,7 @@ export class DirectoryService {
     name: string,
     bucketId: string,
     parentDirectoryId: string
-  ) {
+  ): Promise<Directory> {
     let doc = await this.db.findOneAsync({
       collection: collections.DIRECTORY,
       name,
@@ -50,7 +50,7 @@ export class DirectoryService {
     encryptedMetaData: string,
     createdByUserId: string,
     parentDirectoryId: string | null
-  ) {
+  ): Promise<Directory> {
     let data: Directory = {
       _id: undefined,
       name,

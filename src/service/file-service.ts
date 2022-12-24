@@ -11,7 +11,7 @@ export class FileService {
     this.db = dbEngine.connection;
   }
 
-  async findFileById(bucketId: string, fileId: string) {
+  async findFileById(bucketId: string, fileId: string): Promise<File> {
     let doc = await this.db.findOneAsync({
       collection: collections.FILE,
       bucketId,
@@ -24,7 +24,7 @@ export class FileService {
     name: string,
     bucketId: string,
     parentDirectoryId: string
-  ) {
+  ): Promise<File> {
     let doc = await this.db.findOneAsync({
       collection: collections.FILE,
       name,
@@ -41,7 +41,7 @@ export class FileService {
     encryptedMetaData: string,
     createdByUserId: string,
     parentDirectoryId: string
-  ) {
+  ): Promise<File> {
     let data: File = {
       _id: undefined,
       name,

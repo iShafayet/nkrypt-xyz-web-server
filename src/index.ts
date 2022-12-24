@@ -12,8 +12,8 @@ import { prepareServiceDispatch } from "./lib/service-dispatch.js";
 import { apiNameList } from "./routes.js";
 import { appRootDirPath, toFileUrl } from "./utility/file-utils.js";
 
-// We initiate logger and inject it into global so that it is usable by everyone.
-let logger = (global.logger = new Logger({
+// We initiate logger and inject it into global so that it is usable everywhere.
+global.logger = new Logger({
   switches: {
     debug: true,
     log: true,
@@ -22,7 +22,7 @@ let logger = (global.logger = new Logger({
     error: true,
     urgent: true,
   },
-}));
+});
 await logger.init();
 
 export class NkWebServerProgram {

@@ -13,7 +13,7 @@ export class BucketService {
     this.db = dbEngine.connection;
   }
 
-  async findBucketById(id: string) {
+  async findBucketById(id: string): Promise<Bucket> {
     let doc = await this.db.findOneAsync({
       collection: collections.BUCKET,
       _id: id,
@@ -21,7 +21,7 @@ export class BucketService {
     return doc;
   }
 
-  async findBucketByName(name: string) {
+  async findBucketByName(name: string): Promise<Bucket> {
     let doc = await this.db.findOneAsync({
       collection: collections.BUCKET,
       name,
@@ -35,7 +35,7 @@ export class BucketService {
     cryptData: string,
     metaData: Record<string, never>,
     createdByUserId: string
-  ) {
+  ): Promise<Bucket> {
     let data: Bucket = {
       _id: undefined,
       name,
@@ -58,7 +58,7 @@ export class BucketService {
     });
   }
 
-  async listAllBuckets() {
+  async listAllBuckets(): Promise<Bucket[]> {
     let list = await this.db.findAsync({
       collection: collections.BUCKET,
     });

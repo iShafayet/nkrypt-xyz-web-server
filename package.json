@@ -12,8 +12,16 @@
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/start-dev.js\"",
     "dev-amnesiac": "concurrently \"npx tsc --watch\" \"nodemon -q dist/start-dev.js --amnesiac\"",
     "lint": "eslint .",
+    "start-dev": "node dist/start-dev.js",
     "start": "node dist/start.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "docker-dev-prep": "docker volume create --name nkrypt-xyz-web-server-mvp-dev-1-data",
+    "docker-dev-build": "docker build -t nkrypt-xyz-web-server-mvp-dev-1 -f ./Dockerfile-Dev .",
+    "docker-dev-run": "docker run -it --rm -p 9041:9041 -v nkrypt-xyz-web-server-mvp-dev-1-data:/home/node/app/nkrypt-xyz-local-data nkrypt-xyz-web-server-mvp-dev-1",
+    "docker-dev": "npm run docker-dev-prep && npm run docker-dev-build && npm run docker-dev-run",
+    "docker-test-build": "docker build -t nkrypt-xyz-web-server-mvp-dev-1-test -f ./Dockerfile-Test .",
+    "docker-test-run": "docker run -it --network \"host\" --rm -v nkrypt-xyz-web-server-mvp-dev-1-data:/home/node/app/nkrypt-xyz-local-data nkrypt-xyz-web-server-mvp-dev-1-test",
+    "docker-test": "npm run docker-test-build && npm run docker-test-run"
   },
   "dependencies": {
     "@seald-io/nedb": "^3.0.0",

@@ -3,7 +3,8 @@
 import fetch from "node-fetch";
 import Joi from "joi";
 
-const basePath = "http://localhost:9041/api";
+const apiServerHostName = process.env.apiserverhostname || "localhost";
+const basePath = `http://${apiServerHostName}:9041/api`;
 
 const callPostJsonApi = async (endPoint, postData, authToken = null) => {
   const url = basePath + endPoint;
@@ -39,7 +40,12 @@ const callHappyPostJsonApi = async (expectedStatus, endPoint, postData) => {
   return await response.json();
 };
 
-const callHappyPostJsonApiWithAuth = async (expectedStatus, authToken, endPoint, postData) => {
+const callHappyPostJsonApiWithAuth = async (
+  expectedStatus,
+  authToken,
+  endPoint,
+  postData
+) => {
   const response = await callPostJsonApi(endPoint, postData, authToken);
 
   if (response.status !== expectedStatus) {
@@ -65,8 +71,12 @@ const validateObject = async (data, objectKeysMap) => {
   );
 };
 
-const callRawPostApi = async (endPoint, authToken, body, additionalHeaders = {}) => {
-  const basePath = "http://localhost:9041/api";
+const callRawPostApi = async (
+  endPoint,
+  authToken,
+  body,
+  additionalHeaders = {}
+) => {
   const url = basePath + endPoint;
   let headers = { "Content-Type": "text/plain" };
   Object.assign(headers, additionalHeaders);

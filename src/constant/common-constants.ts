@@ -1,4 +1,8 @@
 const constants = {
+  config: {
+    CONFIG_DIRECTORY_NAME: "nkrypt-xyz",
+    CONFIG_FILE_NAME: "config.json"
+  },
   api: {
     CORE_API_DIR: "./api",
     CORE_API_SUBCONTEXT_PATH: "/api",

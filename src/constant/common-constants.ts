@@ -8,9 +8,7 @@ const constants = {
     CORE_API_SUBCONTEXT_PATH: "/api",
   },
   webServer: {
-    INTENTIONAL_REQUEST_DELAY_MS: 100,
-    INTENTIONAL_BLOB_UPLOAD_DELAY_MS: 400,
-    FALLBACK_PORT: 8080,
+    INTENTIONAL_REQUEST_DELAY_MS: 1,
     BLOB_API_CRYPTO_META_HEADER_NAME: "nk-crypto-meta"
   },
   database: {

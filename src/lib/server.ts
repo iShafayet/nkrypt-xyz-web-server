@@ -2,11 +2,13 @@ import bodyParser from "body-parser";
 import express from "express";
 import * as ExpressCore from "express-serve-static-core";
 import http from "http";
+import https from "https";
 import pathlib from "path";
 import constants from "../constant/common-constants.js";
 import { ErrorCode } from "../constant/error-codes.js";
 import { Generic } from "../global.js";
 import { DeveloperError } from "../utility/coded-error.js";
+import { prepareSslDetails } from "../utility/ssl-utils.js";
 import { generateUuid } from "../utility/string-utils.js";
 import { joinUrlParts } from "../utility/url-utils.js";
 import { IAbstractApi } from "./abstract-api.js";
@@ -22,16 +24,16 @@ class Server {
   config: Config;
   db: DatabaseEngine;
 
-  private _port: any;
   private _expressApp: ExpressCore.Express;
-  private _nodeWebServer!: http.Server;
+  private _nodeHttpWebServer!: http.Server;
+  private _nodeHttpsWebServer!: http.Server;
+
   private _subContextPath: string;
 
   constructor(config: Config, db: DatabaseEngine) {
     this.config = config;
     this.db = db;
 
-    this._port = config.webServer.port || constants.webServer.FALLBACK_PORT;
     this._expressApp = express();
 
     this._subContextPath = constants.api.CORE_API_SUBCONTEXT_PATH;
@@ -48,8 +50,9 @@ class Server {
       (req as Generic).uuid = uuid;
 
       // Log including UUID
-      let description = `HTTP ${req.method} ${req.url} ${(req as Generic).uuid
-        }`;
+      let description = `HTTP ${req.method} ${req.url} ${
+        (req as Generic).uuid
+      }`;
       logger.log(description);
       return next();
     });
@@ -74,7 +77,7 @@ class Server {
     await this._initializeWebServer();
   }
 
-  _initializeWebServer() {
+  async _initializeWebServer() {
     // static content
     registerStaticRequestHandlers(this._expressApp);
 
@@ -85,13 +88,33 @@ class Server {
       return res.status(400).send("Not supported");
     });
 
-    return new Promise<void>((accept, reject) => {
-      this._nodeWebServer = http.createServer(this._expressApp);
-      this._nodeWebServer.listen(this._port, () => {
-        logger.log("(server)> Http server listening on port", this._port);
-        return accept();
+    if (this.config.webServer.http.enabled) {
+      await new Promise<void>((accept, reject) => {
+        let port = this.config.webServer.http.port;
+        
+        this._nodeHttpWebServer = http.createServer(this._expressApp);
+        this._nodeHttpWebServer.listen(port, () => {
+          logger.log("(server)> Http server is listening on port", port);
+          return accept();
+        });
       });
-    });
+    }
+
+    if (this.config.webServer.https.enabled) {
+      await new Promise<void>((accept, reject) => {
+        let port = this.config.webServer.https.port;
+        let sslDetails = prepareSslDetails(this.config);
+
+        this._nodeHttpsWebServer = https.createServer(
+          sslDetails,
+          this._expressApp
+        );
+        this._nodeHttpsWebServer.listen(port, () => {
+          logger.log("(server)> Https server is listening on port", port);
+          return accept();
+        });
+      });
+    }
   }
 
   async registerCustomHandler(

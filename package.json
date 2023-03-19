@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "User deployable web/API server for nkrypt.xyz community edition.",
   "author": "Sayem Shafayet <ishafayet@gmail.com>",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "private": true,
   "type": "module",
   "main": "src/start.ts",
